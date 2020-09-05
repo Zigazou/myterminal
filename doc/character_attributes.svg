@@ -1,0 +1,1105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:export-ydpi="300"
+   inkscape:export-xdpi="300"
+   inkscape:export-filename="/home/fred/Documents/dev/FPGA/myterminal/doc/character_attributes.png"
+   sodipodi:docname="character_attributes.svg"
+   inkscape:version="1.0 (4035a4f, 2020-05-01)"
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 287.19843 73.781519"
+   height="73.781517mm"
+   width="287.19843mm">
+  <sodipodi:namedview
+     lock-margins="true"
+     inkscape:document-rotation="0"
+     fit-margin-bottom="8"
+     fit-margin-right="8"
+     fit-margin-left="8"
+     fit-margin-top="8"
+     inkscape:guide-bbox="true"
+     showguides="true"
+     inkscape:snap-grids="true"
+     inkscape:window-maximized="1"
+     inkscape:window-y="27"
+     inkscape:window-x="0"
+     inkscape:window-height="2100"
+     inkscape:window-width="3840"
+     showgrid="true"
+     inkscape:current-layer="layer1"
+     inkscape:document-units="mm"
+     inkscape:cy="110.95849"
+     inkscape:cx="430.28939"
+     inkscape:zoom="1.7878737"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="1"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base">
+    <inkscape:grid
+       originy="-162.80828"
+       originx="75.865829"
+       type="xygrid"
+       id="grid4485"
+       empspacing="8"
+       spacingx="8.4666667"
+       spacingy="8.4666667" />
+    <sodipodi:guide
+       inkscape:locked="false"
+       id="guide4826"
+       orientation="0,1"
+       position="90.205442,38.663029" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(75.86583,-70.341612)"
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="opacity:1;vector-effect:none;fill:#c8c7f9;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:9.365;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       id="rect980"
+       width="67.733337"
+       height="33.866665"
+       x="-67.73333"
+       y="85.333328" />
+    <rect
+       y="85.333328"
+       x="135.46666"
+       height="33.866665"
+       width="67.733337"
+       id="rect1130"
+       style="opacity:1;vector-effect:none;fill:#f9c7d4;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:9.365;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal" />
+    <rect
+       y="85.333328"
+       x="1.000011e-07"
+       height="33.866665"
+       width="67.733337"
+       id="rect1128"
+       style="opacity:1;vector-effect:none;fill:#c7f9c9;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:9.365;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal" />
+    <rect
+       style="opacity:1;vector-effect:none;fill:#f6f9c7;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:9.365;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       id="rect1112"
+       width="67.733337"
+       height="33.866665"
+       x="67.733337"
+       y="85.333328" />
+    <rect
+       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.265;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       id="rect4487"
+       width="270.93341"
+       height="8.4666672"
+       x="-67.73333"
+       y="93.799995"
+       rx="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.39699px;line-height:1.2;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.787217"
+       x="169.01912"
+       y="100.97227"
+       id="text4493"><tspan
+         sodipodi:role="line"
+         id="tspan4491"
+         x="169.01912"
+         y="100.97227"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';text-align:center;text-anchor:middle;stroke-width:0.787217">CHARACTER CODE</tspan></text>
+    <text
+       id="text4513"
+       y="100.97227"
+       x="104.66392"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.39699px;line-height:1.2;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.787217"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';stroke-width:0.787217"
+         y="100.97227"
+         x="104.66392"
+         id="tspan4511"
+         sodipodi:role="line">size</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.39699px;line-height:1.2;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.787217"
+       x="86.64521"
+       y="100.97227"
+       id="text4517"><tspan
+         sodipodi:role="line"
+         id="tspan4515"
+         x="86.64521"
+         y="100.97227"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';stroke-width:0.787217">PART</tspan></text>
+    <path
+       sodipodi:nodetypes="cc"
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 101.6,93.799999 V 105.46009"
+       id="path4523"
+       inkscape:connector-curvature="0" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 84.666667,93.799999 V 105.46009"
+       id="path4525"
+       inkscape:connector-curvature="0" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 67.733336,93.799999 V 105.46009"
+       id="path4527"
+       inkscape:connector-curvature="0" />
+    <text
+       transform="rotate(-45)"
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.9602px;line-height:1.2;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.371269"
+       x="-28.625097"
+       y="115.57143"
+       id="text4535"><tspan
+         sodipodi:role="line"
+         id="tspan4533"
+         x="-28.625097"
+         y="115.57143"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';stroke-width:0.371269">INVERT</tspan></text>
+    <text
+       id="text4547"
+       y="108.70586"
+       x="4.1442704"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="108.70586"
+         x="4.1442704"
+         sodipodi:role="line"
+         id="tspan4582">23</tspan></text>
+    <text
+       id="text4587"
+       y="108.7435"
+       x="12.755896"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="108.7435"
+         x="12.755896"
+         sodipodi:role="line"
+         id="tspan4585">22</tspan></text>
+    <text
+       id="text4591"
+       y="108.7435"
+       x="21.317902"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="108.7435"
+         x="21.317902"
+         sodipodi:role="line"
+         id="tspan4589">21</tspan></text>
+    <text
+       id="text4595"
+       y="108.71455"
+       x="29.677227"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="108.71455"
+         x="29.677227"
+         sodipodi:role="line"
+         id="tspan4593">20</tspan></text>
+    <text
+       id="text4599"
+       y="108.70586"
+       x="38.175526"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="108.70586"
+         x="38.175526"
+         sodipodi:role="line"
+         id="tspan4597">19</tspan></text>
+    <text
+       id="text4603"
+       y="108.70586"
+       x="46.624607"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="108.70586"
+         x="46.624607"
+         sodipodi:role="line"
+         id="tspan4601">18</tspan></text>
+    <text
+       id="text4607"
+       y="108.70586"
+       x="55.021568"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="108.70586"
+         x="55.021568"
+         sodipodi:role="line"
+         id="tspan4605">17</tspan></text>
+    <text
+       id="text4611"
+       y="108.70586"
+       x="63.548828"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="108.70586"
+         x="63.548828"
+         sodipodi:role="line"
+         id="tspan4609">16</tspan></text>
+    <text
+       id="text4615"
+       y="108.66823"
+       x="71.98922"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="108.66823"
+         x="71.98922"
+         sodipodi:role="line"
+         id="tspan4613">15</tspan></text>
+    <text
+       id="text4619"
+       y="108.70586"
+       x="80.432503"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="108.70586"
+         x="80.432503"
+         sodipodi:role="line"
+         id="tspan4617">14</tspan></text>
+    <text
+       id="text4623"
+       y="108.70586"
+       x="88.904755"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="108.70586"
+         x="88.904755"
+         sodipodi:role="line"
+         id="tspan4621">13</tspan></text>
+    <text
+       id="text4627"
+       y="108.7435"
+       x="97.362518"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="108.7435"
+         x="97.362518"
+         sodipodi:role="line"
+         id="tspan4625">12</tspan></text>
+    <text
+       id="text4631"
+       y="108.70586"
+       x="105.92452"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="108.70586"
+         x="105.92452"
+         sodipodi:role="line"
+         id="tspan4629">11</tspan></text>
+    <text
+       id="text4635"
+       y="108.70586"
+       x="114.28386"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="108.70586"
+         x="114.28386"
+         sodipodi:role="line"
+         id="tspan4633">10</tspan></text>
+    <text
+       id="text4639"
+       y="108.70586"
+       x="122.70977"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="108.70586"
+         x="122.70977"
+         sodipodi:role="line"
+         id="tspan4637">9</tspan></text>
+    <text
+       id="text4643"
+       y="108.70586"
+       x="131.15884"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="108.70586"
+         x="131.15884"
+         sodipodi:role="line"
+         id="tspan4641">8</tspan></text>
+    <text
+       id="text4647"
+       y="108.70586"
+       x="139.62241"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="108.70586"
+         x="139.62241"
+         sodipodi:role="line"
+         id="tspan4645">7</tspan></text>
+    <text
+       id="text4651"
+       y="108.70586"
+       x="148.08305"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="108.70586"
+         x="148.08305"
+         sodipodi:role="line"
+         id="tspan4649">6</tspan></text>
+    <text
+       id="text4655"
+       y="108.66823"
+       x="156.53793"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="108.66823"
+         x="156.53793"
+         sodipodi:role="line"
+         id="tspan4653">5</tspan></text>
+    <text
+       id="text4659"
+       y="108.70586"
+       x="164.9957"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="108.70586"
+         x="164.9957"
+         sodipodi:role="line"
+         id="tspan4657">4</tspan></text>
+    <text
+       id="text4663"
+       y="108.70586"
+       x="173.45348"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="108.70586"
+         x="173.45348"
+         sodipodi:role="line"
+         id="tspan4661">3</tspan></text>
+    <text
+       id="text4667"
+       y="108.7435"
+       x="181.91124"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="108.7435"
+         x="181.91124"
+         sodipodi:role="line"
+         id="tspan4665">2</tspan></text>
+    <text
+       id="text4671"
+       y="108.70586"
+       x="190.50218"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="108.70586"
+         x="190.50218"
+         sodipodi:role="line"
+         id="tspan4669">1</tspan></text>
+    <text
+       id="text4675"
+       y="108.70586"
+       x="198.82388"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="108.70586"
+         x="198.82388"
+         sodipodi:role="line"
+         id="tspan4673">0</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.9602px;line-height:1.2;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.371269"
+       x="114.27716"
+       y="90.934639"
+       id="text4970"><tspan
+         sodipodi:role="line"
+         id="tspan4968"
+         x="114.27716"
+         y="90.934639"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.371269">horz</tspan></text>
+    <text
+       transform="rotate(-90)"
+       id="text4974"
+       y="107.19798"
+       x="-89.549995"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.9602px;line-height:1.2;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.371269"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.371269"
+         y="107.19798"
+         x="-89.549995"
+         id="tspan4972"
+         sodipodi:role="line">vert</tspan></text>
+    <text
+       id="text4978"
+       y="90.934639"
+       x="97.343826"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.9602px;line-height:1.2;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.371269"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.371269"
+         y="90.934639"
+         x="97.343826"
+         id="tspan4976"
+         sodipodi:role="line">horz</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.9602px;line-height:1.2;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.371269"
+       x="-89.549995"
+       y="90.264648"
+       id="text4982"
+       transform="rotate(-90)"><tspan
+         sodipodi:role="line"
+         id="tspan4980"
+         x="-89.549995"
+         y="90.264648"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.371269">vert</tspan></text>
+    <path
+       inkscape:connector-curvature="0"
+       id="path4578"
+       d="M 118.53333,93.799999 V 105.46009"
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       sodipodi:nodetypes="cc" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 135.46666,93.799999 V 105.46009"
+       id="path912"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.39699px;line-height:1.2;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.787217"
+       x="120.60727"
+       y="100.97227"
+       id="text916"><tspan
+         sodipodi:role="line"
+         id="tspan914"
+         x="120.60727"
+         y="100.97227"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';stroke-width:0.787217">PAGE</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       x="139.62241"
+       y="116.64336"
+       id="text1016"><tspan
+         id="tspan1014"
+         sodipodi:role="line"
+         x="139.62241"
+         y="116.64336">7</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       x="148.08305"
+       y="116.64336"
+       id="text1020"><tspan
+         id="tspan1018"
+         sodipodi:role="line"
+         x="148.08305"
+         y="116.64336">6</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       x="156.53793"
+       y="116.60573"
+       id="text1024"><tspan
+         id="tspan1022"
+         sodipodi:role="line"
+         x="156.53793"
+         y="116.60573">5</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       x="164.9957"
+       y="116.64336"
+       id="text1028"><tspan
+         id="tspan1026"
+         sodipodi:role="line"
+         x="164.9957"
+         y="116.64336">4</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       x="173.45348"
+       y="116.64336"
+       id="text1032"><tspan
+         id="tspan1030"
+         sodipodi:role="line"
+         x="173.45348"
+         y="116.64336">3</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       x="181.91124"
+       y="116.68102"
+       id="text1036"><tspan
+         id="tspan1034"
+         sodipodi:role="line"
+         x="181.91124"
+         y="116.68102">2</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       x="190.50218"
+       y="116.64336"
+       id="text1040"><tspan
+         id="tspan1038"
+         sodipodi:role="line"
+         x="190.50218"
+         y="116.64336">1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       x="198.82388"
+       y="116.64336"
+       id="text1044"><tspan
+         id="tspan1042"
+         sodipodi:role="line"
+         x="198.82388"
+         y="116.64336">0</tspan></text>
+    <text
+       id="text1048"
+       y="116.64336"
+       x="71.889046"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="116.64336"
+         x="71.889046"
+         sodipodi:role="line"
+         id="tspan1046">7</tspan></text>
+    <text
+       id="text1052"
+       y="116.64336"
+       x="80.349693"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="116.64336"
+         x="80.349693"
+         sodipodi:role="line"
+         id="tspan1050">6</tspan></text>
+    <text
+       id="text1056"
+       y="116.60573"
+       x="88.804626"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="116.60573"
+         x="88.804626"
+         sodipodi:role="line"
+         id="tspan1054">5</tspan></text>
+    <text
+       id="text1060"
+       y="116.64336"
+       x="97.26239"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="116.64336"
+         x="97.26239"
+         sodipodi:role="line"
+         id="tspan1058">4</tspan></text>
+    <text
+       id="text1064"
+       y="116.64336"
+       x="105.72019"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="116.64336"
+         x="105.72019"
+         sodipodi:role="line"
+         id="tspan1062">3</tspan></text>
+    <text
+       id="text1068"
+       y="116.68102"
+       x="114.17799"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="116.68102"
+         x="114.17799"
+         sodipodi:role="line"
+         id="tspan1066">2</tspan></text>
+    <text
+       id="text1072"
+       y="116.64336"
+       x="122.76894"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="116.64336"
+         x="122.76894"
+         sodipodi:role="line"
+         id="tspan1070">1</tspan></text>
+    <text
+       id="text1076"
+       y="116.64336"
+       x="131.0907"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="116.64336"
+         x="131.0907"
+         sodipodi:role="line"
+         id="tspan1074">0</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       x="4.1557136"
+       y="116.64336"
+       id="text1080"><tspan
+         id="tspan1078"
+         sodipodi:role="line"
+         x="4.1557136"
+         y="116.64336">7</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       x="12.616354"
+       y="116.64336"
+       id="text1084"><tspan
+         id="tspan1082"
+         sodipodi:role="line"
+         x="12.616354"
+         y="116.64336">6</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       x="21.07128"
+       y="116.60573"
+       id="text1088"><tspan
+         id="tspan1086"
+         sodipodi:role="line"
+         x="21.07128"
+         y="116.60573">5</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       x="29.529037"
+       y="116.64336"
+       id="text1092"><tspan
+         id="tspan1090"
+         sodipodi:role="line"
+         x="29.529037"
+         y="116.64336">4</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       x="37.986839"
+       y="116.64336"
+       id="text1096"><tspan
+         id="tspan1094"
+         sodipodi:role="line"
+         x="37.986839"
+         y="116.64336">3</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       x="46.444626"
+       y="116.68102"
+       id="text1100"><tspan
+         id="tspan1098"
+         sodipodi:role="line"
+         x="46.444626"
+         y="116.68102">2</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       x="55.035572"
+       y="116.64336"
+       id="text1104"><tspan
+         id="tspan1102"
+         sodipodi:role="line"
+         x="55.035572"
+         y="116.64336">1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       x="63.357338"
+       y="116.64336"
+       id="text1108"><tspan
+         id="tspan1106"
+         sodipodi:role="line"
+         x="63.357338"
+         y="116.64336">0</tspan></text>
+    <text
+       id="text1116"
+       y="84.303474"
+       x="169.01912"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.39699px;line-height:1.2;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.787217"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';text-align:center;text-anchor:middle;stroke-width:0.787217"
+         y="84.303474"
+         x="169.01912"
+         id="tspan1114"
+         sodipodi:role="line">CHARACTER CODE</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.39699px;line-height:1.2;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.787217"
+       x="102.07962"
+       y="84.303474"
+       id="text1120"><tspan
+         sodipodi:role="line"
+         id="tspan1118"
+         x="102.07962"
+         y="84.303474"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';text-align:center;text-anchor:middle;stroke-width:0.787217">ATTRIBUTES 1</tspan></text>
+    <text
+       id="text1124"
+       y="84.303474"
+       x="34.346268"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.39699px;line-height:1.2;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.787217"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';text-align:center;text-anchor:middle;stroke-width:0.787217"
+         y="84.303474"
+         x="34.346268"
+         id="tspan1122"
+         sodipodi:role="line">ATTRIBUTES 2</tspan></text>
+    <text
+       id="text984"
+       y="116.64336"
+       x="-63.490662"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="116.64336"
+         x="-63.490662"
+         sodipodi:role="line"
+         id="tspan982">7</tspan></text>
+    <text
+       id="text988"
+       y="116.64336"
+       x="-55.030022"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="116.64336"
+         x="-55.030022"
+         sodipodi:role="line"
+         id="tspan986">6</tspan></text>
+    <text
+       id="text992"
+       y="116.60573"
+       x="-46.575096"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="116.60573"
+         x="-46.575096"
+         sodipodi:role="line"
+         id="tspan990">5</tspan></text>
+    <text
+       id="text996"
+       y="116.64336"
+       x="-38.11734"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="116.64336"
+         x="-38.11734"
+         sodipodi:role="line"
+         id="tspan994">4</tspan></text>
+    <text
+       id="text1000"
+       y="116.64336"
+       x="-29.659536"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="116.64336"
+         x="-29.659536"
+         sodipodi:role="line"
+         id="tspan998">3</tspan></text>
+    <text
+       id="text1004"
+       y="116.68102"
+       x="-21.20175"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="116.68102"
+         x="-21.20175"
+         sodipodi:role="line"
+         id="tspan1002">2</tspan></text>
+    <text
+       id="text1008"
+       y="116.64336"
+       x="-12.610805"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="116.64336"
+         x="-12.610805"
+         sodipodi:role="line"
+         id="tspan1006">1</tspan></text>
+    <text
+       id="text1012"
+       y="116.64336"
+       x="-4.2890391"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       xml:space="preserve"><tspan
+         y="116.64336"
+         x="-4.2890391"
+         sodipodi:role="line"
+         id="tspan1010">0</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       x="-63.572372"
+       y="108.70586"
+       id="text1050"><tspan
+         id="tspan1048"
+         sodipodi:role="line"
+         x="-63.572372"
+         y="108.70586">31</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       x="-54.960747"
+       y="108.7435"
+       id="text1054"><tspan
+         id="tspan1052"
+         sodipodi:role="line"
+         x="-54.960747"
+         y="108.7435">30</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       x="-46.398743"
+       y="108.7435"
+       id="text1058"><tspan
+         id="tspan1056"
+         sodipodi:role="line"
+         x="-46.398743"
+         y="108.7435">29</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       x="-38.039417"
+       y="108.71455"
+       id="text1062"><tspan
+         id="tspan1060"
+         sodipodi:role="line"
+         x="-38.039417"
+         y="108.71455">28</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       x="-29.541119"
+       y="108.70586"
+       id="text1066"><tspan
+         id="tspan1064"
+         sodipodi:role="line"
+         x="-29.541119"
+         y="108.70586">27</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       x="-21.092037"
+       y="108.70586"
+       id="text1070"><tspan
+         id="tspan1068"
+         sodipodi:role="line"
+         x="-21.092037"
+         y="108.70586">26</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       x="-12.695076"
+       y="108.70586"
+       id="text1074"><tspan
+         id="tspan1072"
+         sodipodi:role="line"
+         x="-12.695076"
+         y="108.70586">25</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1.2;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.555907"
+       x="-4.1678147"
+       y="108.70586"
+       id="text1078"><tspan
+         id="tspan1076"
+         sodipodi:role="line"
+         x="-4.1678147"
+         y="108.70586">24</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.39699px;line-height:1.2;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.787217"
+       x="-33.776852"
+       y="84.303474"
+       id="text1117"><tspan
+         sodipodi:role="line"
+         id="tspan1115"
+         x="-33.776852"
+         y="84.303474"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';text-align:center;text-anchor:middle;stroke-width:0.787217">ATTRIBUTES 3</tspan></text>
+    <path
+       inkscape:connector-curvature="0"
+       id="path1119"
+       d="M -33.866667,93.80001 V 105.4601"
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       sodipodi:nodetypes="cc" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 1.0000003e-7,93.800012 V 105.4601"
+       id="path1121"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.54176px;line-height:1.2;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.51954"
+       x="-27.762323"
+       y="99.972946"
+       id="text1125"><tspan
+         sodipodi:role="line"
+         id="tspan1123"
+         x="-27.762323"
+         y="99.972946"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';stroke-width:0.51954">FOREGROUND</tspan></text>
+    <text
+       id="text1129"
+       y="99.972946"
+       x="-61.934219"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.54176px;line-height:1.2;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.51954"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';stroke-width:0.51954"
+         y="99.972946"
+         x="-61.934219"
+         id="tspan1127"
+         sodipodi:role="line">BACKGROUND</tspan></text>
+    <text
+       id="text1133"
+       y="100.97227"
+       x="68.60881"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.39699px;line-height:1.2;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.787217"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';stroke-width:0.787217"
+         y="100.97227"
+         x="68.60881"
+         id="tspan1131"
+         sodipodi:role="line">BLINK</tspan></text>
+    <path
+       inkscape:connector-curvature="0"
+       id="path1135"
+       d="M 59.266667,93.799999 V 105.46009"
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       sodipodi:nodetypes="cc" />
+    <text
+       transform="rotate(-45)"
+       id="text1141"
+       y="108.4598"
+       x="-30.339144"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.40123px;line-height:0.8;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.318865"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0.8;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';text-align:center;text-anchor:middle;stroke-width:0.318865"
+         y="108.4598"
+         x="-30.339144"
+         id="tspan1137"
+         sodipodi:role="line">UNDER</tspan><tspan
+         id="tspan1139"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0.8;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';text-align:center;text-anchor:middle;stroke-width:0.318865"
+         y="111.214"
+         x="-30.339144"
+         sodipodi:role="line">LINE</tspan></text>
+    <path
+       inkscape:connector-curvature="0"
+       id="path1143"
+       d="M 50.8,93.799999 V 105.46009"
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.9602px;line-height:1;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.371269"
+       x="42.334789"
+       y="99.419395"
+       id="text1151"><tspan
+         sodipodi:role="line"
+         x="42.334789"
+         y="99.419395"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:1;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.371269"
+         id="tspan1149">FUNCTION</tspan></text>
+    <path
+       inkscape:connector-curvature="0"
+       id="path1157"
+       d="M 33.866668,93.799999 V 105.46009"
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       sodipodi:nodetypes="cc" />
+    <text
+       id="text34577"
+       y="90.659821"
+       x="29.712669"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.175px;line-height:1;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.371269"
+       xml:space="preserve"><tspan
+         id="tspan34575"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.175px;line-height:1;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.371269"
+         y="90.659821"
+         x="29.712669"
+         sodipodi:role="line">TOP</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.175px;line-height:1;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.371269"
+       x="21.316137"
+       y="90.659821"
+       id="text34587"><tspan
+         sodipodi:role="line"
+         x="21.316137"
+         y="90.659821"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.175px;line-height:1;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.371269"
+         id="tspan34585">RIGHT</tspan></text>
+    <text
+       id="text34591"
+       y="90.659821"
+       x="12.760386"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.175px;line-height:1;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.371269"
+       xml:space="preserve"><tspan
+         id="tspan34589"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.175px;line-height:1;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.371269"
+         y="90.659821"
+         x="12.760386"
+         sodipodi:role="line">BOTTOM</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.175px;line-height:1;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.371269"
+       x="4.056076"
+       y="90.659821"
+       id="text34595"><tspan
+         sodipodi:role="line"
+         x="4.056076"
+         y="90.659821"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.175px;line-height:1;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.371269"
+         id="tspan34593">LEFT</tspan></text>
+    <text
+       id="text56031"
+       y="99.419395"
+       x="16.934793"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.9602px;line-height:1;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.371269"
+       xml:space="preserve"><tspan
+         id="tspan56029"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:1;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.371269"
+         y="99.419395"
+         x="16.934793"
+         sodipodi:role="line">Border / pattern</tspan></text>
+    <text
+       id="text56035"
+       y="124.08691"
+       x="31.18449"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.9602px;line-height:1;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.371269"
+       xml:space="preserve"><tspan
+         id="tspan56033"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:1;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';text-align:start;text-anchor:start;fill:#000000;fill-opacity:1;stroke-width:0.371269"
+         y="124.08691"
+         x="31.18449"
+         sodipodi:role="line">00 = AND pattern</tspan><tspan
+         id="tspan56037"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:1;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';text-align:start;text-anchor:start;fill:#000000;fill-opacity:1;stroke-width:0.371269"
+         y="128.08578"
+         x="31.18449"
+         sodipodi:role="line">01 = OR pattern</tspan><tspan
+         id="tspan56039"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:1;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';text-align:start;text-anchor:start;fill:#000000;fill-opacity:1;stroke-width:0.371269"
+         y="132.08466"
+         x="31.18449"
+         sodipodi:role="line">10 = XOR pattern</tspan><tspan
+         id="tspan56041"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:1;font-family:'Bebas Neue';-inkscape-font-specification:'Bebas Neue';text-align:start;text-anchor:start;fill:#000000;fill-opacity:1;stroke-width:0.371269"
+         y="136.08353"
+         x="31.18449"
+         sodipodi:role="line">11 = border</tspan></text>
+  </g>
+</svg>
