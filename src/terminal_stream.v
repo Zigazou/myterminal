@@ -55,7 +55,8 @@ localparam
 	DBLHEIGHT = 3,
 	DBLSIZE = 4,
 	CR = 13,
-	LF = 10;
+	LF = 10,
+	ESC = 'h1B;
 
 // Automaton registers
 reg [6:0] text_x;
@@ -84,7 +85,9 @@ localparam
 	STAGE_WRITE_TOP_LEFT     = 'd4,
 	STAGE_WRITE_TOP_RIGHT    = 'd5,
 	STAGE_WRITE_BOTTOM_LEFT  = 'd6,
-	STAGE_WRITE_BOTTOM_RIGHT = 'd7;
+	STAGE_WRITE_BOTTOM_RIGHT = 'd7,
+	STAGE_ESC                = 'd8,
+	STAGE_CSI                = 'd9;
 
 task goto;
 	input [7:0] next_stage;
@@ -192,6 +195,7 @@ task stage_idle;
 		else if (unicode == DBLWIDTH) size <= SIZE_DOUBLE_WIDTH;
 		else if (unicode == DBLHEIGHT) size <= SIZE_DOUBLE_HEIGHT;
 		else if (unicode == DBLSIZE) size <= SIZE_DOUBLE;
+		else if (unicode == ESC) goto(STAGE_ESC);
 		else begin
 			wr_request <= TRUE;
 			wr_address <= address_from_position(text_x, text_y);
@@ -319,6 +323,48 @@ task clear_screen_next;
 endtask
 
 // =============================================================================
+// Control sequences
+// =============================================================================
+reg [2:0] argument_count;
+reg [9:0] arguments [1:0];
+task stage_esc;
+	if (unicode_available) begin
+		if (unicode == 'h5B) begin
+			argument_count <= 'd0;
+			arguments[0] <= 'd0;
+			arguments[1] <= 'd0;
+			goto(STAGE_CSI);
+		end else
+			goto(STAGE_IDLE);
+	end
+endtask
+
+task stage_csi;
+	begin
+		if (unicode_available) begin
+			if (unicode >= 'h30 && unicode < 'h3A) begin // Parameter bytes
+				if (argument_count == 'd0) begin
+					argument_count <= 'd1;
+					arguments[0] <= unicode[3:0];
+				end else begin
+					arguments[argument_count - 'd1] <=
+						arguments[argument_count - 'd1] * 'd10 +
+						unicode[3:0];
+				end
+				goto(STAGE_CSI);
+			end else if (unicode == 'h3B) begin
+				argument_count <= argument_count + 'd1;
+			end else if (unicode == 'h48) begin // CUP - Cursor position
+				text_y <= arguments[0] == 'd0 ? 'd0 : arguments[0] - 'd1; 
+				text_x <= arguments[1] == 'd0 ? 'd0 : arguments[1] - 'd1;
+				goto(STAGE_IDLE);
+			end else
+				goto(STAGE_CSI);
+		end
+	end
+endtask
+
+// =============================================================================
 // Automaton
 // =============================================================================
 always @(posedge clk)
@@ -347,5 +393,8 @@ always @(posedge clk)
 			STAGE_WRITE_TOP_RIGHT: stage_write_top_right();
 			STAGE_WRITE_BOTTOM_LEFT: stage_write_bottom_left();
 			STAGE_WRITE_BOTTOM_RIGHT: stage_write_bottom_right();
+
+			STAGE_ESC: stage_esc();
+			STAGE_CSI: stage_csi();
 		endcase
 endmodule
