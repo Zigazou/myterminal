@@ -36,16 +36,7 @@ module video_controller #(
     input wire [CHAR_WIDTH - 1:0] char_row_bitmap
 );
 
-// =============================================================================
-// Constants
-// =============================================================================
-localparam
-	TRUE    = 1,
-	FALSE   = 0,
-
-	TRUE_n  = 0,
-	FALSE_n = 1;
-
+`include "constant.v"
 integer i;
 
 // =============================================================================
@@ -462,10 +453,10 @@ function [4:0] vertical_resize;
 		{ PART_FIRST, SIZE_NORMAL },
 		{ PART_LAST, SIZE_NORMAL }:	vertical_resize = row;
 
-		{ PART_FIRST, SIZE_DOUBLE }: vertical_resize = { 1'b0, row[3:1] };
+		{ PART_FIRST, SIZE_DOUBLE }: vertical_resize = { 1'b0, row[4:1] };
 
 		{ PART_LAST, SIZE_DOUBLE }:
-			vertical_resize = { 1'b0, row[3:1] } + CHAR_HEIGHT / 2;
+			vertical_resize = { 1'b0, row[4:1] } + (CHAR_HEIGHT / 2);
 	endcase
 endfunction
 

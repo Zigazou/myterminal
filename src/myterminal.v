@@ -15,6 +15,8 @@ module myterminal (
 	output wire vga_vsync
 );
 
+`include "constant.v"
+
 assign tx = 'b1;
 
 wire clk;
@@ -44,10 +46,6 @@ font font (
 	.font_address (font_address),
 	.char_row_bitmap (char_row_bitmap)
 );
-
-localparam
-	TRUE = 1,
-	FALSE = 0;
 
 wire [20:0] unicode;
 wire unicode_available;

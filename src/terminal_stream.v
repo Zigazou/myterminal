@@ -52,6 +52,8 @@ localparam
 
 	CLS = 1,
 	DBLWIDTH = 2,
+	DBLHEIGHT = 3,
+	DBLSIZE = 4,
 	CR = 13,
 	LF = 10;
 
@@ -63,20 +65,26 @@ reg [3:0] foreground;
 reg [3:0] background;
 
 reg [1:0] blink;
+reg invert;
+reg underline;
 
 reg [1:0] size;
 reg [1:0] func;
+reg [3:0] pattern;
 
 // =============================================================================
 // Stage management
 // =============================================================================
 reg [7:0] stage;
 localparam
-	STAGE_IDLE = 'd0,
+	STAGE_IDLE               = 'd0,
 	STAGE_CLEAR_SCREEN_START = 'd1,
 	STAGE_CLEAR_SCREEN_WRITE = 'd2,
-	STAGE_CLEAR_SCREEN_NEXT = 'd3,
-	STAGE_WRITE = 'd4;
+	STAGE_CLEAR_SCREEN_NEXT  = 'd3,
+	STAGE_WRITE_TOP_LEFT     = 'd4,
+	STAGE_WRITE_TOP_RIGHT    = 'd5,
+	STAGE_WRITE_BOTTOM_LEFT  = 'd6,
+	STAGE_WRITE_BOTTOM_RIGHT = 'd7;
 
 task goto;
 	input [7:0] next_stage;
@@ -87,7 +95,7 @@ endtask
 // Generate a cell
 // =============================================================================
 function [31:0] generate_cell;
-	input [9:0] ord;
+	input [20:0] ord;
 	input [1:0] size;
 	input [1:0] part;
 	input [1:0] blink;
@@ -100,12 +108,31 @@ function [31:0] generate_cell;
 
 	generate_cell = {
 		background, foreground, pattern, func, underline, invert, blink,
-		part, size, ord
+		part, size, ord[9:0]
 	};
 endfunction
 
+function [31:0] generate_cell_part;
+	input [20:0] ord;
+	input [1:0] part;
+
+	generate_cell_part = generate_cell(
+		.ord (ord),
+		.size (size),
+		.part (part),
+		.blink (blink),
+		.invert (invert),
+		.underline (underline),
+		.func (func),
+		.pattern (pattern),
+		.foreground (foreground),
+		.background (background)
+
+	);
+endfunction
+
 function clear_cell;
-	input [9:0] ord;
+	input [20:0] ord;
 	clear_cell = generate_cell(
 		.ord (ord),
 		.size (SIZE_NORMAL),
@@ -163,37 +190,98 @@ task stage_idle;
 		else if (unicode == CR) text_x <= 'd0;
 		else if (unicode == LF) line_feed();
 		else if (unicode == DBLWIDTH) size <= SIZE_DOUBLE_WIDTH;
+		else if (unicode == DBLHEIGHT) size <= SIZE_DOUBLE_HEIGHT;
+		else if (unicode == DBLSIZE) size <= SIZE_DOUBLE;
 		else begin
 			wr_request <= TRUE;
 			wr_address <= address_from_position(text_x, text_y);
-			wr_data <= generate_cell(
-				.ord (unicode[9:0]),
-				.size (size),
-				.part (PART_TOP_LEFT),
-				.blink (blink),
-				.invert (FALSE),
-				.underline (FALSE),
-				.func (func),
-				.pattern (PATTERN_NONE),
-				.foreground (foreground),
-				.background (background)
-			);
-
+			wr_data <= generate_cell_part(unicode, PART_TOP_LEFT);
 			next_char();
-			goto(STAGE_WRITE);
+			goto(STAGE_WRITE_TOP_LEFT);
 		end
 	end
 endtask
 
-task stage_write;
+task stage_write_top_left;
+	if (wr_done)
+		case (size)
+			SIZE_DOUBLE_WIDTH, SIZE_DOUBLE: begin
+				wr_request <= TRUE;
+				wr_address <= wr_address + 'd4;
+				wr_data <= generate_cell_part(unicode, PART_TOP_RIGHT);
+				goto(STAGE_WRITE_TOP_RIGHT);
+			end
+
+			SIZE_DOUBLE_HEIGHT: begin
+				wr_request <= TRUE;
+				wr_address <= wr_address + COLUMNS * 'd4;
+				wr_data <= generate_cell_part(unicode, PART_BOTTOM_LEFT);
+				goto(STAGE_WRITE_BOTTOM_LEFT);
+			end
+
+			default: begin
+				wr_request <= FALSE;
+				goto(STAGE_IDLE);
+			end
+		endcase
+	else begin
+		wr_request <= FALSE;
+		goto(STAGE_WRITE_TOP_LEFT);
+	end
+endtask
+
+task stage_write_top_right;
+	if (wr_done)
+		case (size)
+			SIZE_DOUBLE: begin
+				wr_request <= TRUE;
+				wr_address <= wr_address + (COLUMNS - 'd1) * 'd4;
+				wr_data <= generate_cell_part(unicode, PART_BOTTOM_LEFT);
+				goto(STAGE_WRITE_BOTTOM_LEFT);
+			end
+
+			default: begin
+				wr_request <= FALSE;
+				goto(STAGE_IDLE);
+			end
+		endcase
+	else begin
+		wr_request <= FALSE;
+		goto(STAGE_WRITE_TOP_RIGHT);
+	end
+endtask
+
+task stage_write_bottom_left;
+	if (wr_done)
+		case (size)
+			SIZE_DOUBLE: begin
+				wr_request <= TRUE;
+				wr_address <= wr_address + 'd4;
+				wr_data <= generate_cell_part(unicode, PART_BOTTOM_RIGHT);
+				goto(STAGE_WRITE_BOTTOM_RIGHT);
+			end
+
+			default: begin
+				wr_request <= FALSE;
+				goto(STAGE_IDLE);
+			end
+		endcase
+	else begin
+		wr_request <= FALSE;
+		goto(STAGE_WRITE_BOTTOM_LEFT);
+	end
+endtask
+
+task stage_write_bottom_right;
 	begin
 		wr_request <= FALSE;
 		if (wr_done)
 			goto(STAGE_IDLE);
 		else
-			goto(STAGE_WRITE);
+			goto(STAGE_WRITE_BOTTOM_RIGHT);
 	end
 endtask
+
 
 // =============================================================================
 // Clear screen
@@ -244,6 +332,9 @@ always @(posedge clk)
 		blink <= BLINK_NONE;
 		size <= SIZE_NORMAL;
 		func <= LOGICAL_AND;
+		pattern <= PATTERN_NONE;
+		invert <= FALSE;
+		underline <= FALSE;
 	end else
 		case (stage)
 			STAGE_IDLE: stage_idle();
@@ -252,6 +343,9 @@ always @(posedge clk)
 			STAGE_CLEAR_SCREEN_WRITE: clear_screen_write();
 			STAGE_CLEAR_SCREEN_NEXT: clear_screen_next();
 
-			STAGE_WRITE: stage_write();
+			STAGE_WRITE_TOP_LEFT: stage_write_top_left();
+			STAGE_WRITE_TOP_RIGHT: stage_write_top_right();
+			STAGE_WRITE_BOTTOM_LEFT: stage_write_bottom_left();
+			STAGE_WRITE_BOTTOM_RIGHT: stage_write_bottom_right();
 		endcase
 endmodule
