@@ -4,6 +4,7 @@ module terminal_stream #(
 ) (
 	input wire clk,
 	input wire reset,
+	output reg ready_n,
 
 	// Stream input
 	input wire [20:0] unicode,
@@ -20,6 +21,8 @@ module terminal_stream #(
 localparam
 	TRUE = 1'b1,
 	FALSE = 1'b0,
+	TRUE_n = 1'b0,
+	FALSE_n = 1'b1,
 
 	LAST_ADDRESS = 4 * (COLUMNS * ROWS - 1),
 
@@ -51,12 +54,28 @@ localparam
 	PATTERN_NONE = 4'b0000,
 
 	CLS = 1,
-	DBLWIDTH = 2,
-	DBLHEIGHT = 3,
-	DBLSIZE = 4,
 	CR = 13,
 	LF = 10,
-	ESC = 'h1B;
+
+	ESC = 'h1B,
+	ESC_SIZE_NORMAL = 'h4C,
+	ESC_SIZE_DOUBLE_HEIGHT = 'h4D,
+	ESC_SIZE_DOUBLE_WIDTH = 'h4E,
+	ESC_SIZE_DOUBLE = 'h4F,
+
+	CSI = 'h5B,
+	CSI_CURSOR_POSITION = 'h48,
+	CSI_SEPARATOR = 'h3B,
+
+	SGR = 'h6D,
+	SGR_RESET = 'd0,
+	SGR_UNDERLINE_ON = 'd4,
+	SGR_UNDERLINE_OFF = 'd24,
+	SGR_BLINK_SLOW = 'd5,
+	SGR_BLINK_FAST = 'd6,
+	SGR_BLINK_OFF = 'd25,
+	SGR_INVERT_ON = 'd7,
+	SGR_INVERT_OFF = 'd27;
 
 // Automaton registers
 reg [6:0] text_x;
@@ -192,9 +211,6 @@ task stage_idle;
 		if (unicode == CLS) goto(STAGE_CLEAR_SCREEN_START);
 		else if (unicode == CR) text_x <= 'd0;
 		else if (unicode == LF) line_feed();
-		else if (unicode == DBLWIDTH) size <= SIZE_DOUBLE_WIDTH;
-		else if (unicode == DBLHEIGHT) size <= SIZE_DOUBLE_HEIGHT;
-		else if (unicode == DBLSIZE) size <= SIZE_DOUBLE;
 		else if (unicode == ESC) goto(STAGE_ESC);
 		else begin
 			wr_request <= TRUE;
@@ -293,6 +309,7 @@ endtask
 task clear_screen_start;
 	begin
 		wr_address <= 'd0;
+		ready_n <= FALSE_n;
 		goto(STAGE_CLEAR_SCREEN_WRITE);
 	end
 endtask
@@ -313,6 +330,7 @@ task clear_screen_next;
 				text_x <= 'd0;
 				text_y <= 'd0;
 				size <= SIZE_NORMAL;
+				ready_n <= TRUE_n;
 				goto(STAGE_IDLE);
 			end else begin
 				wr_address <= wr_address + 'd4;
@@ -329,7 +347,19 @@ reg [2:0] argument_count;
 reg [9:0] arguments [1:0];
 task stage_esc;
 	if (unicode_available) begin
-		if (unicode == 'h5B) begin
+		if (unicode == ESC_SIZE_DOUBLE_WIDTH) begin
+			size <= SIZE_DOUBLE_WIDTH;
+			goto(STAGE_IDLE);
+		end	else if (unicode == ESC_SIZE_DOUBLE_HEIGHT) begin
+			size <= SIZE_DOUBLE_HEIGHT;
+			goto(STAGE_IDLE);
+		end else if (unicode == ESC_SIZE_DOUBLE) begin
+			size <= SIZE_DOUBLE;
+			goto(STAGE_IDLE);
+		end else if (unicode == ESC_SIZE_NORMAL) begin
+			size <= SIZE_NORMAL;
+			goto(STAGE_IDLE);
+		end	else if (unicode == CSI) begin
 			argument_count <= 'd0;
 			arguments[0] <= 'd0;
 			arguments[1] <= 'd0;
@@ -352,9 +382,9 @@ task stage_csi;
 						unicode[3:0];
 				end
 				goto(STAGE_CSI);
-			end else if (unicode == 'h3B) begin
+			end else if (unicode == CSI_SEPARATOR) begin
 				argument_count <= argument_count + 'd1;
-			end else if (unicode == 'h48) begin // CUP - Cursor position
+			end else if (unicode == CSI_CURSOR_POSITION) begin
 				text_y <= arguments[0] == 'd0 ? 'd0 : arguments[0] - 'd1; 
 				text_x <= arguments[1] == 'd0 ? 'd0 : arguments[1] - 'd1;
 				goto(STAGE_IDLE);
@@ -372,7 +402,6 @@ always @(posedge clk)
 		wr_address <= 'd0;
 		wr_request <= FALSE;
 		wr_mask <= 4'b1111;
-		stage <= STAGE_CLEAR_SCREEN_START;
 		foreground <= DEFAULT_FOREGROUND;
 		background <= DEFAULT_BACKGROUND;
 		blink <= BLINK_NONE;
@@ -381,7 +410,9 @@ always @(posedge clk)
 		pattern <= PATTERN_NONE;
 		invert <= FALSE;
 		underline <= FALSE;
-	end else
+		ready_n <= FALSE_n;
+		goto(STAGE_CLEAR_SCREEN_START);
+	end else begin
 		case (stage)
 			STAGE_IDLE: stage_idle();
 
@@ -397,4 +428,5 @@ always @(posedge clk)
 			STAGE_ESC: stage_esc();
 			STAGE_CSI: stage_csi();
 		endcase
+	end
 endmodule

@@ -3,6 +3,7 @@ set_pin_assignment	{ reset_n }	{ LOCATION = T2; IOSTANDARD = LVCMOS33; }
 
 set_pin_assignment	{ rx }	{ LOCATION = B10; IOSTANDARD = LVCMOS33; }
 set_pin_assignment	{ tx }	{ LOCATION = C9; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ cts }	{ LOCATION = B6; IOSTANDARD = LVCMOS33; }
 
 set_pin_assignment	{ vga_blue[0] }	{ LOCATION = R9; IOSTANDARD = LVCMOS33; }
 set_pin_assignment	{ vga_blue[1] }	{ LOCATION = P8; IOSTANDARD = LVCMOS33; }

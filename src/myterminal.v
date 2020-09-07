@@ -6,6 +6,7 @@ module myterminal (
 	// Serial port
 	input wire rx,
 	output wire tx,
+	output wire cts,
 
 	// VGA output
 	output wire [2:0] vga_red,
@@ -26,8 +27,8 @@ clock clock (
 	.clk0_out (clk)
 );
 
-wire [7:0] byte;
-wire byte_available;
+wire [7:0] in_byte;
+wire in_byte_available;
 serial_in #(
 	.CLK_FREQUENCY_HZ (108_000_000),
 	.SERIAL_BPS (1_000_000)
@@ -35,8 +36,8 @@ serial_in #(
 	.clk (clk),
 	.reset (~reset_n),
 	.rx (rx),
-	.data (byte),
-	.oe (byte_available)
+	.data (in_byte),
+	.oe (in_byte_available)
 );
 
 wire [14:0] font_address;
@@ -47,8 +48,31 @@ font font (
 	.char_row_bitmap (char_row_bitmap)
 );
 
+wire out_data_available;
+wire [20:0] out_data;
+utf8_decode utf8_decode (
+	.clk (clk),
+	.reset (~reset_n),
+	.ie (in_byte_available),
+	.current_byte (in_byte),
+	.unicode (out_data),
+	.oe (out_data_available)
+);
+
 wire [20:0] unicode;
 wire unicode_available;
+simple_fifo simple_fifo (
+	.clk (clk),
+	.reset (~reset_n),
+
+	.in_data (out_data),
+	.in_data_available (out_data_available),
+
+	.receiver_ready (~cts),
+	.out_data_available (unicode_available),
+	.out_data (unicode)
+);
+
 wire [22:0] wr_address;
 wire [31:0] wr_data;
 wire [3:0] wr_mask;
@@ -60,6 +84,7 @@ terminal_stream #(
 ) terminal_stream (
 	.clk (clk),
 	.reset (~reset_n),
+	.ready_n (cts),
 	.unicode (unicode),
 	.unicode_available (unicode_available),
 	.wr_address (wr_address),
@@ -67,15 +92,6 @@ terminal_stream #(
 	.wr_data (wr_data),
 	.wr_mask (wr_mask),
 	.wr_done (wr_done)
-);
-
-utf8_decode utf8_decode (
-	.clk (clk),
-	.reset (~reset_n),
-	.ie (byte_available),
-	.current_byte (byte),
-	.unicode (unicode),
-	.oe (unicode_available)
 );
 
 wire rd_request;
