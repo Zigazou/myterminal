@@ -17,13 +17,15 @@ module ram #(
 	input wire [22:0] rd_address,
 	output reg rd_available,
 	output reg [31:0] rd_data,
+	input wire [8:0] rd_burst_length,
 
 	// Write signals
 	input wire wr_request,
 	output reg wr_done,
 	input wire [3:0] wr_mask,
 	input wire [22:0] wr_address,
-	input wire [31:0] wr_data
+	input wire [31:0] wr_data,
+	input wire [8:0] wr_burst_length
 );
 
 // =============================================================================
@@ -51,7 +53,7 @@ localparam
 	REFRESH_OPERATIONS = 4_096,
 	REFRESH_WINDOW_NS  = 64_000_000,
 	REFRESH_CYCLE      = (REFRESH_WINDOW_NS / REFRESH_OPERATIONS)
-	                   / CLK_CYCLE_NS,
+					   / CLK_CYCLE_NS,
 
 	tRC  = 1 + tRC_NS  / CLK_CYCLE_NS,
 	tRCD = 1 + tRCD_NS / CLK_CYCLE_NS,
@@ -103,19 +105,50 @@ EG_PHY_SDRAM_2M_32 sdram (
 );
 
 // =============================================================================
+// Address structure
+// =============================================================================
+// 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0
+// 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+// --- --------------------- --------------- ---
+// BNK          ROW               COLUMN     XXX
+function [1:0] get_bank;
+	input wire [22:0] address;
+	get_bank = address[22:21];
+endfunction
+
+function [7:0] get_column;
+	input wire [22:0] address;
+	get_column = address[9:2];
+endfunction
+
+function [10:0] get_row;
+	input wire [22:0] address;
+	get_row = address[20:10];
+endfunction
+
+// =============================================================================
 // SDRAM commands
 // =============================================================================
 localparam
 	BIT_AUTO_PRECHARGE           = 10,
+	WITH_AUTO_PRECHARGE          = HIGH,
+	WITHOUT_AUTO_PRECHARGE       = LOW,
 
-	COMMAND_BANK_ACTIVATE        = 5'b10011,
-	COMMAND_PRECHARGE            = 5'b10010,
-	COMMAND_WRITE                = 5'b10100,
-	COMMAND_READ                 = 5'b10101,
-	COMMAND_NOP                  = 5'b10111,
-	COMMAND_INIT                 = 5'b00111,
-	COMMAND_AUTO_REFRESH         = 5'b10001,
-	COMMAND_MODE_REGISTER_SET    = 5'b10000;
+	//                                cke
+	//                                | cs_n
+	//                                | | ras_n
+	//                                | | | cas_n
+	//                                | | | | we_n 
+	//                                | | | | |    
+	COMMAND_BANK_ACTIVATE        = 5'b1_0_0_1_1,
+	COMMAND_PRECHARGE            = 5'b1_0_0_1_0,
+	COMMAND_WRITE                = 5'b1_0_1_0_0,
+	COMMAND_READ                 = 5'b1_0_1_0_1,
+	COMMAND_BURST_STOP           = 5'b1_0_1_1_0,
+	COMMAND_NOP                  = 5'b1_0_1_1_1,
+	COMMAND_INIT                 = 5'b0_0_1_1_1,
+	COMMAND_AUTO_REFRESH         = 5'b1_0_0_0_1,
+	COMMAND_MODE_REGISTER_SET    = 5'b1_0_0_0_0;
 
 task command_bank_activate;
 	input wire [1:0] bank;
@@ -143,28 +176,32 @@ task command_precharge_all;
 	end
 endtask
 
-task command_read_auto_precharge;
+task command_read;
 	input wire [1:0] page;
 	input wire [7:0] col_address;
 	begin
 		{ cke, cs_n, ras_n, cas_n, we_n } <= COMMAND_READ;
 		dqm <= 4'b0000;
 		ba <= page;
-		addr[BIT_AUTO_PRECHARGE] <= HIGH;
 		addr[9:0] <= { 2'b00, col_address };
+		addr[BIT_AUTO_PRECHARGE] <= WITHOUT_AUTO_PRECHARGE;
 	end
 endtask
 
-task command_write_auto_precharge;
+task command_write;
 	input wire [1:0] page;
 	input wire [7:0] col_address;
 	begin
 		{ cke, cs_n, ras_n, cas_n, we_n } <= COMMAND_WRITE;
 		dqm <= ~wr_mask;
 		ba <= page;
-		addr[BIT_AUTO_PRECHARGE] <= HIGH;
 		addr[9:0] <= { 2'b00, col_address };
+		addr[BIT_AUTO_PRECHARGE] <= WITHOUT_AUTO_PRECHARGE;
 	end
+endtask
+
+task command_burst_stop;
+	{ cke, cs_n, ras_n, cas_n, we_n } <= COMMAND_BURST_STOP;
 endtask
 
 task command_nop;
@@ -219,11 +256,11 @@ task command_mode_register_set;
 		ba <= { MR_RESERVED_FOR_FUTURE_USE, MR_RESERVED_FOR_FUTURE_USE };
 		addr <= {
 			MR_RESERVED_FOR_FUTURE_USE,
-			MR_WRITE_BURST_LENGTH_SINGLE_BIT,
+			MR_WRITE_BURST_LENGTH_BURST,
 			MR_TEST_MODE_NORMAL,
 			MR_CAS_LATENCY_3,
 			MR_BURST_TYPE_SEQUENTIAL,
-			MR_BURST_LENGTH_1
+			MR_BURST_LENGTH_FULL_PAGE
 		};
 	end
 endtask
@@ -237,8 +274,8 @@ localparam
 	STAGE_WRITE   = 4;
 
 reg [3:0] stage = STAGE_INIT;
-reg [COUNTER_WIDTH:0] counter = 32'd0;
-reg [COUNTER_REFRESH_WIDTH:0] counter_refresh = 32'd0;
+reg [COUNTER_WIDTH:0] counter = 'd0;
+reg [COUNTER_REFRESH_WIDTH:0] counter_refresh = 'd0;
 task goto_when;
 	input [3:0] next_stage;
 	input [31:0] when;
@@ -336,8 +373,9 @@ task stage_idle;
 			goto(STAGE_READ);
 		end else if (wr_request_pending) begin
 			goto(STAGE_WRITE);
-		end else
+		end else begin
 			goto(STAGE_IDLE);
+		end
 	end
 endtask
 
@@ -362,63 +400,80 @@ task stage_refresh;
 endtask
 
 // =============================================================================
-// Read (with auto precharge) stage
+// Burst read stage
 // =============================================================================
 localparam
 	READ_OPEN_ROW       = 0,
-	READ_OPEN_COL       = tRCD + READ_OPEN_ROW,
-	READ_GET_DATA       = 1 + CAS_LATENCY + READ_OPEN_COL,
-	READ_END            = tRP + BURST_LENGTH + READ_GET_DATA;
+	READ_OPEN_COL       = tRCD,
+	READ_DATA_START     = tRCD + 1 + CAS_LATENCY;
 
-wire [1:0] read_bank = rd_address[3:2];
-wire [7:0] read_col = rd_address[11:4];
-wire [10:0] read_row = rd_address[22:12];
+wire [1:0] read_bank = get_bank(rd_address);
+wire [7:0] read_col = get_column(rd_address);
+wire [10:0] read_row = get_row(rd_address);
+reg [8:0] rd_burst_stop;
 task stage_read;
 	begin
-		rd_available <= counter == READ_END - 1;
+		// Commands sequence
+		if (counter == READ_OPEN_ROW) begin
+			rd_burst_stop <= rd_burst_length + READ_OPEN_COL;
+			command_bank_activate(read_bank, read_row);
+		end else if (counter == READ_OPEN_COL)
+			command_read(read_bank, read_col);
+		else if (counter == rd_burst_stop)
+			command_burst_stop();
+		else if (counter == rd_burst_stop + 'd1)
+			command_bank_precharge(read_bank);
+		else
+			command_nop();
 
-		case (counter)
-			READ_OPEN_ROW: command_bank_activate(read_bank, read_row);
-			READ_OPEN_COL: command_read_auto_precharge(read_bank, read_col);
-			READ_GET_DATA: rd_data <= dq;
-			READ_END-1: rd_available <= TRUE;
-			default: begin
-				command_nop();
-				rd_available <= FALSE;
-			end
-		endcase
+		// Data output
+		if (counter >= READ_DATA_START && counter < rd_burst_length + READ_DATA_START) begin
+			rd_available <= TRUE;
+			rd_data <= dq;
+		end else
+			rd_available <= FALSE;
 
-		goto_when(STAGE_IDLE, READ_END);
+		goto_when(STAGE_IDLE, rd_burst_stop + 'd1 + tRP);
 	end
 endtask
 
 // =============================================================================
-// Write (with auto precharge) stage
+// Burst write stage
 // =============================================================================
 localparam
 	WRITE_OPEN_ROW       = 0,
-	WRITE_OPEN_COL       = tRCD + WRITE_OPEN_ROW,
-	WRITE_END            = tWR + tRP + (BURST_LENGTH - 1) + WRITE_OPEN_COL;
+	WRITE_OPEN_COL       = tRCD;
 
-wire [1:0] write_bank = wr_address[3:2];
-wire [7:0] write_col = wr_address[11:4];
-wire [10:0] write_row = wr_address[22:12];
+wire [1:0] write_bank = get_bank(wr_address);
+wire [7:0] write_col = get_column(wr_address);
+wire [10:0] write_row = get_row(wr_address);
+reg [8:0] wr_burst_stop;
+reg [8:0] wr_precharge;
 task stage_write;
 	begin
-		wr_done <= counter == WRITE_END - 1;
+		// Commands sequence
+		if (counter == WRITE_OPEN_ROW) begin
+			wr_burst_stop <= wr_burst_length + WRITE_OPEN_COL;
+			if (wr_burst_length + WRITE_OPEN_COL < tRAS)
+				wr_precharge <= tRAS;
+			else
+				wr_precharge <= wr_burst_length + WRITE_OPEN_COL + 'd1;
+			command_bank_activate(write_bank, write_row);
+		end else if (counter == WRITE_OPEN_COL) begin
+			command_write(write_bank, write_col);
+		end else if (counter == wr_burst_stop) begin
+			command_burst_stop();
+		end else if (counter == wr_precharge) begin
+			command_bank_precharge(write_bank);
+		end else
+			command_nop();
 
-		case (counter)
-			WRITE_OPEN_ROW: command_bank_activate(write_bank, write_row);
+		if (counter >= WRITE_OPEN_COL && counter < wr_burst_stop)
+			set_dq(wr_data);
 
-			WRITE_OPEN_COL: begin
-				command_write_auto_precharge(write_bank, write_col);
-				set_dq(wr_data);
-			end
+		wr_done <= counter == wr_precharge + tRP;
 
-			default: command_nop();
-		endcase
-
-		goto_when(STAGE_IDLE, WRITE_END);
+		goto_when(STAGE_IDLE, wr_precharge + tWR + tRP);
 	end
 endtask
 

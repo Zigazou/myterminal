@@ -30,6 +30,7 @@ module video_controller #(
 	output reg [22:0] rd_address,
 	input wire rd_available,
 	input wire [31:0] rd_data,
+	output reg [8:0] rd_burst_length,
 
 	// Font interface
     output reg [14:0] font_address,
@@ -244,6 +245,7 @@ always @(posedge clk)
 	if (reset || (xpos == 'd0 && ypos == 'd0)) begin
 		rd_request <= FALSE;
 		rd_address <= 'd0;
+		rd_burst_length <= 'd1;
 		wr_index <= 'd0;
 		wr_enable <= FALSE;
 	end else if (preload && wr_index < COLUMNS) begin

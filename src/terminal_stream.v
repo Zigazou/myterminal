@@ -15,6 +15,7 @@ module terminal_stream #(
 	output reg wr_request,
 	output reg [31:0] wr_data,
 	output reg [3:0] wr_mask,
+	output reg [8:0] wr_burst_length,
 	input wire wr_done
 );
 
@@ -411,6 +412,7 @@ always @(posedge clk)
 		invert <= FALSE;
 		underline <= FALSE;
 		ready_n <= FALSE_n;
+		wr_burst_length <= 'd1;
 		goto(STAGE_CLEAR_SCREEN_START);
 	end else begin
 		case (stage)

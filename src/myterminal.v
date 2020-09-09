@@ -78,6 +78,7 @@ wire [31:0] wr_data;
 wire [3:0] wr_mask;
 wire wr_request;
 wire wr_done;
+wire [8:0] wr_burst_length;
 terminal_stream #(
 	.COLUMNS (80),
 	.ROWS (51)
@@ -91,13 +92,15 @@ terminal_stream #(
 	.wr_request (wr_request),
 	.wr_data (wr_data),
 	.wr_mask (wr_mask),
-	.wr_done (wr_done)
+	.wr_done (wr_done),
+	.wr_burst_length (wr_burst_length)
 );
 
 wire rd_request;
 wire [22:0] rd_address;
 wire [31:0] rd_data;
 wire rd_available;
+wire [8:0] rd_burst_length;
 ram #(
 	.CLK_FREQUENCY_HZ (108_000_000)
 ) ram (
@@ -109,13 +112,15 @@ ram #(
 	.rd_address (rd_address),
 	.rd_available (rd_available),
 	.rd_data (rd_data),
+	.rd_burst_length (rd_burst_length),
 
 	// Write signals
 	.wr_request (wr_request),
 	.wr_mask (wr_mask),
 	.wr_done (wr_done),
 	.wr_address (wr_address),
-	.wr_data (wr_data)
+	.wr_data (wr_data),
+	.wr_burst_length (wr_burst_length)
 );
 
 video_controller video_controller (
@@ -132,6 +137,7 @@ video_controller video_controller (
 	.rd_address (rd_address),
 	.rd_available (rd_available),
 	.rd_data (rd_data),
+	.rd_burst_length (rd_burst_length),
 
 	.font_address (font_address),
 	.char_row_bitmap (char_row_bitmap)
