@@ -405,7 +405,7 @@ endtask
 localparam
 	READ_OPEN_ROW       = 0,
 	READ_OPEN_COL       = tRCD,
-	READ_DATA_START     = tRCD + 1 + CAS_LATENCY;
+	READ_DATA_START     = tRCD + CAS_LATENCY;
 
 wire [1:0] read_bank = get_bank(rd_address);
 wire [7:0] read_col = get_column(rd_address);

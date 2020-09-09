@@ -240,29 +240,29 @@ charattr_row row1 (
 );
 
 wire [31:0] charattr = pg ? dob0 : dob1;
-
 always @(posedge clk)
 	if (reset || (xpos == 'd0 && ypos == 'd0)) begin
 		rd_request <= FALSE;
-		rd_address <= 'd0;
-		rd_burst_length <= 'd1;
+		rd_address <= 'd0 - ('d128 * 'd4);
+		rd_burst_length <= 'd80;
 		wr_index <= 'd0;
 		wr_enable <= FALSE;
-	end else if (preload && wr_index < COLUMNS) begin
-		rd_request <= xpos == 'd0 || rd_available;
+	end else if (preload) begin
+		rd_request <= xpos == 'd0;
 
-		if (xpos == 'd0)
-			wr_index <= 'd0;
-		else if (rd_available) begin
-			wr_enable <= TRUE;
-			rd_address <= rd_address + 'd4;
-		end else if (wr_enable) begin
-			wr_enable <= FALSE;
-			wr_index <= wr_index + 'd1;
+		if (xpos == 'd0) begin
+			wr_index <= 'h7F; //'d0;
+			rd_address <= rd_address + 'd128 * 'd4;
+		end else if (wr_index < COLUMNS - 1 || wr_index == 'h7F) begin
+			if (rd_available) begin
+				wr_enable <= TRUE;
+				wr_index <= wr_index + 'd1;
+			end else
+				wr_enable <= FALSE;
 		end
 	end else begin
 		rd_request <= FALSE;
-		wr_index <= preload ? wr_index : 'd0;
+		wr_index <= 'd0;
 	end
 
 // =============================================================================

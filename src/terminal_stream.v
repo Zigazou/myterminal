@@ -25,7 +25,9 @@ localparam
 	TRUE_n = 1'b0,
 	FALSE_n = 1'b1,
 
-	LAST_ADDRESS = 4 * (COLUMNS * ROWS - 1),
+	REAL_WIDTH = 'd128,
+
+	LAST_ADDRESS = 4 * (REAL_WIDTH * ROWS - 1),
 
 	SPACE_CHARACTER = 10'h020,
 
@@ -201,7 +203,7 @@ endtask
 function [22:0] address_from_position;
 	input [6:0] x;
 	input [5:0] y;
-	address_from_position = { 13'b0, x, 2'b00 } + { 14'b0, y, 2'b00 } * COLUMNS;
+	address_from_position = { 8'b0, y, x, 2'b00 };
 endfunction
 
 // =============================================================================
@@ -235,7 +237,7 @@ task stage_write_top_left;
 
 			SIZE_DOUBLE_HEIGHT: begin
 				wr_request <= TRUE;
-				wr_address <= wr_address + COLUMNS * 'd4;
+				wr_address <= wr_address + REAL_WIDTH * 'd4;
 				wr_data <= generate_cell_part(unicode, PART_BOTTOM_LEFT);
 				goto(STAGE_WRITE_BOTTOM_LEFT);
 			end
@@ -256,7 +258,7 @@ task stage_write_top_right;
 		case (size)
 			SIZE_DOUBLE: begin
 				wr_request <= TRUE;
-				wr_address <= wr_address + (COLUMNS - 'd1) * 'd4;
+				wr_address <= wr_address + (REAL_WIDTH - 'd1) * 'd4;
 				wr_data <= generate_cell_part(unicode, PART_BOTTOM_LEFT);
 				goto(STAGE_WRITE_BOTTOM_LEFT);
 			end
