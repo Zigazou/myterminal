@@ -68,9 +68,9 @@ localparam
 
 	CSI = 'h5B,
 	CSI_CURSOR_POSITION = 'h48,
+	CSI_SGR = 'h6d,
 	CSI_SEPARATOR = 'h3B,
 
-	SGR = 'h6D,
 	SGR_RESET = 'd0,
 	SGR_UNDERLINE_ON = 'd4,
 	SGR_UNDERLINE_OFF = 'd24,
@@ -78,7 +78,42 @@ localparam
 	SGR_BLINK_FAST = 'd6,
 	SGR_BLINK_OFF = 'd25,
 	SGR_INVERT_ON = 'd7,
-	SGR_INVERT_OFF = 'd27;
+	SGR_INVERT_OFF = 'd27,
+
+	SGR_FOREGROUND_0 = 'd30,
+	SGR_FOREGROUND_1 = 'd31,
+	SGR_FOREGROUND_2 = 'd32,
+	SGR_FOREGROUND_3 = 'd33,
+	SGR_FOREGROUND_4 = 'd34,
+	SGR_FOREGROUND_5 = 'd35,
+	SGR_FOREGROUND_6 = 'd36,
+	SGR_FOREGROUND_7 = 'd37,
+	SGR_FOREGROUND_8 = 'd90,
+	SGR_FOREGROUND_9 = 'd91,
+	SGR_FOREGROUND_10 = 'd92,
+	SGR_FOREGROUND_11 = 'd93,
+	SGR_FOREGROUND_12 = 'd94,
+	SGR_FOREGROUND_13 = 'd95,
+	SGR_FOREGROUND_14 = 'd96,
+	SGR_FOREGROUND_15 = 'd97,
+
+	SGR_BACKGROUND_0 = 'd40,
+	SGR_BACKGROUND_1 = 'd41,
+	SGR_BACKGROUND_2 = 'd42,
+	SGR_BACKGROUND_3 = 'd43,
+	SGR_BACKGROUND_4 = 'd44,
+	SGR_BACKGROUND_5 = 'd45,
+	SGR_BACKGROUND_6 = 'd46,
+	SGR_BACKGROUND_7 = 'd47,
+	SGR_BACKGROUND_8 = 'd100,
+	SGR_BACKGROUND_9 = 'd101,
+	SGR_BACKGROUND_10 = 'd102,
+	SGR_BACKGROUND_11 = 'd103,
+	SGR_BACKGROUND_12 = 'd104,
+	SGR_BACKGROUND_13 = 'd105,
+	SGR_BACKGROUND_14 = 'd106,
+	SGR_BACKGROUND_15 = 'd107
+	;
 
 // Automaton registers
 reg [6:0] text_x;
@@ -346,6 +381,70 @@ endtask
 // =============================================================================
 // Control sequences
 // =============================================================================
+task apply_sgr;
+	input [9:0] argument;
+
+	case (argument)
+		SGR_RESET: begin
+			foreground <= DEFAULT_FOREGROUND;
+			background <= DEFAULT_BACKGROUND;
+			blink <= BLINK_NONE;
+			invert <= FALSE;
+			underline <= FALSE;
+			size <= SIZE_NORMAL;
+			func <= LOGICAL_AND;
+			pattern <= 'd0;
+		end
+
+		SGR_INVERT_ON: invert <= TRUE;
+		SGR_INVERT_OFF: invert <= FALSE;
+
+		SGR_BLINK_SLOW: blink <= 'd1;
+		SGR_BLINK_FAST: blink <= 'd3;
+		SGR_BLINK_OFF: blink <= 'd0;
+
+		SGR_FOREGROUND_0,
+		SGR_FOREGROUND_1,
+		SGR_FOREGROUND_2,
+		SGR_FOREGROUND_3,
+		SGR_FOREGROUND_4,
+		SGR_FOREGROUND_5,
+		SGR_FOREGROUND_6,
+		SGR_FOREGROUND_7:
+			foreground <= argument - SGR_FOREGROUND_0;
+
+		SGR_FOREGROUND_8,
+		SGR_FOREGROUND_9,
+		SGR_FOREGROUND_10,
+		SGR_FOREGROUND_11,
+		SGR_FOREGROUND_12,
+		SGR_FOREGROUND_13,
+		SGR_FOREGROUND_14,
+		SGR_FOREGROUND_15:
+			foreground <= argument - SGR_FOREGROUND_8 + 'd8;
+
+		SGR_BACKGROUND_0,
+		SGR_BACKGROUND_1,
+		SGR_BACKGROUND_2,
+		SGR_BACKGROUND_3,
+		SGR_BACKGROUND_4,
+		SGR_BACKGROUND_5,
+		SGR_BACKGROUND_6,
+		SGR_BACKGROUND_7:
+			background <= argument - SGR_BACKGROUND_0;
+
+		SGR_BACKGROUND_8,
+		SGR_BACKGROUND_9,
+		SGR_BACKGROUND_10,
+		SGR_BACKGROUND_11,
+		SGR_BACKGROUND_12,
+		SGR_BACKGROUND_13,
+		SGR_BACKGROUND_14,
+		SGR_BACKGROUND_15:
+			background <= argument - SGR_BACKGROUND_8 + 'd8;
+	endcase
+endtask
+
 reg [2:0] argument_count;
 reg [9:0] arguments [1:0];
 task stage_esc;
@@ -390,6 +489,10 @@ task stage_csi;
 			end else if (unicode == CSI_CURSOR_POSITION) begin
 				text_y <= arguments[0] == 'd0 ? 'd0 : arguments[0] - 'd1; 
 				text_x <= arguments[1] == 'd0 ? 'd0 : arguments[1] - 'd1;
+				goto(STAGE_IDLE);
+			end else if (unicode == CSI_SGR) begin
+				apply_sgr(arguments[0]);
+				if (argument_count == 2) apply_sgr(arguments[1]);
 				goto(STAGE_IDLE);
 			end else
 				goto(STAGE_CSI);
