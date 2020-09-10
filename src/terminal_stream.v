@@ -27,8 +27,6 @@ localparam
 
 	REAL_WIDTH = 'd128,
 
-	LAST_ADDRESS = 4 * (REAL_WIDTH * ROWS - 1),
-
 	SPACE_CHARACTER = 10'h020,
 
 	DEFAULT_FOREGROUND = 4'd15,
@@ -130,24 +128,38 @@ reg [1:0] size;
 reg [1:0] func;
 reg [3:0] pattern;
 
+task reset_attributes;
+	begin
+		text_x <= 'd0;
+		text_y <= 'd0;
+		foreground <= DEFAULT_FOREGROUND;
+		background <= DEFAULT_BACKGROUND;
+		blink <= BLINK_NONE;
+		size <= SIZE_NORMAL;
+		func <= LOGICAL_AND;
+		pattern <= PATTERN_NONE;
+		invert <= FALSE;
+		underline <= FALSE;
+	end
+endtask
+
 // =============================================================================
 // Stage management
 // =============================================================================
-reg [7:0] stage;
+reg [3:0] stage;
 localparam
 	STAGE_IDLE               = 'd0,
-	STAGE_CLEAR_SCREEN_START = 'd1,
-	STAGE_CLEAR_SCREEN_WRITE = 'd2,
-	STAGE_CLEAR_SCREEN_NEXT  = 'd3,
-	STAGE_WRITE_TOP_LEFT     = 'd4,
-	STAGE_WRITE_TOP_RIGHT    = 'd5,
-	STAGE_WRITE_BOTTOM_LEFT  = 'd6,
-	STAGE_WRITE_BOTTOM_RIGHT = 'd7,
-	STAGE_ESC                = 'd8,
-	STAGE_CSI                = 'd9;
+	STAGE_CLEAR_WRITE        = 'd1,
+	STAGE_CLEAR_NEXT         = 'd2,
+	STAGE_WRITE_TOP_LEFT     = 'd3,
+	STAGE_WRITE_TOP_RIGHT    = 'd4,
+	STAGE_WRITE_BOTTOM_LEFT  = 'd5,
+	STAGE_WRITE_BOTTOM_RIGHT = 'd6,
+	STAGE_ESC                = 'd7,
+	STAGE_CSI                = 'd8;
 
 task goto;
-	input [7:0] next_stage;
+	input [3:0] next_stage;
 	stage <= next_stage;
 endtask
 
@@ -246,7 +258,7 @@ endfunction
 // =============================================================================
 task stage_idle;
 	if (unicode_available) begin
-		if (unicode == CLS) goto(STAGE_CLEAR_SCREEN_START);
+		if (unicode == CLS) clear_screen();
 		else if (unicode == CR) text_x <= 'd0;
 		else if (unicode == LF) line_feed();
 		else if (unicode == ESC) goto(STAGE_ESC);
@@ -344,35 +356,45 @@ endtask
 // =============================================================================
 // Clear screen
 // =============================================================================
-task clear_screen_start;
+reg [22:0] wr_address_end;
+task clear;
+	input [6:0] from_x;
+	input [5:0] from_y;
+	input [6:0] to_x;
+	input [5:0] to_y;
 	begin
-		wr_address <= 'd0;
+		wr_address <= address_from_position(from_x, from_y);
+		wr_address_end <= address_from_position(to_x, to_y) - 'd4;
 		ready_n <= FALSE_n;
-		goto(STAGE_CLEAR_SCREEN_WRITE);
+		goto(STAGE_CLEAR_WRITE);
 	end
 endtask
 
-task clear_screen_write;
+task clear_screen;
+	begin
+		reset_attributes();
+		clear(0, 0, COLUMNS, ROWS);
+	end
+endtask
+
+task clear_write;
 	begin
 		wr_request <= TRUE;
 		wr_data <= clear_cell(SPACE_CHARACTER);
-		goto(STAGE_CLEAR_SCREEN_NEXT);
+		goto(STAGE_CLEAR_NEXT);
 	end
 endtask
 
-task clear_screen_next;
+task clear_next;
 	begin
 		wr_request <= FALSE;
 		if (wr_done) begin
-			if (wr_address == LAST_ADDRESS) begin
-				text_x <= 'd0;
-				text_y <= 'd0;
-				size <= SIZE_NORMAL;
+			if (wr_address == wr_address_end) begin
 				ready_n <= TRUE_n;
 				goto(STAGE_IDLE);
 			end else begin
 				wr_address <= wr_address + 'd4;
-				goto(STAGE_CLEAR_SCREEN_WRITE);
+				goto(STAGE_CLEAR_WRITE);
 			end
 		end
 	end
@@ -403,44 +425,20 @@ task apply_sgr;
 		SGR_BLINK_FAST: blink <= 'd3;
 		SGR_BLINK_OFF: blink <= 'd0;
 
-		SGR_FOREGROUND_0,
-		SGR_FOREGROUND_1,
-		SGR_FOREGROUND_2,
-		SGR_FOREGROUND_3,
-		SGR_FOREGROUND_4,
-		SGR_FOREGROUND_5,
-		SGR_FOREGROUND_6,
-		SGR_FOREGROUND_7:
+		SGR_FOREGROUND_0, SGR_FOREGROUND_1, SGR_FOREGROUND_2, SGR_FOREGROUND_3,
+		SGR_FOREGROUND_4, SGR_FOREGROUND_5, SGR_FOREGROUND_6, SGR_FOREGROUND_7:
 			foreground <= argument - SGR_FOREGROUND_0;
 
-		SGR_FOREGROUND_8,
-		SGR_FOREGROUND_9,
-		SGR_FOREGROUND_10,
-		SGR_FOREGROUND_11,
-		SGR_FOREGROUND_12,
-		SGR_FOREGROUND_13,
-		SGR_FOREGROUND_14,
-		SGR_FOREGROUND_15:
+		SGR_FOREGROUND_8, SGR_FOREGROUND_9, SGR_FOREGROUND_10, SGR_FOREGROUND_11,
+		SGR_FOREGROUND_12, SGR_FOREGROUND_13, SGR_FOREGROUND_14, SGR_FOREGROUND_15:
 			foreground <= argument - SGR_FOREGROUND_8 + 'd8;
 
-		SGR_BACKGROUND_0,
-		SGR_BACKGROUND_1,
-		SGR_BACKGROUND_2,
-		SGR_BACKGROUND_3,
-		SGR_BACKGROUND_4,
-		SGR_BACKGROUND_5,
-		SGR_BACKGROUND_6,
-		SGR_BACKGROUND_7:
+		SGR_BACKGROUND_0, SGR_BACKGROUND_1, SGR_BACKGROUND_2, SGR_BACKGROUND_3,
+		SGR_BACKGROUND_4, SGR_BACKGROUND_5, SGR_BACKGROUND_6, SGR_BACKGROUND_7:
 			background <= argument - SGR_BACKGROUND_0;
 
-		SGR_BACKGROUND_8,
-		SGR_BACKGROUND_9,
-		SGR_BACKGROUND_10,
-		SGR_BACKGROUND_11,
-		SGR_BACKGROUND_12,
-		SGR_BACKGROUND_13,
-		SGR_BACKGROUND_14,
-		SGR_BACKGROUND_15:
+		SGR_BACKGROUND_8, SGR_BACKGROUND_9, SGR_BACKGROUND_10, SGR_BACKGROUND_11,
+		SGR_BACKGROUND_12, SGR_BACKGROUND_13, SGR_BACKGROUND_14, SGR_BACKGROUND_15:
 			background <= argument - SGR_BACKGROUND_8 + 'd8;
 	endcase
 endtask
@@ -508,26 +506,19 @@ endtask
 always @(posedge clk)
 	if (reset) begin
 		wr_address <= 'd0;
+		wr_address_end <= 'd0;
 		wr_request <= FALSE;
 		wr_mask <= 4'b1111;
-		foreground <= DEFAULT_FOREGROUND;
-		background <= DEFAULT_BACKGROUND;
-		blink <= BLINK_NONE;
-		size <= SIZE_NORMAL;
-		func <= LOGICAL_AND;
-		pattern <= PATTERN_NONE;
-		invert <= FALSE;
-		underline <= FALSE;
 		ready_n <= FALSE_n;
 		wr_burst_length <= 'd1;
-		goto(STAGE_CLEAR_SCREEN_START);
+		reset_attributes();
+		clear_screen();
 	end else begin
 		case (stage)
 			STAGE_IDLE: stage_idle();
 
-			STAGE_CLEAR_SCREEN_START: clear_screen_start();
-			STAGE_CLEAR_SCREEN_WRITE: clear_screen_write();
-			STAGE_CLEAR_SCREEN_NEXT: clear_screen_next();
+			STAGE_CLEAR_WRITE: clear_write();
+			STAGE_CLEAR_NEXT: clear_next();
 
 			STAGE_WRITE_TOP_LEFT: stage_write_top_left();
 			STAGE_WRITE_TOP_RIGHT: stage_write_top_right();
