@@ -21,6 +21,7 @@
             <File>al_ip/pixels.v</File>
             <File>src/terminal_stream.v</File>
             <File>src/utf8_decode.v</File>
+            <File>src/simple_fifo.v</File>
         </Verilog>
         <ADC_FILE>src/myterminal.adc</ADC_FILE>
         <SDC_FILE>src/myterminal.sdc</SDC_FILE>
@@ -37,8 +38,8 @@
         </EG4X>
     </Device_Settings>
     <Project_Settings>
-        <Step_Last_Change>2020-09-05 20:46:44</Step_Last_Change>
-        <Current_Step>0</Current_Step>
+        <Step_Last_Change>2020-09-10 20:26:43</Step_Last_Change>
+        <Current_Step>60</Current_Step>
         <Step_Status>true</Step_Status>
     </Project_Settings>
 </Project>
