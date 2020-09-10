@@ -14,6 +14,8 @@ localparam
 	CSI_CURSOR_POSITION    = 'h48,
 	CSI_SGR                = 'h6d,
 	CSI_SEPARATOR          = 'h3B,
+    CSI_ERASE_IN_DISPLAY   = 'h4A,
+    CSI_ERASE_IN_LINE      = 'h4B,
 
 	SGR_RESET              = 'd0,
 	SGR_BOLD               = 'd1,

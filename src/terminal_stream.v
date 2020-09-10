@@ -312,6 +312,19 @@ task stage_csi;
 				text_y <= arguments[0] == 'd0 ? 'd0 : arguments[0] - 'd1; 
 				text_x <= arguments[1] == 'd0 ? 'd0 : arguments[1] - 'd1;
 				goto(STAGE_IDLE);
+			end else if (unicode == CSI_ERASE_IN_DISPLAY) begin
+				case (arguments[0])
+					'd1: clear('d0, 'd0, text_x + 'd1, text_y);
+					'd2: clear_screen();
+					'd3: clear_screen();
+					default: clear(text_x, text_y, COLUMNS, ROWS);
+				endcase
+			end else if (unicode == CSI_ERASE_IN_LINE) begin
+				case (arguments[0])
+					'd1: clear('d0, text_y, text_x + 'd1, text_y);
+					'd2: clear('d0, text_y, COLUMNS, text_y);
+					default: clear(text_x, text_y, COLUMNS, text_y);
+				endcase
 			end else if (unicode == CSI_SGR) begin
 				apply_sgr(arguments[0]);
 				if (argument_count == 2) apply_sgr(arguments[1]);
