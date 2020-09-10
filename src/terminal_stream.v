@@ -486,6 +486,7 @@ task stage_csi;
 				goto(STAGE_CSI);
 			end else if (unicode == CSI_SEPARATOR) begin
 				argument_count <= argument_count + 'd1;
+				goto(STAGE_CSI);
 			end else if (unicode == CSI_CURSOR_POSITION) begin
 				text_y <= arguments[0] == 'd0 ? 'd0 : arguments[0] - 'd1; 
 				text_x <= arguments[1] == 'd0 ? 'd0 : arguments[1] - 'd1;
@@ -495,8 +496,9 @@ task stage_csi;
 				if (argument_count == 2) apply_sgr(arguments[1]);
 				goto(STAGE_IDLE);
 			end else
-				goto(STAGE_CSI);
-		end
+				goto(STAGE_IDLE);
+		end else
+			goto(STAGE_CSI);
 	end
 endtask
 
