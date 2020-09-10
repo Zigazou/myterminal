@@ -427,7 +427,7 @@ task stage_read;
 			command_nop();
 
 		// Data output
-		if (counter >= READ_DATA_START && counter < rd_burst_length + READ_DATA_START) begin
+		if (counter >= READ_DATA_START && counter <= rd_burst_length + READ_DATA_START) begin
 			rd_available <= TRUE;
 			rd_data <= dq;
 		end else
