@@ -90,6 +90,6 @@ colors = [
 screen = ""
 for _ in range(80*51):
     screen += chr(0x1b) + "[" + random.choice(colors) + "m"
-    screen += chr(0x40 + random.choice(mosaic))
+    screen += chr(random.choice(mosaic))
 
 print(screen, end='')
