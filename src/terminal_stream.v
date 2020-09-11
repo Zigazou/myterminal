@@ -267,7 +267,7 @@ task apply_sgr;
 endtask
 
 reg [2:0] argument_count;
-reg [9:0] arguments [1:0];
+reg [9:0] arguments [3:0];
 task stage_esc;
 	if (unicode_available) begin
 		if (unicode == ESC_SIZE_DOUBLE_WIDTH) begin
@@ -286,6 +286,8 @@ task stage_esc;
 			argument_count <= 'd0;
 			arguments[0] <= 'd0;
 			arguments[1] <= 'd0;
+			arguments[2] <= 'd0;
+			arguments[3] <= 'd0;
 			goto(STAGE_CSI);
 		end else
 			goto(STAGE_IDLE);
@@ -328,6 +330,8 @@ task stage_csi;
 			end else if (unicode == CSI_SGR) begin
 				apply_sgr(arguments[0]);
 				if (argument_count == 2) apply_sgr(arguments[1]);
+				if (argument_count == 3) apply_sgr(arguments[2]);
+				if (argument_count == 4) apply_sgr(arguments[3]);
 				goto(STAGE_IDLE);
 			end else
 				goto(STAGE_IDLE);
