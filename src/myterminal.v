@@ -79,10 +79,9 @@ wire [3:0] wr_mask;
 wire wr_request;
 wire wr_done;
 wire [8:0] wr_burst_length;
-terminal_stream #(
-	.COLUMNS (80),
-	.ROWS (51)
-) terminal_stream (
+wire [3:0] register_index;
+wire [22:0] register_value;
+terminal_stream terminal_stream (
 	.clk (clk),
 	.reset (~reset_n),
 	.ready_n (cts),
@@ -93,7 +92,9 @@ terminal_stream #(
 	.wr_data (wr_data),
 	.wr_mask (wr_mask),
 	.wr_done (wr_done),
-	.wr_burst_length (wr_burst_length)
+	.wr_burst_length (wr_burst_length),
+	.register_index (register_index),
+	.register_value (register_value)
 );
 
 wire rd_request;
@@ -140,7 +141,10 @@ video_controller video_controller (
 	.rd_burst_length (rd_burst_length),
 
 	.font_address (font_address),
-	.char_row_bitmap (char_row_bitmap)
+	.char_row_bitmap (char_row_bitmap),
+
+	.register_index (register_index),
+	.register_value (register_value)
 );
 
 endmodule

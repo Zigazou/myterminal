@@ -28,6 +28,7 @@ localparam
 ;
 
 // Automaton registers
+reg [5:0] first_row;
 reg [6:0] text_x;
 reg [5:0] text_y;
 
@@ -42,6 +43,14 @@ reg underline;
 reg [1:0] size;
 reg [1:0] func;
 reg [3:0] pattern;
+
+task reset_all;
+    begin
+        first_row <= 'd0;
+        reset_position();
+        reset_attributes();
+    end
+endtask
 
 task reset_position;
 	begin

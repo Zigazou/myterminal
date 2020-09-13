@@ -34,17 +34,43 @@ module video_controller #(
 
 	// Font interface
     output reg [14:0] font_address,
-    input wire [CHAR_WIDTH - 1:0] char_row_bitmap
+    input wire [CHAR_WIDTH - 1:0] char_row_bitmap,
+
+	// Registers
+	input wire [3:0] register_index,
+	input wire [22:0] register_value
 );
 
 `include "constant.v"
 
+`include "video_controller/registers.v"
 `include "video_controller/generate_pattern.v"
 `include "video_controller/apply_pattern.v"
 `include "video_controller/horizontal_resize.v"
 `include "video_controller/vertical_resize.v"
 
-integer i;
+// =============================================================================
+// Registers
+// =============================================================================
+reg [22:0] base_address;
+reg [22:0] first_row;
+always @(posedge clk)
+	if (reset) begin
+		base_address <= 'd0;
+		first_row <= 'd0;
+	end else
+		case (register_index)
+			VIDEO_SET_BASE_ADDRESS: base_address <= register_value;
+			VIDEO_SET_FIRST_ROW: first_row <= register_value;
+		endcase
+
+function next_row_address;
+	input [22:0] current_address;
+	if (current_address + ROW_SIZE >= base_address + PAGE_SIZE)
+		next_row_address = base_address;
+	else
+		next_row_address = current_address + ROW_SIZE;
+endfunction
 
 // =============================================================================
 // Video timings (1280×1024@60Hz)
@@ -59,9 +85,7 @@ localparam
 
 	VERT_VISIBLE_START = VERT_BACK_PORCH,
 	VERT_VISIBLE_END   = VERT_BACK_PORCH + VERT_VISIBLE - 4,
-	VERT_SYNC_START    = VERT_BACK_PORCH + VERT_VISIBLE + VERT_FRONT_PORCH,
-	
-	COLUMNS            = HORZ_VISIBLE / CHAR_WIDTH;
+	VERT_SYNC_START    = VERT_BACK_PORCH + VERT_VISIBLE + VERT_FRONT_PORCH;
 
 // =============================================================================
 // Color palette (16 × 9 bit colors)
@@ -249,16 +273,24 @@ wire [31:0] charattr = pg ? dob0 : dob1;
 always @(posedge clk)
 	if (reset || (xpos == 'd0 && ypos == 'd0)) begin
 		rd_request <= FALSE;
-		rd_address <= 'd0 - ('d128 * 'd4);
+		rd_address <= first_row;
 		rd_burst_length <= 'd80;
 		wr_index <= 'd0;
 		wr_enable <= FALSE;
 	end else if (preload) begin
 		rd_request <= xpos == 'd0;
 
+		if (xpos == HORZ_TOTAL - 1) begin
+			//rd_address <= next_row_address(rd_address);
+			if (rd_address + ROW_SIZE >= base_address + PAGE_SIZE)
+				rd_address <= base_address;
+			else
+				rd_address <= rd_address + ROW_SIZE;
+		end
+
 		if (xpos == 'd0) begin
 			wr_index <= 'h7F; //'d0;
-			rd_address <= rd_address + 'd128 * 'd4;
+			//rd_address <= next_row_address(rd_address);
 		end else if (wr_index < COLUMNS - 1 || wr_index == 'h7F) begin
 			if (rd_available) begin
 				wr_enable <= TRUE;

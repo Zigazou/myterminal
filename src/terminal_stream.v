@@ -1,7 +1,4 @@
-module terminal_stream #(
-	parameter COLUMNS = 80,
-	parameter ROWS = 51
-) (
+module terminal_stream (
 	input wire clk,
 	input wire reset,
 	output reg ready_n,
@@ -16,15 +13,26 @@ module terminal_stream #(
 	output reg [31:0] wr_data,
 	output reg [3:0] wr_mask,
 	output reg [8:0] wr_burst_length,
-	input wire wr_done
+	input wire wr_done,
+
+	// Video registers
+	output reg [3:0] register_index,
+	output reg [22:0] register_value
 );
 
 `include "constant.v"
 `include "terminal_stream/escape_codes.v"
 `include "terminal_stream/attributes.v"
+`include "video_controller/registers.v"
 
-localparam
-	REAL_WIDTH = 'd128;
+task set;
+	input [3:0] register;
+	input [22:0] value;
+	begin
+		register_index <= register;
+		register_value <= value;
+	end
+endtask
 
 // =============================================================================
 // Stage management
@@ -46,39 +54,61 @@ task goto;
 	stage <= next_stage;
 endtask
 
-
 // =============================================================================
 // Cursor position
 // =============================================================================
-task line_feed;
-	begin
-		text_x <= 'd0;
+reg [22:0] wr_address_end;
 
-		if (size[1])
-			text_y <= text_y >= ROWS - 2 ? 'd0 : text_y + 'd2;
-		else
-			text_y <= text_y >= ROWS - 1 ? 'd0 : text_y + 'd1;
+task prepare_first_row;
+	input [5:0] new_first_row;
+	begin
+		if (new_first_row == ROWS) begin
+			first_row <= 'd0;
+			set(VIDEO_SET_FIRST_ROW, 'd0);
+		end else begin
+			first_row <= new_first_row;
+			set(VIDEO_SET_FIRST_ROW, { new_first_row, 9'b000_0000 });
+		end
+
+		wr_address <= { first_row, 9'b000_0000 };
+		wr_address_end <= { first_row, 9'b000_0000 } + ROW_SIZE - 'd4;
 	end
 endtask
 
+task gotoxy;
+	input [6:0] x;
+	input [5:0] y;
+	if (x < COLUMNS) begin
+		text_x <= x;
+
+		if (y < ROWS) begin
+			text_y <= y;
+			goto(STAGE_IDLE);
+		end else begin
+			text_y <= ROWS - 6'd1;
+			prepare_first_row(first_row + 'd1);
+			ready_n <= FALSE_n;
+			goto(STAGE_CLEAR_WRITE);
+		end
+	end else
+		gotoxy('d0, y + { 5'b0, size[1] } + 'd1);
+endtask
+
+task line_feed;
+	gotoxy('d0, text_y + { 5'b0, size[1] } + 'd1);
+endtask
+
 task next_char;
-	if (size[0]) begin
-		if (text_x >= COLUMNS - 2)
-			line_feed();
-		else
-			text_x <= text_x + 'd2;
-	end else begin
-		if (text_x >= COLUMNS - 1)
-			line_feed();
-		else
-			text_x <= text_x + 'd1;
-	end
+	gotoxy(text_x + { 6'b0, size[0] } + 'd1, text_y);
 endtask
 
 function [22:0] address_from_position;
 	input [6:0] x;
 	input [5:0] y;
-	address_from_position = { 8'b0, y, x, 2'b00 };
+	if (y >= ROWS - first_row)
+		address_from_position = { 8'b0, y - ROWS + first_row, x, 2'b00 };
+	else
+		address_from_position = { 8'b0, y + first_row, x, 2'b00 };
 endfunction
 
 // =============================================================================
@@ -86,18 +116,23 @@ endfunction
 // =============================================================================
 task stage_idle;
 	if (unicode_available) begin
-		if (unicode == CLS) clear_screen();
-		else if (unicode == CR) text_x <= 'd0;
-		else if (unicode == LF) line_feed();
-		else if (unicode == ESC) goto(STAGE_ESC);
+		if (unicode == CLS) begin
+			ready_n <= FALSE_n;
+			clear_screen();
+		end else if (unicode == CR) text_x <= 'd0;
+		else if (unicode == LF) begin
+			ready_n <= FALSE_n;
+			line_feed();
+		end else if (unicode == ESC) goto(STAGE_ESC);
 		else begin
+			ready_n <= FALSE_n;
 			wr_request <= TRUE;
 			wr_address <= address_from_position(text_x, text_y);
 			wr_data <= generate_cell_part(unicode, PART_TOP_LEFT);
-			next_char();
 			goto(STAGE_WRITE_TOP_LEFT);
 		end
-	end
+	end else
+		ready_n <= TRUE_n;
 endtask
 
 task stage_write_top_left;
@@ -105,21 +140,21 @@ task stage_write_top_left;
 		case (size)
 			SIZE_DOUBLE_WIDTH, SIZE_DOUBLE: begin
 				wr_request <= TRUE;
-				wr_address <= wr_address + 'd4;
+				wr_address <= wr_address + CHARATTR_SIZE;
 				wr_data <= generate_cell_part(unicode, PART_TOP_RIGHT);
 				goto(STAGE_WRITE_TOP_RIGHT);
 			end
 
 			SIZE_DOUBLE_HEIGHT: begin
 				wr_request <= TRUE;
-				wr_address <= wr_address + REAL_WIDTH * 'd4;
+				wr_address <= wr_address + ROW_SIZE;
 				wr_data <= generate_cell_part(unicode, PART_BOTTOM_LEFT);
 				goto(STAGE_WRITE_BOTTOM_LEFT);
 			end
 
 			default: begin
 				wr_request <= FALSE;
-				goto(STAGE_IDLE);
+				next_char();
 			end
 		endcase
 	else begin
@@ -133,14 +168,14 @@ task stage_write_top_right;
 		case (size)
 			SIZE_DOUBLE: begin
 				wr_request <= TRUE;
-				wr_address <= wr_address + (REAL_WIDTH - 'd1) * 'd4;
+				wr_address <= wr_address + ROW_SIZE - CHARATTR_SIZE;
 				wr_data <= generate_cell_part(unicode, PART_BOTTOM_LEFT);
 				goto(STAGE_WRITE_BOTTOM_LEFT);
 			end
 
 			default: begin
 				wr_request <= FALSE;
-				goto(STAGE_IDLE);
+				next_char();
 			end
 		endcase
 	else begin
@@ -154,14 +189,14 @@ task stage_write_bottom_left;
 		case (size)
 			SIZE_DOUBLE: begin
 				wr_request <= TRUE;
-				wr_address <= wr_address + 'd4;
+				wr_address <= wr_address + CHARATTR_SIZE;
 				wr_data <= generate_cell_part(unicode, PART_BOTTOM_RIGHT);
 				goto(STAGE_WRITE_BOTTOM_RIGHT);
 			end
 
 			default: begin
 				wr_request <= FALSE;
-				goto(STAGE_IDLE);
+				next_char();
 			end
 		endcase
 	else begin
@@ -174,17 +209,15 @@ task stage_write_bottom_right;
 	begin
 		wr_request <= FALSE;
 		if (wr_done)
-			goto(STAGE_IDLE);
+			next_char();
 		else
 			goto(STAGE_WRITE_BOTTOM_RIGHT);
 	end
 endtask
 
-
 // =============================================================================
 // Clear screen
 // =============================================================================
-reg [22:0] wr_address_end;
 task clear;
 	input [6:0] from_x;
 	input [5:0] from_y;
@@ -193,16 +226,17 @@ task clear;
 	begin
 		wr_address <= address_from_position(from_x, from_y);
 		wr_address_end <= address_from_position(to_x, to_y) - 'd4;
-		ready_n <= FALSE_n;
 		goto(STAGE_CLEAR_WRITE);
 	end
 endtask
 
 task clear_screen;
 	begin
-		reset_position();
-		reset_attributes();
-		clear(0, 0, COLUMNS, ROWS);
+		set(VIDEO_SET_FIRST_ROW, 'd0);
+		reset_all();
+		wr_address <= 'd0;
+		wr_address_end <= PAGE_SIZE - 'd4;
+		goto(STAGE_CLEAR_WRITE);
 	end
 endtask
 
@@ -219,7 +253,6 @@ task clear_next;
 		wr_request <= FALSE;
 		if (wr_done) begin
 			if (wr_address == wr_address_end) begin
-				ready_n <= TRUE_n;
 				goto(STAGE_IDLE);
 			end else begin
 				wr_address <= wr_address + 'd4;
@@ -315,6 +348,7 @@ task stage_csi;
 				text_x <= arguments[1] == 'd0 ? 'd0 : arguments[1] - 'd1;
 				goto(STAGE_IDLE);
 			end else if (unicode == CSI_ERASE_IN_DISPLAY) begin
+				ready_n <= FALSE_n;
 				case (arguments[0])
 					'd1: clear('d0, 'd0, text_x + 'd1, text_y);
 					'd2: clear_screen();
@@ -322,6 +356,7 @@ task stage_csi;
 					default: clear(text_x, text_y, COLUMNS, ROWS);
 				endcase
 			end else if (unicode == CSI_ERASE_IN_LINE) begin
+				ready_n <= FALSE_n;
 				case (arguments[0])
 					'd1: clear('d0, text_y, text_x + 'd1, text_y);
 					'd2: clear('d0, text_y, COLUMNS, text_y);
@@ -351,8 +386,8 @@ always @(posedge clk)
 		wr_mask <= 4'b1111;
 		ready_n <= FALSE_n;
 		wr_burst_length <= 'd1;
-		reset_position();
-		reset_attributes();
+		set(VIDEO_NOP, 'd0);
+		reset_all();
 		clear_screen();
 	end else begin
 		case (stage)
