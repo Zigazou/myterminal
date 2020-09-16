@@ -47,7 +47,9 @@ localparam
 	STAGE_WRITE_BOTTOM_LEFT  = 'd5,
 	STAGE_WRITE_BOTTOM_RIGHT = 'd6,
 	STAGE_ESC                = 'd7,
-	STAGE_CSI                = 'd8;
+	STAGE_CSI                = 'd8,
+	STAGE_CLEAR_SCREEN_WRITE = 'd9,
+	STAGE_CLEAR_SCREEN_NEXT  = 'd10;
 
 task goto;
 	input [3:0] next_stage;
@@ -230,16 +232,6 @@ task clear;
 	end
 endtask
 
-task clear_screen;
-	begin
-		set(VIDEO_SET_FIRST_ROW, 'd0);
-		reset_all();
-		wr_address <= 'd0;
-		wr_address_end <= PAGE_SIZE - 'd4;
-		goto(STAGE_CLEAR_WRITE);
-	end
-endtask
-
 task clear_write;
 	begin
 		wr_request <= TRUE;
@@ -252,11 +244,48 @@ task clear_next;
 	begin
 		wr_request <= FALSE;
 		if (wr_done) begin
-			if (wr_address == wr_address_end) begin
+			if (wr_address >= wr_address_end) begin
 				goto(STAGE_IDLE);
 			end else begin
 				wr_address <= wr_address + 'd4;
 				goto(STAGE_CLEAR_WRITE);
+			end
+		end
+	end
+endtask
+
+localparam
+	CLEAR_SCREEN_BURST = 'd32;
+
+task clear_screen;
+	begin
+		set(VIDEO_SET_FIRST_ROW, 'd0);
+		reset_all();
+		wr_address <= 'd0;
+		wr_address_end <= PAGE_SIZE - 'd4;
+		wr_burst_length <= CLEAR_SCREEN_BURST;
+		goto(STAGE_CLEAR_SCREEN_WRITE);
+	end
+endtask
+
+task clear_screen_write;
+	begin
+		wr_request <= TRUE;
+		wr_data <= clear_cell(SPACE_CHARACTER);
+		goto(STAGE_CLEAR_SCREEN_NEXT);
+	end
+endtask
+
+task clear_screen_next;
+	begin
+		wr_request <= FALSE;
+		if (wr_done) begin
+			if (wr_address >= wr_address_end) begin
+				wr_burst_length <= 'd1;
+				goto(STAGE_IDLE);
+			end else begin
+				wr_address <= wr_address + CLEAR_SCREEN_BURST * 'd4;
+				goto(STAGE_CLEAR_SCREEN_WRITE);
 			end
 		end
 	end
@@ -395,6 +424,9 @@ always @(posedge clk)
 
 			STAGE_CLEAR_WRITE: clear_write();
 			STAGE_CLEAR_NEXT: clear_next();
+
+			STAGE_CLEAR_SCREEN_WRITE: clear_screen_write();
+			STAGE_CLEAR_SCREEN_NEXT: clear_screen_next();
 
 			STAGE_WRITE_TOP_LEFT: stage_write_top_left();
 			STAGE_WRITE_TOP_RIGHT: stage_write_top_right();

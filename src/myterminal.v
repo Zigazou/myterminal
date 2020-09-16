@@ -31,7 +31,7 @@ wire [7:0] in_byte;
 wire in_byte_available;
 serial_in #(
 	.CLK_FREQUENCY_HZ (108_000_000),
-	.SERIAL_BPS (2_000_000)
+	.SERIAL_BPS (3_000_000)
 ) serial_in (
 	.clk (clk),
 	.reset (~reset_n),

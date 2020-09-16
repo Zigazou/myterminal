@@ -35,7 +35,7 @@ diagonals = [
 ]
 
 screen = ""
-for _ in range(80*51):
+for _ in range(80*51 - 1):
     screen += chr(random.choice(diagonals))
 
 print(chr(1) + screen, end='')

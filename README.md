@@ -13,7 +13,7 @@ Characteristics
   - 16 colors from a 512 colors/9 bits palette
   - 16×20 1024 character set
   - semi-graphic characters
-- fast serial input (tested at 1Mbps)
+- fast serial input (tested at 3 Mbps)
   - CTSRTS control signal when doing “intensive” operations
   - 8 characters FIFO 
   - UTF-8 support
