@@ -1,0 +1,44 @@
+myterminal|MyTerminal,
+# MyTerminal is 80×51
+	cols=#80,
+	lines=#51,
+# MyTerminal can display any combination of 16 colors
+	colors#16,
+	pairs#256,
+# Automatic margins wrap
+	am,
+# Terminal can overstrike
+	os,
+# Clear screen, home cursor and reset attributes
+	clear=^A0,
+# Clear to beginning of line/to end of line/to end of screen/delete line
+	el1=^A1,
+	el=^A2,
+	ed=^A3,
+	dl=^A4,
+# Bell
+	bel=^G,
+# Carriage return
+	cr=^M,
+# Newline
+	nel=^J,
+# Scroll text up/down
+	ind=^J,
+	ri=^K,
+# Set foreground/background color
+	setaf=^B%p1%'@'%+%c,
+	setab=^B%p1%'P'%+%c,
+# Cursor movement with no auto-margins (up/down/left/right)
+	cuu=^N,
+	cud=^O,
+	cub=^P,
+	cuf=^Q,
+# Absolute positionning
+	cup=^D%p1%' '%+%c%p2%' '%+%c,
+	hpa=,
+# Cursor visibility (visible/very visible/hidden)
+	cnorm=^FN,
+	cvvis=^FV,
+	civis=^FH,
+# Blinking
+	blink=,
