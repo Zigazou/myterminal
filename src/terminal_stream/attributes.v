@@ -32,6 +32,8 @@ reg [5:0] first_row;
 reg [6:0] text_x;
 reg [5:0] text_y;
 
+reg [20:0] charset_offset;
+
 reg [3:0] foreground;
 reg [3:0] background;
 reg bold;
@@ -61,6 +63,7 @@ endtask
 
 task reset_attributes;
 	begin
+		charset_offset <= 'd0;
 		foreground <= DEFAULT_FOREGROUND;
 		background <= DEFAULT_BACKGROUND;
 		bold <= FALSE;
@@ -99,7 +102,7 @@ function [31:0] generate_cell_part;
 	input [1:0] part;
 
 	generate_cell_part = generate_cell(
-		.ord (ord),
+		.ord (ord + charset_offset),
 		.size (size),
 		.part (part),
 		.blink (blink),
@@ -123,7 +126,7 @@ function clear_cell;
 		.underline (FALSE),
 		.func (LOGICAL_OR),
 		.pattern (PATTERN_NONE),
-		.foreground (DEFAULT_FOREGROUND),
-		.background (DEFAULT_BACKGROUND)
+		.foreground (foreground),
+		.background (background)
 	);
 endfunction

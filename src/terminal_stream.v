@@ -37,7 +37,7 @@ endtask
 // =============================================================================
 // Stage management
 // =============================================================================
-reg [3:0] stage;
+reg [4:0] stage;
 localparam
 	STAGE_IDLE               = 'd0,
 	STAGE_CLEAR_WRITE        = 'd1,
@@ -46,13 +46,19 @@ localparam
 	STAGE_WRITE_TOP_RIGHT    = 'd4,
 	STAGE_WRITE_BOTTOM_LEFT  = 'd5,
 	STAGE_WRITE_BOTTOM_RIGHT = 'd6,
-	STAGE_ESC                = 'd7,
-	STAGE_CSI                = 'd8,
-	STAGE_CLEAR_SCREEN_WRITE = 'd9,
-	STAGE_CLEAR_SCREEN_NEXT  = 'd10;
+	STAGE_CLEAR_SCREEN_WRITE = 'd7,
+	STAGE_CLEAR_SCREEN_NEXT  = 'd8,
+	STAGE_CLEAR              = 'd9,
+	STAGE_COLOR              = 'd10,
+	STAGE_CHARPAGE           = 'd11,
+	STAGE_CURSOR1            = 'd12,
+	STAGE_CURSOR2            = 'd13,
+	STAGE_ATTRIBUTE          = 'd14,
+	STAGE_PARAMETER          = 'd15,
+	STAGE_REPEAT             = 'd16;
 
 task goto;
-	input [3:0] next_stage;
+	input [4:0] next_stage;
 	stage <= next_stage;
 endtask
 
@@ -118,23 +124,50 @@ endfunction
 // =============================================================================
 task stage_idle;
 	if (unicode_available) begin
-		if (unicode == CLS) begin
-			ready_n <= FALSE_n;
-			clear_screen();
-		end else if (unicode == CR) text_x <= 'd0;
-		else if (unicode == LF) begin
-			ready_n <= FALSE_n;
-			line_feed();
-		end else if (unicode == ESC) goto(STAGE_ESC);
-		else begin
-			ready_n <= FALSE_n;
-			wr_request <= TRUE;
-			wr_address <= address_from_position(text_x, text_y);
-			wr_data <= generate_cell_part(unicode, PART_TOP_LEFT);
-			goto(STAGE_WRITE_TOP_LEFT);
-		end
-	end else
+		case (unicode)
+			CTRL_CLEAR: goto(STAGE_CLEAR);
+			CTRL_COLOR: goto(STAGE_COLOR);
+			CTRL_CHARPAGE: goto(STAGE_CHARPAGE);
+			CTRL_CURSOR: goto(STAGE_CURSOR1);
+			CTRL_ATTRIBUTE: goto(STAGE_ATTRIBUTE);
+			CTRL_PARAMETER: goto(STAGE_PARAMETER);
+			CTRL_CURSOR_UP: begin
+				text_y <= text_y == 'd0 ? text_y : text_y - 'd1;
+				goto(STAGE_IDLE);
+			end
+			CTRL_CURSOR_DOWN: begin
+				text_y <= text_y == ROWS - 'd1 ? text_y : text_y + 'd1;
+				goto(STAGE_IDLE);
+			end
+			CTRL_CURSOR_LEFT: begin
+				text_x <= text_x == 'd0 ? text_x : text_x - 'd1;
+				goto(STAGE_IDLE);
+			end
+			CTRL_CURSOR_RIGHT: begin
+				text_x <= text_x == COLUMNS - 'd1 ? text_x : text_x + 'd1;
+				goto(STAGE_IDLE);
+			end
+			CR: begin
+				text_x <= 'd0;
+				goto(STAGE_IDLE);
+			end
+			LF: begin
+				ready_n <= FALSE_n;
+				line_feed();
+			end
+
+			default: begin
+				ready_n <= FALSE_n;
+				wr_request <= TRUE;
+				wr_address <= address_from_position(text_x, text_y);
+				wr_data <= generate_cell_part(unicode, PART_TOP_LEFT);
+				goto(STAGE_WRITE_TOP_LEFT);
+			end
+		endcase
+	end else begin
 		ready_n <= TRUE_n;
+		goto(STAGE_IDLE);
+	end
 endtask
 
 task stage_write_top_left;
@@ -226,6 +259,7 @@ task clear;
 	input [6:0] to_x;
 	input [5:0] to_y;
 	begin
+		wr_burst_length <= 'd1;
 		wr_address <= address_from_position(from_x, from_y);
 		wr_address_end <= address_from_position(to_x, to_y) - 'd4;
 		goto(STAGE_CLEAR_WRITE);
@@ -294,116 +328,124 @@ endtask
 // =============================================================================
 // Control sequences
 // =============================================================================
-task apply_sgr;
-	input [9:0] argument;
-
-	case (argument)
-		SGR_RESET: reset_attributes();
-
-		SGR_BOLD: bold <= TRUE;
-		SGR_NORMAL: bold <= FALSE;
-
-		SGR_INVERT_ON: invert <= TRUE;
-		SGR_INVERT_OFF: invert <= FALSE;
-
-		SGR_BLINK_SLOW: blink <= 'd1;
-		SGR_BLINK_FAST: blink <= 'd3;
-		SGR_BLINK_OFF: blink <= 'd0;
-
-		SGR_FOREGROUND_0, SGR_FOREGROUND_1, SGR_FOREGROUND_2, SGR_FOREGROUND_3,
-		SGR_FOREGROUND_4, SGR_FOREGROUND_5, SGR_FOREGROUND_6, SGR_FOREGROUND_7:
-			foreground <= argument - SGR_FOREGROUND_0;
-
-		SGR_FOREGROUND_8, SGR_FOREGROUND_9, SGR_FOREGROUND_10, SGR_FOREGROUND_11,
-		SGR_FOREGROUND_12, SGR_FOREGROUND_13, SGR_FOREGROUND_14, SGR_FOREGROUND_15:
-			foreground <= argument - SGR_FOREGROUND_8 + 'd8;
-
-		SGR_BACKGROUND_0, SGR_BACKGROUND_1, SGR_BACKGROUND_2, SGR_BACKGROUND_3,
-		SGR_BACKGROUND_4, SGR_BACKGROUND_5, SGR_BACKGROUND_6, SGR_BACKGROUND_7:
-			background <= argument - SGR_BACKGROUND_0;
-
-		SGR_BACKGROUND_8, SGR_BACKGROUND_9, SGR_BACKGROUND_10, SGR_BACKGROUND_11,
-		SGR_BACKGROUND_12, SGR_BACKGROUND_13, SGR_BACKGROUND_14, SGR_BACKGROUND_15:
-			background <= argument - SGR_BACKGROUND_8 + 'd8;
-	endcase
-endtask
-
-reg [2:0] argument_count;
-reg [9:0] arguments [3:0];
-task stage_esc;
+task stage_clear;
 	if (unicode_available) begin
-		if (unicode == ESC_SIZE_DOUBLE_WIDTH) begin
-			size <= SIZE_DOUBLE_WIDTH;
-			goto(STAGE_IDLE);
-		end	else if (unicode == ESC_SIZE_DOUBLE_HEIGHT) begin
-			size <= SIZE_DOUBLE_HEIGHT;
-			goto(STAGE_IDLE);
-		end else if (unicode == ESC_SIZE_DOUBLE) begin
-			size <= SIZE_DOUBLE;
-			goto(STAGE_IDLE);
-		end else if (unicode == ESC_SIZE_NORMAL) begin
-			size <= SIZE_NORMAL;
-			goto(STAGE_IDLE);
-		end	else if (unicode == CSI) begin
-			argument_count <= 'd0;
-			arguments[0] <= 'd0;
-			arguments[1] <= 'd0;
-			arguments[2] <= 'd0;
-			arguments[3] <= 'd0;
-			goto(STAGE_CSI);
-		end else
-			goto(STAGE_IDLE);
-	end
+		case (unicode[6:0])
+			CLEAR_SCREEN: begin
+				ready_n <= FALSE_n;
+				clear_screen();
+			end
+			CLEAR_BOL: begin
+				ready_n <= FALSE_n;
+				clear('d0, text_y, text_x + 'd1, text_y);
+			end
+			CLEAR_EOL: begin
+				ready_n <= FALSE_n;
+				clear(text_x, text_y, COLUMNS, text_y);
+			end
+			CLEAR_BOD: begin
+				ready_n <= FALSE_n;
+				clear('d0, 'd0, text_x + 'd1, text_y);
+			end
+			CLEAR_EOD: begin
+				ready_n <= FALSE_n;
+				clear(text_x, text_y, COLUMNS, ROWS);
+			end
+			CLEAR_LINE: begin
+				ready_n <= FALSE_n;
+				clear('d0, text_y, COLUMNS, text_y);
+			end
+			//CLEAR_CHARS:
+			default: goto(STAGE_IDLE);
+		endcase
+	end else
+		goto(STAGE_CLEAR);
 endtask
 
-task stage_csi;
-	begin
-		if (unicode_available) begin
-			if (unicode >= 'h30 && unicode < 'h3A) begin // Parameter bytes
-				if (argument_count == 'd0) begin
-					argument_count <= 'd1;
-					arguments[0] <= unicode[3:0];
-				end else begin
-					arguments[argument_count - 'd1] <=
-						arguments[argument_count - 'd1] * 'd10 +
-						unicode[3:0];
-				end
-				goto(STAGE_CSI);
-			end else if (unicode == CSI_SEPARATOR) begin
-				argument_count <= argument_count + 'd1;
-				goto(STAGE_CSI);
-			end else if (unicode == CSI_CURSOR_POSITION) begin
-				text_y <= arguments[0] == 'd0 ? 'd0 : arguments[0] - 'd1; 
-				text_x <= arguments[1] == 'd0 ? 'd0 : arguments[1] - 'd1;
-				goto(STAGE_IDLE);
-			end else if (unicode == CSI_ERASE_IN_DISPLAY) begin
-				ready_n <= FALSE_n;
-				case (arguments[0])
-					'd1: clear('d0, 'd0, text_x + 'd1, text_y);
-					'd2: clear_screen();
-					'd3: clear_screen();
-					default: clear(text_x, text_y, COLUMNS, ROWS);
-				endcase
-			end else if (unicode == CSI_ERASE_IN_LINE) begin
-				ready_n <= FALSE_n;
-				case (arguments[0])
-					'd1: clear('d0, text_y, text_x + 'd1, text_y);
-					'd2: clear('d0, text_y, COLUMNS, text_y);
-					default: clear(text_x, text_y, COLUMNS, text_y);
-				endcase
-			end else if (unicode == CSI_SGR) begin
-				apply_sgr(arguments[0]);
-				if (argument_count == 2) apply_sgr(arguments[1]);
-				if (argument_count == 3) apply_sgr(arguments[2]);
-				if (argument_count == 4) apply_sgr(arguments[3]);
-				goto(STAGE_IDLE);
-			end else
-				goto(STAGE_IDLE);
-		end else
-			goto(STAGE_CSI);
-	end
+task stage_color;
+	if (unicode_available) begin
+		if (unicode[4])
+			background <= unicode[3:0];
+		else
+			foreground <= unicode[3:0];
+		goto(STAGE_IDLE);
+	end else
+		goto(STAGE_COLOR);
 endtask
 
+task stage_cursor1;
+	if (unicode_available) begin
+		if (unicode[6:0] >= "0" && unicode[6:0] < ROWS + "0")
+			text_y <= unicode[6:0] - "0";
+		else
+			text_y <= text_y;
+
+		goto(STAGE_CURSOR2);
+	end else
+		goto(STAGE_CURSOR1);
+endtask
+
+task stage_cursor2;
+	if (unicode_available) begin
+		if (unicode[6:0] >= "0")
+			text_x <= unicode[6:0] - "0";
+		else
+			text_x <= text_x;
+
+		goto(STAGE_IDLE);
+	end else
+		goto(STAGE_CURSOR2);
+endtask
+
+task stage_attribute;
+	if (unicode_available) begin
+		case (unicode[6:0])
+			ATTRIBUTE_RESET: reset_attributes();
+			SET_UNDERLINE_ON: underline <= TRUE;
+			SET_UNDERLINE_OFF: underline <= FALSE;
+			SET_BLINK_ON: blink <= BLINK_FAST;
+			SET_BLINK_OFF: blink <= BLINK_NONE;
+			SET_REVERSE_ON: invert <= TRUE;
+			SET_REVERSE_OFF: invert <= FALSE;
+			SET_SIZE_NORMAL: size <= SIZE_NORMAL;
+			SET_SIZE_DBLWIDTH: size <= SIZE_DOUBLE_WIDTH;
+			SET_SIZE_DBLHEIGHT: size <= SIZE_DOUBLE_HEIGHT;
+			SET_SIZE_DOUBLE: size <= SIZE_DOUBLE;
+			default: invert <= invert;
+		endcase
+		goto(STAGE_IDLE);
+	end else
+		goto(STAGE_ATTRIBUTE);
+endtask
+
+task stage_parameter;
+	if (unicode_available) begin
+		case (unicode[6:0])
+			CURSOR_VISIBLE: func <= 'd0;
+			CURSOR_EMPHASIZE: func <= 'd0;
+			CURSOR_HIDDEN: func <= 'd0;
+			default: func <= func;
+		endcase
+
+		goto(STAGE_IDLE);
+	end else
+		goto(STAGE_PARAMETER);
+endtask
+
+task stage_charpage;
+	if (unicode_available) begin
+		if (unicode[6:0] == CHARPAGE_RESET)
+			charset_offset <= 'd0;
+		else
+			charset_offset <= { 12'b0, unicode[3:0], 5'b0 } - " ";
+
+		goto(STAGE_IDLE);
+	end else
+		goto(STAGE_CHARPAGE);
+endtask
+/*
+			STAGE_REPEAT: stage_repeat();
+*/
 // =============================================================================
 // Automaton
 // =============================================================================
@@ -418,7 +460,7 @@ always @(posedge clk)
 		set(VIDEO_NOP, 'd0);
 		reset_all();
 		clear_screen();
-	end else begin
+	end else
 		case (stage)
 			STAGE_IDLE: stage_idle();
 
@@ -433,8 +475,13 @@ always @(posedge clk)
 			STAGE_WRITE_BOTTOM_LEFT: stage_write_bottom_left();
 			STAGE_WRITE_BOTTOM_RIGHT: stage_write_bottom_right();
 
-			STAGE_ESC: stage_esc();
-			STAGE_CSI: stage_csi();
+			STAGE_CLEAR: stage_clear();
+			STAGE_COLOR: stage_color();
+			STAGE_CHARPAGE: stage_charpage();
+			STAGE_CURSOR1: stage_cursor1();
+			STAGE_CURSOR2: stage_cursor2();
+			STAGE_ATTRIBUTE: stage_attribute();
+			STAGE_PARAMETER: stage_parameter();
+			//STAGE_REPEAT: stage_repeat();
 		endcase
-	end
 endmodule
