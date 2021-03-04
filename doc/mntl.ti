@@ -1,0 +1,363 @@
+# (C) Alexandre MONTARON - 1992/98-2015/16/19 - mntl.ti - 1.09 - 25/05/2020
+m1,
+#|minitel 1,
+####### OTEP, OTLC=\E:iE,OTUC=\E:jE,
+	cols#40, lines#24, am, bw, hz,
+	bel=^G, cr=^M, nel=^M^J, ind=^J, ri=^K,
+	acsc=j+k+l+m+n+o~q`s_t+u+v+w+x|0\177, .enacs=^O,
+	civis=^T, cnorm=^Q, flash=^_@A\EW \177^R\177^RP^M^X^J,
+	hs, tsl=^_@%p1%'A'%+%c, fsl=^J, dsl=^_@A^X^J, eslok,
+
+	u7=\Ea,  u6=^_%c%'A'%-%c%'A'%-,
+	u9=\E9{, u8=^A%[BCDEFGHIJKLbcresdfg0123456789]^D, .u8=^ABr4^D,
+	is2=\E;`ZQ\E:iC\E:iE^Q,	.mc4=\E;`[R, .mc5=\E;a[R, .hup=\E9g,
+	iprog=stty -ixon,
+
+	blink=\EH, rev=\E], sgr0=\EI\E\\\EG, .dim=\EB, .ncv#16, .invis=\E@,
+	smso=\E], rmso=\E\\, .msgr,
+###	smul=\EZ, rmul=\EY, OTug#1, smso=^N\EU\177^O\E], rmso=\EP \E\\, xmc#1,
+###	swidm=\EN, rwidm=\EL, .widcs#2,
+	sgr=%?%p1%t\E]%;%?%p3%t\E]%;%?%p4%t\EH%;,
+
+	colors#8, pairs#8, op=\EG, setb=^@, setaf=\E%p1%'@'%+%c, setab=^@,
+ setf=\E%?%p1%{1}%=%tD%e%p1%{3}%=%tF%e%p1%{4}%=%tA%e%p1%{6}%=%tC%e%p1%'@'%+%c%;,
+
+	cub1=^H, cuf1=^I, cud1=^J, cuu1=^K, home=^^,
+	cup=^_%p1%'A'%+%c%p2%'A'%+%c, rep=%p1%c^R%p2%'?'%+%c,
+	clear=^L, el=^X,
+
+	rs2=^T^_XA^X^J^X^J^X^J^X^J^X^J^X^J^X^J^X^J^X^J^X^J^X^J^X^J
+		  ^X^J^X^J^X^J^X^J^X^J^X^J^X^J^X^J^X^J^X^J^X^J^X^L^Q,
+
+	kent=^SA, kbs=^SG, khlp=^SD,krfr=^SC^SC, kcan=^SE,
+	kend=^SI, knp=^SH, kpp=^SB, .kb2=^SFg, .kcbt=^SFi,
+
+	kdch1=\177, kich1=^SJ, khome=^SF^SF,
+
+	kf1=^SC1,  kf2=^SC2,  kf3=^SC3,  kf4=^SC4,  kf5=^SC5,  kf6=^SC6,
+	kf7=^SC7,  kf8=^SC8,  kf9=^SC9,  kf10=^SC0,
+	kf11=^SF1, kf12=^SF2, kf13=^SF3, kf14=^SF4, kf15=^SF5, kf16=^SF6,
+	kf17=^SF7, kf18=^SF8, kf19=^SF9, kf20=^SF0, kf21=^SF*, kf22=^SF#,
+
+# $ stty -ixon (ou tput init)
+#
+#	TS+Connexion/Fin(Fin),Retour(Page Up),Suite(Page Down),Guide(Help),
+#	Envoi(Enter),Correction(BS), TS+Repetition(Ins.),TS+ESPACE(Del),
+
+#	#  Repetition-1(F1),  Sommaire-1(F11,Shift-F1),  Sommaire-*(F21),
+#	#  Repetition-2(F2),  Sommaire-2(F12,Shift-F2),  Sommaire-#(F22).
+#	#      ...                 ...
+#	#  Repetition-9(F9),  Sommaire-9(F19,Shift-F9),
+#	#  Repetition-0(F10), Sommaire-0(F20,Shift-F10),
+
+#       Sommaire-Sommaire(Home).
+
+m1b|minitel 1-bistandard (in 40cols mode),
+	cub=\E[%p1%dD, cuf=\E[%p1%dC, cuu=\E[%p1%dA, cud=\E[%p1%dB,
+	ed=\E[J, el1=\E[1K, 
+	il1=\E[L, il=\E[%p1%dL, dl1=\E[M, dl=\E[%p1%dM,
+	smir=\E[4h, rmir=\E[4l, mir,
+	dch1=\E[P, dch=\E[%p1%dP,
+	.smkx=\E;iYA\E;jYC,.rmkx=\E;jYA, .ich1=\E[@,.ich=\E[%p1%d@, .mc0=\E:|k,
+	is1=\E;iYA\E;jYC,   u8=^A%[ABCPtuvwxyz0123456789:;<=>?]^D, .u8=^ACu<^D,
+	iprog@,
+	.rs1=\E[4l\E[2l,
+	kcub1=\E[D, kcuf1=\E[C, kcuu1=\E[A, kcud1=\E[B,
+	kdch1=\E[P, kdl1=\E[M, .kel=^X, kctab=^I, .kLFT=\E[P, .kRIT=\E[4h,
+	khome=\E[H, kclr=\E[2J, kich1=\E[4h, kil1=\E[L,
+	kent@,    kbs@,    khlp@,    krfr@,    kcan@,
+	kf1=^SD, kf2=^SC, kf3=^SF, kf4=^SA, kf5=^SG, kf6=^SE,
+#
+#    ^ These keys ^ do works with mc or emacs under screen despite it's Xoff...
+#    Pour activer ces touches dans vi, faire:     $ stty -ixon
+#
+	kf7=^Y8, kf8=^Y\,, kf9=^Y., kf10=^Y0, kf11=^Y1, kf12=^Y/,
+ lf1=Guide,lf2=Repetition,lf3=Sommaire,lf4=Envoi,lf5=Correction,lf6=Annulation,
+	kf13=^Y{1, kf14=^Y{2, kf15=^Y{3, kf16=^Y{4, kf17=^Y{5, kf18=^Y{6,
+	kf19=^Y{7, kf20=^Y{8, kf21=^Y{9, kf22=^Y{0, kf23=^Y{*, kf24=^Y{#,
+	.kb2=^Y{g, .kcbt=^Y{i,
+	use=m1,
+# rmkx posait des problemes (logout en sortant de vi).
+m1b-x80|minitel 1-bistandard (standard teleinformatique),
+	cols#80, am@, bw@,
+	civis=^_@A^T^J, cnorm=^_@A^Q^J,
+	cuf1=\E[C, cuu1=\E[A, home=\E[H, nel=\EE,
+	it#8, ht=^I,
+	cup=\E[%i%p1%d;%p2%dH, .ll=\E[24H,
+	clear=\E[H\E[J, el=\E[K,
+	ind=\ED, ri=\EM,
+	blink=\E[5m, rev=\E[7m, bold=\E[1m, sgr0=\E[m,
+	smso=\E[7m, rmso=\E[27m, msgr,
+	smul=\E[4m, rmul=\E[24m,
+	.sgr=\E[%?%p1%t7;%;%?%p2%t4;%;%?%p3%t7;%;%?%p4%t5;%;%?%p6%t1;%;m, sgr@,
+	sc=\E7, rc=\E8,
+	smkx@, rmkx@,
+	is1@, is2@, rep@, eslok@, hz@, u6@, u7@, u8@, u9@,
+	lf1@, lf2@, lf3@, lf4@, lf5@, lf6@,  kf23@, kf24@,
+	kf10=\EOp,kf1=\EOq, kf2=\EOr, kf3=\EOs, kf4=\EOt,
+	kf5=\EOu, kf6=\EOv, kf7=\EOw, kf8=\EOx, kf9=\EOy,
+	kf11=\EOP1, kf12=\EOP2, kf13=\EOP3, kf14=\EOP4, kf15=\EOP5, kf16=\EOP6,
+	kf17=\EOP7, kf18=\EOP8, kf19=\EOP9, kf20=\EOP0, kf21=\EOP*, kf22=\EOP#,
+
+#	##
+#	#  TS+Connexion/Fin(Fin),Retour(Page Up),Suite(Page Down),Guide(Help),
+#	#  Repetition(Refresh),Envoi(Enter),Correction(BS),Annulation(Cancel),
+#	##
+#	#  Fnct+1(F1),  Sommaire-1(F11,Shift-F1),  Sommaire-*(F21),
+#	#  Fnct+2(F2),  Sommaire-2(F12,Shift-F2),  Sommaire-#(F22).
+#	#      ...                 ...
+#	#  Fnct+9(F9),  Sommaire-9(F19,Shift-F9),
+#	#  Fnct+0(F10), Sommaire-0(F20,Shift-F10),
+#	##
+
+	kent=\EOM, kbs=\EOl,khlp=\EOm, knp=\EOn,kpp=\EOR, krfr=\EOS,kcan=\EOQ,
+	kend=\E)4\r, .kb2=\EOPg, .kcbt=\EOPi,               .rs2=\E[H\E[J\E[m,
+	.acsc=}#f[, .enacs=^O, .smacs=^N,.rmacs=^O, .rs2=\Ec, .mc0=\E[i, acsc@,
+	  rs2=^^\E[12H\E[2M\E[H\E[L\E[12H\E[2M\E[H\E[L\E[12H\E[2M\E[H\E[L
+		\E[12H\E[2M\E[H\E[L\E[12H\E[2M\E[H\E[L\E[12H\E[2M\E[H\E[L
+		\E[12H\E[2M\E[H\E[L\E[12H\E[2M\E[H\E[L\E[12H\E[2M\E[H\E[L
+		\E[12H\E[2M\E[H\E[L\E[12H\E[2M\E[H\E[L\E[12H\E[2M\E[H\E[J\E[m,
+	tsl=^_@
+	%?%p1%{63}%<
+	%t
+	%p1%'A'%+%c
+	%e
+	\177
+	%p1%{62}%-%Pa
+	%?%ga%{1}%&%t^I%;
+	%?%ga%{2}%&%t^I^I%;
+	%?%ga%{4}%&%t^I^I^I^I%;
+	%?%ga%{07}%>%t^I^I^I^I^I^I^I^I%;
+	%?%ga%{15}%>%t^I^I^I^I^I^I^I^I%;
+	%;,
+	colors@, pairs@, op@, setf@, setb@, setaf@, setab@,
+	use=m1b,
+
+m1-nb|minitel 1 (40cols) noir & blanc sans couleurs avec bold et dim ...,
+	colors@, pairs@, op@, setf@, setb@, setaf@, setab@,        .invis=\E@,
+	tsl=^_@%p1%'A'%+%c\EB,		    dim=\ED, bold=\EG, sgr0=\EI\E\\\EB,
+	home=^^\EB, clear=^L\EB, rs2=^L\EB, cup=^_%p1%'A'%+%c%p2%'A'%+%c\EB,
+
+	sgr=%?%p1%p3%O%t\E]%;%?%p4%t\EH%;%?%p5%t\ED%;%?%p6%t\EG%;,
+	use=m1,
+
+m1b-nb|minitel 1b (40cols) noir & blanc sans couleurs avec bold et dim ...,
+	colors@, pairs@, op@, setf@, setb@, setaf@, setab@,        .invis=\E@,
+	tsl=^_@%p1%'A'%+%c\EB,		    dim=\ED, bold=\EG, sgr0=\EI\E\\\EB,
+	home=^^\EB, clear=^L\EB, rs2=^L\EB, cup=\E[%i%p1%d;%p2%dH, msgr,
+	acsc=`>a9f!j%k4l<m-n=p#q\,rpt=u5v-w<x5yvzy|l~$, smacs=^N, rmacs=^O,
+	sgr=%?%p1%p3%O%t\E]%;%?%p4%t\EH%;%?%p5%t\ED%;%?%p6%t\EG%;,.u8=^ACu|^Dr,
+	kend=\E)4\r, knp=\E(4\r,kpp=\E"4\r,u8=^A%[ABCPpqrstuvwxyz{|}~\177]^D^M,
+	kf1=\E$4\r, kf2=\E#4\r, kf3=\E&4\r, kf4=\E!4\r, kf5=\E'4\r, kf6=\E/4\r,
+	use=m1b,
+
+#       ### Note:
+#       #
+#       # Faire, Fnct T puis "/" (TS+"?") pour activer les touches en 40cols :
+#       #
+#       # TS+Connexion/Fin(Fin),Retour(Page Up),Suite(Page Down),Guide(F1),
+#       # Repetition(F2),Sommaire(F3),Envoi(F4),Correction(F5),Annulation(F6),
+#       # Ctrl+7(F7),Ctrl+8(F8),Ctrl+9(F9),Ctrl+0(F10),Ctrl+*(F11),Ctrl+#(F12).
+#       #
+#       # Ctrl+Suite-1(F13), Ctrl+Suite-2(F14), Ctrl+Suite-3(F15),
+#       # Ctrl+Suite-4(F16), Ctrl+Suite-5(F17), Ctrl+Suite-6(F18),
+#       # Ctrl+Suite-7(F19), Ctrl+Suite-8(F20), Ctrl+Suite-9(F21),
+#       # Ctrl+Suite-0(F22), Ctrl+Suite-*(F23), Ctrl+Suite-#(F24).
+#       #
+#       ### Fonctionne par exemple avec Midnight Commander (mc).
+
+m2-x80|minitel 2 (80cols) avec filets vt100 (DEC),
+ acsc=ffggjjkkllmmnnooqqssttuuvvwwxxyyzz||}}, smacs=^N, rmacs=^O, enacs=\E)0,
+	          u6=\E[%i%d;%dR,
+	use=m12-x80,
+
+m12-x80|minitel 12 (80cols),
+	civis=\E[<1h, cnorm=\E[<1l,          .smacs=^N,.rmacs=^O,
+	.acsc=ffggj+k+l+m+n+ovq-swt+u+v+w+xx}}\,m+k.l-j0\177,    .enacs=\E)3,
+	u7=\E[6n, u6=\E[%i%d;%dH,
+	is2=\E[12h, .rs3=\E[?4l,  .scs=\E(%p1%c,
+	use=m1b-x80,
+
+#       ### Pour obtenir les accents :
+#
+# Utiliser screen(1) et configurer ~/.screenrc avec ces 6 lignes :
+#
+# termcapinfo minitel1|m1|minitel1b|m1b|minitel1-nb|m1-nb|minitel1b-nb|m1b-nb 'XC=B^Y%,\241!,\242",\243#,\244$,\245%,\246&,\247\047,\250(,\253+,\257P,\260\060,\261\061,\262\062,\263\063,\265\065,\267\067,\272k,\273;,\274<,\275=,\276>,\277?,\300AA,\301BA,\302CA,\303DA,\304HA,\305JA,\306a,\307KC,\310AE,\311BE,\312CE,\313HE,\314AI,\315BI,\316CI,\317HI,\320b,\321DN,\322AO,\323BO,\324CO,\325DO,\326HO,\327\064,\330i,\331AU,\332BU,\333CU,\334HU,\335BY,\336l,\337{,\340Aa,\341Ba,\342Ca,\343Da,\344Ha,\345Ja,\346q,\347Kc,\350Ae,\351Be,\352Ce,\353He,\354Ai,\355Bi,\356Ci,\357Hi,\360r,\361Dn,\362Ao,\363Bo,\364Co,\365Do,\366Ho,\367\070,\370y,\371Au,\372Bu,\373Cu,\374Hu,\375By,\376|,\377Hy,\252c,,0^O^Y%^N,}#,f0,g1,\\\054\\\054,+.,./,0\177,--'
+# termcapinfo minitel1|m1|minitel1b|m1b|minitel1-nb|m1-nb|minitel1b-nb|m1b-nb 'G0:S0=^N:E0=^O:C0=`>a9f!j%k4l<m-n=p#q\,rpt=u5v-w<x5yvzy|l~$'
+# termcapinfo minitel1b-80|m1b-x80 'XC=B^N%^O,\243#,\247],\260[,\340@,\347\\\\,\351{,\350},\371|,\300A,\301A,\302A,\303A,\304A,\305A,\306E,\307C,\310E,\311E,\312E,\313E,\314I,\315I,\316I,\317I,\320D,\321N,\322O,\323O,\324O,\325O,\326O,\331U,\332U,\333U,\334U,\335Y,\337s,\341a,\342a,\343a,\344a,\345a,\346e,\352e,\353e,\354i,\355i,\356i,\357i,\360d,\361n,\362o,\363o,\364o,\365o,\366o,\372u,\373u,\374u,\375y,\377y,\267.,\327x,\367/,\261\E7\E[4m+\E8\E[C,,0^O%^N,x|,y\E7\E[4m<\E8\E[C,z\E7\E[4m>\E8\E[C,g\E7\E[4m+\E8\E[C'
+# termcapinfo minitel1b-80|m1b-x80 'G0:S0=^N:E0=^O:C0=}#f[j+k+l+m+n+o~q=s_t+u+v+w+x!0\032'
+# termcapinfo  minitel2-80|m2-x80  'XC=B%\E(B,\243\E(3},\247\E(R[,\257\E(3v,\260\E(3f,\261\E(3g,\265\E(3Y,\267\E(3~,\274\E(3O,\275\E(3P,\276\E(3Q,\277\E(3Z,\300A,\301A,\302A,\303A,\304\E(3R,\305A,\306E,\307C,\310E,\311\E(3S,\312E,\313E,\314\E(3T,\315I,\316I,\317I,\320D,\321\E(3W,\322\E(3U,\323O,\324O,\325O,\326O,\327x,\331U,\332U,\333U,\334\E(3V,\335Y,\337\E(3{,\340\E(3A,\341a,\342\E(3B,\343a,\344\E(3C,\345a,\346e,\347\E(R\\\\,\350\E(3E,\351\E(3D,\352\E(3F,\353\E(3G,\354i,\355i,\356\E(3H,\357\E(3I,\360d,\361\E(3X,\362o,\363o,\364\E(3J,\365o,\366\E(3K,\367\E(3h,\371\E(3L,\372u,\373\E(3M,\374\E(3N,\375y,\377y,,0\E)3%\E)0,\\\054m,+k,.l,0\177,-j'
+# termcapinfo minitel12-80|m12-x80 'XC=B%\E(B,\243\E(3},\247\E(R[,\257\E(3v,\260\E(3f,\261\E(3g,\267\E(3~,\274\E(3O,\275\E(3P,\276\E(3Q,\300A,\301A,\302A,\303A,\304A,\305A,\306E,\307C,\310E,\311E,\312E,\313E,\314I,\315I,\316I,\317I,\320D,\321N,\322O,\323O,\324O,\325O,\326O,\327x,\331U,\332U,\333U,\334U,\335Y,\337\E(3{,\340\E(3A,\341a,\342\E(3B,\343a,\344\E(3C,\345a,\346e,\347\E(R\\\\,\350\E(3E,\351\E(3D,\352\E(3F,\353\E(3G,\354i,\355i,\356\E(3H,\357\E(3I,\360d,\361n,\362o,\363o,\364\E(3J,\365o,\366\E(3K,\367\E(3h,\371\E(3L,\372u,\373\E(3M,\374\E(3N,\375y,\377y,,0\E)3%\E)0,\\\054m,+k,.l,0\177,-j'
+#
+#
+# Ajouter egalement ces lignes pour pouvoir les saisir en 40 colonnes :
+#
+# bindkey ^YA digraph '`'  # Saisi accent grave.
+# bindkey ^YB digraph "'"  # Saisi accent aigu.
+# bindkey ^YC digraph '^'  # Saisi accent circonflexe.
+# bindkey ^YH digraph '"'  # Saisi accent trema.
+#
+# bindkey ^Y#      stuff \243  # Livre.
+# bindkey "^Y\047" stuff \247  # Paragraphe.
+# bindkey ^Yj      stuff \306  # AE
+# bindkey ^Yz      stuff \346  # ae
+# bindkey ^YKc     stuff \347  # c cedille.
+#
+#
+#       ### En 40 ou 80 colonnes ...
+
+screen.m1|Screen specific for m1,
+	bel=\007\E\^ \E\\, flash=\Eg\E\^ \E\\, kmous@, csr@,ncv@, bold@,
+	           smul@,      rmul@,
+	acsc=++\,\,--..00``aaffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz||}}~~,
+	u7=\E[6n, u6=\E[%i%d;%dR, u9=\EZ, u8=\E[?1;2c,
+	use=screen,
+
+screen.m1b|Screen specific for m1b,
+	kdl1=\E[M, kil1=\E[L, kclr=\E[2J,
+	kf13=^Y{1, kf14=^Y{2, kf15=^Y{3, kf16=^Y{4, kf17=^Y{5, kf18=^Y{6,
+	kf19=^Y{7, kf20=^Y{8, kf21=^Y{9, kf22=^Y{0, kf23=^Y{*, kf24=^Y{#,
+	use=screen.m1,
+
+screen.m1b-x80|screen.m2-x80|screen.m12-x80|Screen specific for m1b-x80 m2-x80 and m12-x80,
+	colors@, pairs@, op@, setf@, setb@, setaf@, setab@, ncv@, bold=\E[1m,
+	           smul=\E[4m, rmul=\E[24m,
+
+	kent=\EOM, khlp=\EOm,                                   kf23@, kf24@,
+	kf13@, kf14@, kf15@, kf16@, kf17@, kf18@, kf19@, kf20@, kf21@, kf22@,
+	use=screen.m1b,
+
+screen.m1-nb|Screen specific for m1-nb,
+	colors@, pairs@, op@, setf@, setb@, setaf@, setab@, ncv@, bold=\E[1m,
+	dim=\E[2m,
+	use=screen.m1,
+
+screen.m1b-nb|Screen specific for m1b-nb,
+	colors@, pairs@, op@, setf@, setb@, setaf@, setab@, ncv@, bold=\E[1m,
+	dim=\E[2m,
+	use=screen.m1b,
+
+# 03/05/20 - Il est aussi possible de passer de 80 a 40 colonnes (et recriproquement).
+#
+# Pour cela, ajouter simplement dans ~/.screenrc :
+# terminfo minitel1b-80|m1b-x80                    'WS=^\'
+# terminfo minitel12-80|m12-x80|minitel2-80|m2-x80 'WS=%?%p2%{40}%>%t\E[?3l%e\E[<3h%;'
+#
+# Puis faire (Minitels 2 ou 12 uniquement) sous screen(1) :
+# Ctrl-A :width 40                 Return (<-').
+# Ctrl-A :width 80                 Return (<-').
+#
+# Ou meme manuellement pour les Minitel 1b :
+# Ctrl-A :width 40 <Fnct E puis F> Return (<-').
+# Ctrl-A :width 80 <Fnct E puis F> Return (<-').
+#
+
+m1-l12|minitel 1 en 12 lignes (loupe),
+	lines#12, bw@,
+	cud1=^J^J, cuu1=^K^K, home=^^^J\EM, nel=^M^J^J,
+	cup=^_%p1%{2}%*%'B'%+%c%p2%'A'%+%c\EM,
+	clear=^L^J\EM, .el=^X,
+	  rs2=^L^J\EM,
+	ind=^J^J, ri=^K^K,
+	hd=^J, hu=^K,
+	ssubm=\EL, ssupm=^K\EL, rsubm=\EM, rsupm=^J\EM,
+	swidm=\EO, rwidm=\EM, .widcs#2,
+	use=m1,
+# Rq.: avec Emacs/xemacs uniquement.
+
+# Bonus:
+viewdata|prestel/viewdata terminals,
+	cols#40, lines#24, am, bw,
+	bel=^G, cr=^M,
+	civis=^T, cnorm=^Q,
+	cub1=^H, cuf1=^I, cud1=^J, cuu1=^K, home=^^, nel=^M^J,
+	clear=^L, .el=^X,
+	.ind=^J, .ri=^K,
+	.rep=%p1%c^R%p2%'?'%+%c, eslok, hz, rs2=^L,
+# viewdata lacks a true cup capabilitie,
+# so I achieved it with home and cud1/cuf1 sequences only !
+	cup=^^%?%p1%{07}%>%t^J^J^J^J^J^J^J^J%;%?%p1%{15}%>%t^J^J^J^J^J^J^J^J%;%?%p1%{4}%&%t^J^J^J^J%;%?%p1%{2}%&%t^J^J%;%?%p1%{1}%&%t^J%;%?%p2%{07}%>%t^I^I^I^I^I^I^I^I%;%?%p2%{15}%>%t^I^I^I^I^I^I^I^I%;%?%p2%{23}%>%t^I^I^I^I^I^I^I^I%;%?%p2%{31}%>%t^I^I^I^I^I^I^I^I%;%?%p2%{4}%&%t^I^I^I^I%;%?%p2%{2}%&%t^I^I%;%?%p2%{1}%&%t^I%;,
+
+viewdata-o|optimized version of viewdata prestel/viewdata terminals,
+	cup=^^
+	%p1%?%p2%{20}%>%t%?%p1%{23}%=%t%Pa%{1}%e%{1}%+%;%;%Pa
+
+	%?%ga%{13}%<%t
+	%?%ga%{07}%>%t^J^J^J^J^J^J^J^J%;
+	%?%ga%{4}%&%t^J^J^J^J%;
+	%?%ga%{2}%&%t^J^J%;
+	%?%ga%{1}%&%t^J%;
+	%e
+	%{24}%ga%-%Pa
+	%?%ga%{07}%>%t^K^K^K^K^K^K^K^K%;
+	%?%ga%{4}%&%t^K^K^K^K%;
+	%?%ga%{2}%&%t^K^K%;
+	%?%ga%{1}%&%t^K%;
+	%;
+
+	%?%p2%{21}%<%t
+	%?%p2%{07}%>%t^I^I^I^I^I^I^I^I%;
+	%?%p2%{15}%>%t^I^I^I^I^I^I^I^I%;
+	%?%p2%{4}%&%t^I^I^I^I%;
+	%?%p2%{2}%&%t^I^I%;
+	%?%p2%{1}%&%t^I%;
+	%e
+	%{40}%p2%-%Pa
+	%?%ga%{07}%>%t^H^H^H^H^H^H^H^H%;
+	%?%ga%{15}%>%t^H^H^H^H^H^H^H^H%;
+	%?%ga%{4}%&%t^H^H^H^H%;
+	%?%ga%{2}%&%t^H^H%;
+	%?%ga%{1}%&%t^H%;
+	%?%p1%{23}%=%t^K%;
+	%;, .ll=^^^K,
+	use=viewdata,
+# Samples with TERM=viewdata and TERM=viewdata-rv: http://canal.chez.com/blog/
+
+viewdata-rv|prestel/viewdata terminals with reverse capabilitie (as green),
+	xmc#1, smso=\EB, rmso=\EG, use=viewdata-o,
+# viewdata-rv do works with some applications (e.g. emacs, xemacs) but fails with vim.
+
+#######################################
+#                         Simply do :
+# # tic mntl.ti
+#                       then probably :
+# # export TERM=m1b-x80
+#
+#######################################
+
+# 1.02:  (1998)  Correction m1 au lieu de 'minitel 1'.
+# 1.03: m1b-x80: Suppr. kel -Probleme avec xemacs-
+#                Sequence 'clear' optimisee (1 octet en moins).
+#                Reconnais RETOUR et SUITE comme page up/page down (ex:emacs).
+#                'tput reset' fonctionne desormais...
+#                Correctif sgr= sans incidence (suppr).
+#       m1b:     Suppr. smkx -Probleme avec vi, emacs...-
+#       m1 & m1b:Nouveau: Sequence demande position curseur (u6/u7).
+#       (tous):  Nouveau: Sequence bip sans bruit: flash ligne 0 (tput flash).
+#                Correctif jeu alternatif (filets semigraphique pour m1b-nb).
+#   New m1b-nb:  Nouveau terminfo pour M1b sans couleur avec bold et dim !
+
+# - 11 modifs. - # See nice TERM=m1b-nb : http://canal.chez.com/Linux_mc.gif
+
+# 1.05:  (2016)  Ajout effacement-ecran avec animation (tput rs2) m1/m1b.&x80.
+#                PFKeys jusqu'a F22 en 80cols et F24 en 40cols ! +Libelles.
+#       m1 & m1b:Correctif msgr pour screen(1).
+#                Couleurs pour vi, correctif sgr0+setb.
+#                Couleurs correctes pour vi et emacs (setaf/setab).
+#                Nouveau: Sequence identification ROM (u8/u9).
+#       (tous):  Gestion ligne 0 pour screen(1) jusqu'a 80 colonnes (dsl/tsl).
+#                Correctif kf10 au lieu de kf0 pour vi et screen(1).
+#       m1b-nb:  (BUG) kend absent de 1.05i et 1.05j
+#   New m1-nb:   Nouveau terminfo pour Minitel 1 noir&blanc avec bold et dim.
+#   New m2-x80:  Nouveau terminfo pour Minitel 2 avec filets !
+#   New m12-x80: Nouveau terminfo pour Minitel 12 !
+
+# 1.06: screen.*:7 Nouveaux terminfos pour screen :
+#                Cohabitation du bip silencieux ligne 0 avec screen(1) ex:emacs
+#                Recuperation de touches perdues (kdl1,kil1...) dans screen(1).
+#                Rendu (bold, dim, couleurs...) identique avec ou sans screen(1)
+
+# 1.07:  (2019)  Nouveau terminfo pour Minitel 1 en 12 lignes (double-hauteur).
+
+# 1.08:  (2020)  Ajout WS m1b-x80|m12-x80|m2-x80.
+# 1.09: m1&m1-*: Ajouts acsc+ 0\177, + kdch1/kich1/khome, + kf1 a kf22, + iprog.

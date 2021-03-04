@@ -69,12 +69,12 @@ myterminal|MyTerminal,
 #   double_height=^E2
 #   double_size=^E3
 # List of superscriptable characters
-	supcs=abcdefghijklmnopqrstuvwxyz,
+	supcs=aabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz,
 # Superscript mode enter/end
 	ssupm=^FS,
 	rsupm=^Fs,
 # Alternate character set enter/end
-	smacs=^F%p1%'0'%+%c,
-	rmacs=^F_,
+#	smacs=^F%p1%'0'%+%c,
+#	rmacs=^F_,
 # Repeat char
 	rep=%p1%c^R%p2%'0'%+%c,

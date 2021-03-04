@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Project>
     <Project_Created_Time>2020-09-01 19:32:05</Project_Created_Time>
-    <TD_Version>4.6.14314</TD_Version>
+    <TD_Version>4.6.25304</TD_Version>
     <UCode>10111100</UCode>
     <Name>myterminal</Name>
     <HardWare>
@@ -38,7 +38,7 @@
         </EG4X>
     </Device_Settings>
     <Project_Settings>
-        <Step_Last_Change>2020-09-18 07:58:46</Step_Last_Change>
+        <Step_Last_Change>2021-03-04 19:51:16</Step_Last_Change>
         <Current_Step>60</Current_Step>
         <Step_Status>true</Step_Status>
     </Project_Settings>

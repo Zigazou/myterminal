@@ -88,8 +88,8 @@ colors = [
 ]
 
 screen = ""
-for _ in range(80*51):
+for _ in range(80*51 - 1):
     screen += chr(0x1b) + "[" + random.choice(colors) + "m"
     screen += chr(random.choice(mosaic))
 
-print(screen, end='')
+print(chr(1) + screen, end='')

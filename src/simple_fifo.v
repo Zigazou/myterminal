@@ -14,9 +14,9 @@ module simple_fifo #(
 
 `include "constant.v"
 
-reg [DATA_WIDTH - 1:0] fifo [0:7];
-reg [2:0] fifo_in_index;
-reg [2:0] fifo_out_index;
+reg [DATA_WIDTH - 1:0] fifo [0:15];
+reg [3:0] fifo_in_index;
+reg [3:0] fifo_out_index;
 
 // Data coming in
 always @(posedge clk)

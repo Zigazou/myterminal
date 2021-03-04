@@ -2,6 +2,7 @@ localparam
     VIDEO_NOP              = 'd0,
     VIDEO_SET_BASE_ADDRESS = 'd1,
     VIDEO_SET_FIRST_ROW    = 'd2,
+    VIDEO_CURSOR_POSITION  = 'd3,
 
     COLUMNS                = 'd80,
     COLUMNS_REAL           = 'd128,

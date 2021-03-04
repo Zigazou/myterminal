@@ -54,23 +54,23 @@ module video_controller #(
 // =============================================================================
 reg [22:0] base_address;
 reg [22:0] first_row;
+reg [5:0] cursor_row;
+reg [6:0] cursor_col;
 always @(posedge clk)
 	if (reset) begin
 		base_address <= 'd0;
 		first_row <= 'd0;
+		cursor_row <= 'd1;
+		cursor_col <= 'd1;
 	end else
 		case (register_index)
 			VIDEO_SET_BASE_ADDRESS: base_address <= register_value;
 			VIDEO_SET_FIRST_ROW: first_row <= register_value;
+			VIDEO_CURSOR_POSITION: begin
+				cursor_row <= register_value[12:7];
+				cursor_col <= register_value[6:0];
+			end
 		endcase
-
-function next_row_address;
-	input [22:0] current_address;
-	if (current_address + ROW_SIZE >= base_address + PAGE_SIZE)
-		next_row_address = base_address;
-	else
-		next_row_address = current_address + ROW_SIZE;
-endfunction
 
 // =============================================================================
 // Video timings (1280×1024@60Hz)
@@ -160,15 +160,19 @@ assign vsync = ypos < VERT_SYNC_START;
 
 reg pg;
 reg [4:0] char_row;
+reg [5:0] current_row;
 always @(posedge clk)
 	if (reset || ypos < VERT_VISIBLE_START - 1 || ypos > VERT_VISIBLE_END - 1) begin
 		char_row <= 'd0;
+		current_row <= 0;
 	end else if (xpos == HORZ_TOTAL - 1) begin
 		if (ypos == VERT_VISIBLE_START - 1) begin
 			char_row <= 'd0;
+			current_row <= 0;
 			pg <= 'd0;
 		end else if (char_row == CHAR_HEIGHT - 1) begin
 			char_row <= 'd0;
+			current_row <= current_row + 'd1;
 			pg <= ~pg;
 		end else
 			char_row <= char_row + 'd1;
@@ -176,6 +180,9 @@ always @(posedge clk)
 
 wire x_visible = xpos >= HORZ_VISIBLE_START && xpos < HORZ_VISIBLE_END;
 wire y_visible = ypos >= VERT_VISIBLE_START && ypos < VERT_VISIBLE_END;
+
+wire [$clog2(HORZ_TOTAL):0] current_x = x_visible ? xpos - HORZ_VISIBLE_START : 'd0;
+wire [$clog2(HORZ_VISIBLE / 16):0] current_col = current_x[4 + $clog2(HORZ_VISIBLE / 16):4];
 
 wire preload =
 	ypos == VERT_VISIBLE_START - 1 + 0 * 20 ||
@@ -281,7 +288,6 @@ always @(posedge clk)
 		rd_request <= xpos == 'd0;
 
 		if (xpos == HORZ_TOTAL - 1) begin
-			//rd_address <= next_row_address(rd_address);
 			if (rd_address + ROW_SIZE >= base_address + PAGE_SIZE)
 				rd_address <= base_address;
 			else
@@ -290,7 +296,6 @@ always @(posedge clk)
 
 		if (xpos == 'd0) begin
 			wr_index <= 'h7F; //'d0;
-			//rd_address <= next_row_address(rd_address);
 		end else if (wr_index < COLUMNS - 1 || wr_index == 'h7F) begin
 			if (rd_available) begin
 				wr_enable <= TRUE;
@@ -342,6 +347,8 @@ pixels pixels (
 
 wire blink =
 	charattr[15:14] != 2'b00 ? (charattr[15:14] == frame_count[6:5]) : FALSE;
+
+wire cursor_blink = frame_count[4];
 
 reg [15:0] bitmap;
 always @(posedge clk)
@@ -418,9 +425,15 @@ always @(posedge clk) current_pixel <= palette[current_pixel_index];
 
 always @(posedge clk)
 	if (y_visible && x_visible && ~reset) begin
-		pixel_red <= current_pixel[8:6];
-		pixel_green <= current_pixel[5:3];
-		pixel_blue <= current_pixel[2:0];
+		if (cursor_blink && current_col == cursor_col && current_row == cursor_row) begin
+			pixel_red <= 'b111;
+			pixel_green <= 'b111;
+			pixel_blue <= 'b111;
+		end else begin
+			pixel_red <= current_pixel[8:6];
+			pixel_green <= current_pixel[5:3];
+			pixel_blue <= current_pixel[2:0];
+		end
 	end else begin
 		pixel_red <= 'd0;
 		pixel_green <= 'd0;

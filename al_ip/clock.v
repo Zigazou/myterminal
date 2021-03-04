@@ -71,3 +71,4 @@ module clock(refclk,
 		.clkc({open, open, open, open, clk0_buf}));
 
 endmodule
+

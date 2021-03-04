@@ -75,11 +75,11 @@ task prepare_first_row;
 			set(VIDEO_SET_FIRST_ROW, 'd0);
 		end else begin
 			first_row <= new_first_row;
-			set(VIDEO_SET_FIRST_ROW, { new_first_row, 9'b000_0000 });
+			set(VIDEO_SET_FIRST_ROW, { 8'b0, new_first_row, 7'b0, 2'b0 });
 		end
 
-		wr_address <= { first_row, 9'b000_0000 };
-		wr_address_end <= { first_row, 9'b000_0000 } + ROW_SIZE - 'd4;
+		wr_address <= { 8'b0, first_row, 7'b0, 2'b0 };
+		wr_address_end <= { 8'b0, first_row, 7'b0, 2'b0 } + ROW_SIZE - 'd4;
 	end
 endtask
 
@@ -110,11 +110,12 @@ task next_char;
 	gotoxy(text_x + { 6'b0, size[0] } + 'd1, text_y);
 endtask
 
+wire [5:0] first_row_diff = ROWS - first_row;
 function [22:0] address_from_position;
 	input [6:0] x;
 	input [5:0] y;
-	if (y >= ROWS - first_row)
-		address_from_position = { 8'b0, y - ROWS + first_row, x, 2'b00 };
+	if (y >= first_row_diff)
+		address_from_position = { 8'b0, y - first_row_diff, x, 2'b00 };
 	else
 		address_from_position = { 8'b0, y + first_row, x, 2'b00 };
 endfunction
@@ -167,6 +168,7 @@ task stage_idle;
 	end else begin
 		ready_n <= TRUE_n;
 		goto(STAGE_IDLE);
+		set(VIDEO_CURSOR_POSITION, {10'b0, text_y, text_x});
 	end
 endtask
 
@@ -356,7 +358,10 @@ task stage_clear;
 				clear('d0, text_y, COLUMNS, text_y);
 			end
 			//CLEAR_CHARS:
-			default: goto(STAGE_IDLE);
+			default: begin
+				ready_n <= TRUE_n;
+				goto(STAGE_IDLE);
+			end
 		endcase
 	end else
 		goto(STAGE_CLEAR);
