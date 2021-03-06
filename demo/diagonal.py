@@ -35,7 +35,9 @@ diagonals = [
 ]
 
 screen = ""
-for _ in range(80*51 - 1):
+for _ in range(80*50 - 1):
     screen += chr(random.choice(diagonals))
 
-print(chr(1) + screen, end='')
+print(chr(4) + '00' + chr(2) + '@' + chr(2) + chr(80 + 15), end='')
+print(chr(0xE354) + ("Diagonal demo" + chr(0xE287) + " MyTerminal " + chr(0xE363) + chr(0xE370)).ljust(78) + chr(5) + "0" + chr(0xE351), end='')
+print(chr(2) + chr(64 + 15) + chr(2) + chr(80 + 0) + screen, end='')

@@ -69,27 +69,16 @@ mosaic = [
 ]
 
 colors = [
-    "30",
-    "31",
-    "32",
-    "33",
-    "34",
-    "35",
-    "36",
-    "37",
-    "90",
-    "91",
-    "92",
-    "93",
-    "94",
-    "95",
-    "96",
-    "97",
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+    #16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31
 ]
 
 screen = ""
-for _ in range(80*51 - 1):
-    screen += chr(0x1b) + "[" + random.choice(colors) + "m"
-    screen += chr(random.choice(mosaic))
+for _ in range(80*50 - 1):
+    screen += chr(2) + chr(64 + random.choice(colors))
+    screen += chr(2) + chr(80 + random.choice(colors))
+    screen += chr(random.choice(mosaic) + 64)
 
-print(chr(1) + screen, end='')
+print(chr(4) + '00' + chr(2) + '@' + chr(2) + chr(80 + 15), end='')
+print(chr(0xE354) + "Mosaic demo".ljust(78) + chr(5) + "0" + chr(0xE351), end='')
+print(screen, end='')
