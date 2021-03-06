@@ -15,8 +15,7 @@ localparam
 		COLOR_FOREGROUND   = "@",
 		COLOR_BACKGROUND   = "P",
 
-	CTRL_CHARPAGE          = 'h03, // ^C
-		CHARPAGE_RESET     = "_",
+	//                     = 'h03, // ^C
 
 	CTRL_CURSOR            = 'h04, // ^D
 		CURSOR_RELATIVE    = "#",
@@ -54,11 +53,11 @@ localparam
 	CTRL_CURSOR_LEFT       = 'h10, // ^P
 	CTRL_CURSOR_RIGHT      = 'h11, // ^Q
 	CTRL_REPEAT            = 'h12, // ^R
-	CTRL_CHARPAGE_1        = 'h13, // ^S
-	CTRL_CHARPAGE_2        = 'h14, // ^T
-	CTRL_CHARPAGE_3        = 'h15, // ^U
-	CTRL_CHARPAGE_4        = 'h16, // ^V
-	CTRL_CHARPAGE_5        = 'h17; // ^W
+	CTRL_CHARPAGE_0        = 'h13, // ^S
+	CTRL_CHARPAGE_1        = 'h14, // ^T
+	CTRL_CHARPAGE_2        = 'h15, // ^U
+	CTRL_CHARPAGE_3        = 'h16, // ^V
+	CTRL_CHARPAGE_4        = 'h17; // ^W
 
 	//                     = 'h18, // ^X
 	//                     = 'h19, // ^Y

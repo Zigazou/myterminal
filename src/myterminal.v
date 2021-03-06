@@ -47,7 +47,7 @@ font font (
 	.font_address (font_address),
 	.char_row_bitmap (char_row_bitmap)
 );
-
+/*
 wire out_data_available;
 wire [20:0] out_data;
 utf8_decode utf8_decode (
@@ -58,15 +58,17 @@ utf8_decode utf8_decode (
 	.unicode (out_data),
 	.oe (out_data_available)
 );
-
-wire [20:0] unicode;
+*/
+wire [7:0] unicode;
 wire unicode_available;
-simple_fifo simple_fifo (
+simple_fifo #(
+	.DATA_WIDTH (8)
+) simple_fifo (
 	.clk (clk),
 	.reset (~reset_n),
 
-	.in_data (out_data),
-	.in_data_available (out_data_available),
+	.in_data (in_byte),
+	.in_data_available (in_byte_available),
 
 	.receiver_ready (~cts),
 	.out_data_available (unicode_available),

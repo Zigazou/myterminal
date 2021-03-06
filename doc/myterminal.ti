@@ -31,7 +31,7 @@ myterminal|MyTerminal,
 	nel=^J,
 # Scroll text up/down
 	ind=^J,
-#	ri=^K,
+	ri=^K,
 # Set foreground/background color
 	setaf=^B%p1%'@'%+%c,
 	setab=^B%p1%'P'%+%c,
@@ -43,6 +43,7 @@ myterminal|MyTerminal,
 	cub1=^P,
 	cuf1=^Q,
 # Absolute positionning
+	home=^D00,
 	cup=^D%p1%'0'%+%c%p2%'0'%+%c,
 # Absolute column positionning
 	hpa=^D#%p1%'0'%+%c,
@@ -77,4 +78,4 @@ myterminal|MyTerminal,
 #	smacs=^F%p1%'0'%+%c,
 #	rmacs=^F_,
 # Repeat char
-	rep=%p1%c^R%p2%'0'%+%c,
+#	rep=%p1%c^R%p2%'0'%+%c,

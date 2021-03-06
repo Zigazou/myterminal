@@ -1,6 +1,12 @@
 localparam
 	SPACE_CHARACTER    = 10'h020,
 
+	CHARPAGE_0         = 5'h00,
+	CHARPAGE_1         = 5'h04,
+	CHARPAGE_2         = 5'h0b,
+	CHARPAGE_3         = 5'h12,
+	CHARPAGE_4         = 5'h19,
+
 	DEFAULT_FOREGROUND = 4'd7,
 	DEFAULT_BACKGROUND = 4'd0,
 
@@ -32,7 +38,7 @@ reg [5:0] first_row;
 reg [6:0] text_x;
 reg [5:0] text_y;
 
-reg [20:0] charset_offset;
+reg [9:0] charpage_base;
 
 reg [3:0] foreground;
 reg [3:0] background;
@@ -63,7 +69,7 @@ endtask
 
 task reset_attributes;
 	begin
-		charset_offset <= 'd0;
+		charpage_base <= CHARPAGE_0;
 		foreground <= DEFAULT_FOREGROUND;
 		background <= DEFAULT_BACKGROUND;
 		bold <= FALSE;
@@ -80,7 +86,7 @@ endtask
 // Generate a cell
 // =============================================================================
 function [31:0] generate_cell;
-	input [20:0] ord;
+	input [9:0] ord;
 	input [1:0] size;
 	input [1:0] part;
 	input [1:0] blink;
@@ -93,16 +99,16 @@ function [31:0] generate_cell;
 
 	generate_cell = {
 		background, foreground, pattern, func, underline,
-		invert, blink, part, size, ord[9:0]
+		invert, blink, part, size, ord
 	};
 endfunction
 
 function [31:0] generate_cell_part;
-	input [20:0] ord;
+	input [7:0] ord;
 	input [1:0] part;
 
 	generate_cell_part = generate_cell(
-		.ord (ord + charset_offset),
+		.ord ({ charpage_base, 5'b0 } + { 2'b0, ord }),
 		.size (size),
 		.part (part),
 		.blink (blink),
@@ -116,9 +122,9 @@ function [31:0] generate_cell_part;
 endfunction
 
 function clear_cell;
-	input [20:0] ord;
+	input [7:0] ord;
 	clear_cell = generate_cell(
-		.ord (ord),
+		.ord ({ CHARPAGE_0, 5'b0 } + { 2'b0, ord }),
 		.size (SIZE_NORMAL),
 		.part (PART_TOP_LEFT),
 		.blink (BLINK_NONE),

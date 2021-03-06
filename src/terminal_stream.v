@@ -4,7 +4,7 @@ module terminal_stream (
 	output reg ready_n,
 
 	// Stream input
-	input wire [20:0] unicode,
+	input wire [7:0] unicode,
 	input wire unicode_available,
 
 	// SDRAM output
@@ -37,7 +37,7 @@ endtask
 // =============================================================================
 // Stage management
 // =============================================================================
-reg [4:0] stage;
+reg [3:0] stage;
 localparam
 	STAGE_IDLE               = 'd0,
 	STAGE_CLEAR_WRITE        = 'd1,
@@ -50,15 +50,14 @@ localparam
 	STAGE_CLEAR_SCREEN_NEXT  = 'd8,
 	STAGE_CLEAR              = 'd9,
 	STAGE_COLOR              = 'd10,
-	STAGE_CHARPAGE           = 'd11,
-	STAGE_CURSOR1            = 'd12,
-	STAGE_CURSOR2            = 'd13,
-	STAGE_ATTRIBUTE          = 'd14,
-	STAGE_PARAMETER          = 'd15,
-	STAGE_REPEAT             = 'd16;
+	STAGE_CURSOR1            = 'd11,
+	STAGE_CURSOR2            = 'd12,
+	STAGE_ATTRIBUTE          = 'd13,
+	STAGE_PARAMETER          = 'd14,
+	STAGE_REPEAT             = 'd15;
 
 task goto;
-	input [4:0] next_stage;
+	input [3:0] next_stage;
 	stage <= next_stage;
 endtask
 
@@ -128,7 +127,6 @@ task stage_idle;
 		case (unicode)
 			CTRL_CLEAR: goto(STAGE_CLEAR);
 			CTRL_COLOR: goto(STAGE_COLOR);
-			CTRL_CHARPAGE: goto(STAGE_CHARPAGE);
 			CTRL_CURSOR: goto(STAGE_CURSOR1);
 			CTRL_ATTRIBUTE: goto(STAGE_ATTRIBUTE);
 			CTRL_PARAMETER: goto(STAGE_PARAMETER);
@@ -156,6 +154,28 @@ task stage_idle;
 				ready_n <= FALSE_n;
 				line_feed();
 			end
+
+			CTRL_CHARPAGE_0: begin
+				charpage_base <= CHARPAGE_0;
+				goto(STAGE_IDLE);
+			end
+			CTRL_CHARPAGE_1: begin
+				charpage_base <= CHARPAGE_1;
+				goto(STAGE_IDLE);
+			end
+			CTRL_CHARPAGE_2: begin
+				charpage_base <= CHARPAGE_2;
+				goto(STAGE_IDLE);
+			end
+			CTRL_CHARPAGE_3: begin
+				charpage_base <= CHARPAGE_3;
+				goto(STAGE_IDLE);
+			end
+			CTRL_CHARPAGE_4: begin
+				charpage_base <= CHARPAGE_4;
+				goto(STAGE_IDLE);
+			end
+
 
 			default: begin
 				ready_n <= FALSE_n;
@@ -437,17 +457,6 @@ task stage_parameter;
 		goto(STAGE_PARAMETER);
 endtask
 
-task stage_charpage;
-	if (unicode_available) begin
-		if (unicode[6:0] == CHARPAGE_RESET)
-			charset_offset <= 'd0;
-		else
-			charset_offset <= { 12'b0, unicode[3:0], 5'b0 } - " ";
-
-		goto(STAGE_IDLE);
-	end else
-		goto(STAGE_CHARPAGE);
-endtask
 /*
 			STAGE_REPEAT: stage_repeat();
 */
@@ -482,7 +491,6 @@ always @(posedge clk)
 
 			STAGE_CLEAR: stage_clear();
 			STAGE_COLOR: stage_color();
-			STAGE_CHARPAGE: stage_charpage();
 			STAGE_CURSOR1: stage_cursor1();
 			STAGE_CURSOR2: stage_cursor2();
 			STAGE_ATTRIBUTE: stage_attribute();

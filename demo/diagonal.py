@@ -1,43 +1,27 @@
 #!/usr/bin/env python3
 import random
+import sys
 
-random.choice(['a', 'b', 'c'])
+myt_print = sys.stdout.buffer.write
+
+MYT = 'ISO-8859-15'
+CHARPAGES = [ b'\x13', b'\x14', b'\x15', b'\x16', b'\x17' ]
+LEFT_ROUND = b'\x174\x13'
+RIGHT_ROUND = b'\x171\x13'
 
 diagonals = [
-    0xE211,
-    0xE212,
-    0xE213,
-    0xE214,
-    0xE215,
-    0xE216,
-    0xE217,
-    0xE218,
-    0xE219,
-    0xE21A,
-    0xE21B,
-    0xE21C,
-    0xE21F,
-    0xE221,
-    0xE222,
-    0xE223,
-    0xE224,
-    0xE225,
-    0xE226,
-    0xE227,
-    0xE228,
-    0xE229,
-    0xE22A,
-    0xE22B,
-    0xE22C,
-    0xE22D,
-    0xE22E,
-    0xE22F
+    b'\xD1', b'\xD2', b'\xD3', b'\xD4', b'\xD5', b'\xD6', b'\xD7',
+    b'\xD8', b'\xD9', b'\xDA', b'\xDC', b'\xDF',
+
+    b'\xE1', b'\xE2', b'\xE3', b'\xE4', b'\xE5', b'\xE6', b'\xE7',
+    b'\xE8', b'\xE9', b'\xEA', b'\xEB', b'\xEC', b'\xED', b'\xEE', b'\xEF'
 ]
 
-screen = ""
+screen = CHARPAGES[2]
 for _ in range(80*50 - 1):
-    screen += chr(random.choice(diagonals))
+    screen += random.choice(diagonals)
+screen += CHARPAGES[0]
 
-print(chr(4) + '00' + chr(2) + '@' + chr(2) + chr(80 + 15), end='')
-print(chr(0xE354) + ("Diagonal demo" + chr(0xE287) + " MyTerminal " + chr(0xE363) + chr(0xE370)).ljust(78) + chr(5) + "0" + chr(0xE351), end='')
-print(chr(2) + chr(64 + 15) + chr(2) + chr(80 + 0) + screen, end='')
+myt_print(b'\x0400\x02@\x02_')
+myt_print(LEFT_ROUND + ("Démo: diagonal | MyTerminal").ljust(78).encode(MYT) + RIGHT_ROUND)
+myt_print(b'\x02O\x02P' + screen)
