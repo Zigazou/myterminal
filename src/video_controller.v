@@ -99,6 +99,7 @@ reg [COLOR_DEPTH - 1:0] palette [PALETTE_SIZE - 1:0];
 always @(posedge clk)
 	if (reset) begin
 		// Defaults to DawnBringer’s palette v1.0 converted to 9 bits RGB
+		/*
 		palette[0] <= 9'b000_000_000;
 		palette[1] <= 9'b010_001_001;
 		palette[2] <= 9'b001_001_011;
@@ -115,6 +116,9 @@ always @(posedge clk)
 		palette[13] <= 9'b011_110_110;
 		palette[14] <= 9'b110_110_010;
 		palette[15] <= 9'b110_111_110;
+		*/
+		
+		`include "video_controller/ubuntu_palette.v"
 	end
 
 // =============================================================================

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import random
 import sys
+from time import sleep
 
 def myt_print(string):
     if type(string) is bytes:
@@ -81,3 +82,10 @@ for number in range(256):
     myt_print(str(number).rjust(3) + ":")
     set_foreground(13)
     binary(number, 8)
+
+locate(0, 0)
+sys.stdout.flush()
+for _ in range(30):
+    sleep(1)
+    myt_print(b'\x0b')
+    sys.stdout.flush()

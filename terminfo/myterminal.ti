@@ -1,19 +1,19 @@
 myterminal|MyTerminal,
 # == Boolean/Numeric capabilities ==============================================
-# MyTerminal is 80×51
+# MyTerminal is 80x51
 	cols#80,
 	lines#51,
 # MyTerminal can display any combination of 16 colors
 	colors#16,
 	pairs#256,
 # Automatic right margins wrap
-	am, sam,
+	am,
+	sam,
 # Wide char size
 	widcs#2,
-# Screen erased with background color
-	bce,
-#
-	mir, msgr,
+# Screen not erased with background color
+	mir,
+	msgr,
 # == String capabilities =======================================================
 # Clear screen, home cursor
 	clear=^A!,
@@ -30,8 +30,8 @@ myterminal|MyTerminal,
 # Newline
 	nel=^J,
 # Scroll text up/down
-	ind=^J,
 	ri=^K,
+	ind=^L,
 # Set foreground/background color
 	setaf=^B%p1%'@'%+%c,
 	setab=^B%p1%'P'%+%c,
@@ -55,6 +55,9 @@ myterminal|MyTerminal,
 	civis=^Fc,
 # Reset attributes
 	sgr0=^E*,
+# Bold
+	bold=^EH,
+	dim=^Eh,
 # Blinking
 	blink=^EB,
 	blink=^Eb,
@@ -67,6 +70,8 @@ myterminal|MyTerminal,
 # Character size
 #   normal_size=^E0
 #   double_width=^E1
+    swidm=^E1,
+	rwidm=^E0,
 #   double_height=^E2
 #   double_size=^E3
 # List of superscriptable characters
@@ -75,7 +80,9 @@ myterminal|MyTerminal,
 	ssupm=^FS,
 	rsupm=^Fs,
 # Alternate character set enter/end
-#	smacs=^F%p1%'0'%+%c,
-#	rmacs=^F_,
+	smacs=^U, 
+	rmacs=^S,
+# List of graphical characters
+	acsc=+\315\,\317-\314.\316j\051k\054l\046m\043n\057q\052t\047u\055v\053w\056x\045,
 # Repeat char
 #	rep=%p1%c^R%p2%'0'%+%c,

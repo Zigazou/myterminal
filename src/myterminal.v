@@ -47,18 +47,7 @@ font font (
 	.font_address (font_address),
 	.char_row_bitmap (char_row_bitmap)
 );
-/*
-wire out_data_available;
-wire [20:0] out_data;
-utf8_decode utf8_decode (
-	.clk (clk),
-	.reset (~reset_n),
-	.ie (in_byte_available),
-	.current_byte (in_byte),
-	.unicode (out_data),
-	.oe (out_data_available)
-);
-*/
+
 wire [7:0] unicode;
 wire unicode_available;
 simple_fifo #(

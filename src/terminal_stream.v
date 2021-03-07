@@ -64,21 +64,65 @@ endtask
 // =============================================================================
 // Cursor position
 // =============================================================================
+localparam
+	LIMIT_Y   = 2 ** 6 - 1,
+	FIRST_ROW = 'd0,
+	LAST_ROW  = ROWS - 'd1;
+
 reg [22:0] wr_address_end;
+
+function [22:0] real_row_address;
+	input [5:0] row;
+	real_row_address = { 8'b0, row, 7'b0, 2'b0 };
+endfunction
 
 task prepare_first_row;
 	input [5:0] new_first_row;
 	begin
 		if (new_first_row == ROWS) begin
-			first_row <= 'd0;
-			set(VIDEO_SET_FIRST_ROW, 'd0);
+			first_row <= FIRST_ROW;
+			set(VIDEO_SET_FIRST_ROW, real_row_address(FIRST_ROW));
 		end else begin
 			first_row <= new_first_row;
-			set(VIDEO_SET_FIRST_ROW, { 8'b0, new_first_row, 7'b0, 2'b0 });
+			set(VIDEO_SET_FIRST_ROW, real_row_address(new_first_row));
 		end
 
-		wr_address <= { 8'b0, first_row, 7'b0, 2'b0 };
-		wr_address_end <= { 8'b0, first_row, 7'b0, 2'b0 } + ROW_SIZE - 'd4;
+		wr_address <= real_row_address(first_row);
+		wr_address_end <= real_row_address(first_row) + ROW_SIZE - 'd4;
+	end
+endtask
+
+task scroll_down;
+	begin
+		if (first_row == LAST_ROW) begin
+			first_row <= FIRST_ROW;
+			set(VIDEO_SET_FIRST_ROW, real_row_address(FIRST_ROW));
+		end else begin
+			first_row <= first_row + 'd1;
+			set(VIDEO_SET_FIRST_ROW, real_row_address(first_row));
+		end
+
+		wr_address <= real_row_address(first_row);
+		wr_address_end <= real_row_address(first_row) + ROW_SIZE - 'd4;
+		goto(STAGE_CLEAR_WRITE);
+	end
+endtask
+
+task scroll_up;
+	begin
+		if (first_row == FIRST_ROW) begin
+			first_row <= LAST_ROW;
+			set(VIDEO_SET_FIRST_ROW, real_row_address(LAST_ROW));
+			wr_address <= real_row_address(LAST_ROW);
+			wr_address_end <= real_row_address(LAST_ROW) + ROW_SIZE - 'd4;
+		end else begin
+			first_row <= first_row - 6'd1;
+			set(VIDEO_SET_FIRST_ROW, real_row_address(first_row - 6'd1));
+			wr_address <= real_row_address(first_row - 6'd1);
+			wr_address_end <= real_row_address(first_row - 6'd1) + ROW_SIZE - 'd4;
+		end
+
+		goto(STAGE_CLEAR_WRITE);
 	end
 endtask
 
@@ -125,11 +169,37 @@ endfunction
 task stage_idle;
 	if (unicode_available) begin
 		case (unicode)
+			CTRL_CODE_00: goto(STAGE_IDLE);
 			CTRL_CLEAR: goto(STAGE_CLEAR);
 			CTRL_COLOR: goto(STAGE_COLOR);
+			CTRL_CODE_03: goto(STAGE_IDLE);
 			CTRL_CURSOR: goto(STAGE_CURSOR1);
 			CTRL_ATTRIBUTE: goto(STAGE_ATTRIBUTE);
 			CTRL_PARAMETER: goto(STAGE_PARAMETER);
+			BELL: goto(STAGE_IDLE);
+			CTRL_CODE_08: goto(STAGE_IDLE);
+			TAB: goto(STAGE_IDLE);
+
+			LF: begin
+				ready_n <= FALSE_n;
+				line_feed();
+			end
+
+			CTRL_SCROLL_UP: begin
+				ready_n <= FALSE_n;
+				scroll_up();
+			end
+
+			CTRL_SCROLL_DOWN: begin
+				ready_n <= FALSE_n;
+				scroll_down();
+			end
+
+			CR: begin
+				text_x <= 'd0;
+				goto(STAGE_IDLE);
+			end
+
 			CTRL_CURSOR_UP: begin
 				text_y <= text_y == 'd0 ? text_y : text_y - 'd1;
 				goto(STAGE_IDLE);
@@ -145,14 +215,6 @@ task stage_idle;
 			CTRL_CURSOR_RIGHT: begin
 				text_x <= text_x == COLUMNS - 'd1 ? text_x : text_x + 'd1;
 				goto(STAGE_IDLE);
-			end
-			CR: begin
-				text_x <= 'd0;
-				goto(STAGE_IDLE);
-			end
-			LF: begin
-				ready_n <= FALSE_n;
-				line_feed();
 			end
 
 			CTRL_CHARPAGE_0: begin
@@ -176,6 +238,14 @@ task stage_idle;
 				goto(STAGE_IDLE);
 			end
 
+			CTRL_CODE_18: goto(STAGE_IDLE);
+			CTRL_CODE_19: goto(STAGE_IDLE);
+			CTRL_CODE_1A: goto(STAGE_IDLE);
+			CTRL_CODE_1B: goto(STAGE_IDLE);
+			CTRL_CODE_1C: goto(STAGE_IDLE);
+			CTRL_CODE_1D: goto(STAGE_IDLE);
+			CTRL_CODE_1E: goto(STAGE_IDLE);
+			CTRL_CODE_1F: goto(STAGE_IDLE);
 
 			default: begin
 				ready_n <= FALSE_n;
@@ -430,6 +500,8 @@ task stage_attribute;
 			SET_UNDERLINE_OFF: underline <= FALSE;
 			SET_BLINK_ON: blink <= BLINK_FAST;
 			SET_BLINK_OFF: blink <= BLINK_NONE;
+			SET_HIGHLIGHT_ON: bold <= TRUE;
+			SET_HIGHLIGHT_OFF: bold <= FALSE;
 			SET_REVERSE_ON: invert <= TRUE;
 			SET_REVERSE_OFF: invert <= FALSE;
 			SET_SIZE_NORMAL: size <= SIZE_NORMAL;

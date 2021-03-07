@@ -1,0 +1,2 @@
+ALL:
+	tic myterminal.ti
