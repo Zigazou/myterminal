@@ -11,7 +11,8 @@ myterminal|MyTerminal,
 	sam,
 # Wide char size
 	widcs#2,
-# Screen not erased with background color
+# Screen erased with background color
+	bce,
 	mir,
 	msgr,
 # == String capabilities =======================================================
@@ -35,8 +36,8 @@ myterminal|MyTerminal,
 # Set foreground/background color
 	setaf=^B%p1%'@'%+%c,
 	setab=^B%p1%'P'%+%c,
-	setf=^B%p1%'@'%+%c,
-	setb=^B%p1%'P'%+%c,
+# Reset attributes
+	sgr0=^E*,
 # Cursor movement with no auto-margins (up/down/left/right)
 	cuu1=^N,
 	cud1=^O,
@@ -53,8 +54,6 @@ myterminal|MyTerminal,
 	cnorm=^FC,
 	cvvis=^FV,
 	civis=^Fc,
-# Reset attributes
-	sgr0=^E*,
 # Bold
 	bold=^EH,
 	dim=^Eh,

@@ -15,7 +15,12 @@ localparam
 		COLOR_FOREGROUND   = "@",
 		COLOR_BACKGROUND   = "P",
 
-	CTRL_CODE_03           = 'h03, // ^C
+	CTRL_PATTERN           = 'h03, // ^C
+		FUNCTION_AND       = 'h40,
+		FUNCTION_OR        = 'h41,
+		FUNCTION_XOR       = 'h42,
+		FUNCTION_BORDER    = 'h43,
+		PATTERN_BASE       = 'h04,
 
 	CTRL_CURSOR            = 'h04, // ^D
 		CURSOR_RELATIVE    = "#",

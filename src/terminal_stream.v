@@ -54,7 +54,7 @@ localparam
 	STAGE_CURSOR2            = 'd12,
 	STAGE_ATTRIBUTE          = 'd13,
 	STAGE_PARAMETER          = 'd14,
-	STAGE_REPEAT             = 'd15;
+	STAGE_PATTERN            = 'd15;
 
 task goto;
 	input [3:0] next_stage;
@@ -172,7 +172,7 @@ task stage_idle;
 			CTRL_CODE_00: goto(STAGE_IDLE);
 			CTRL_CLEAR: goto(STAGE_CLEAR);
 			CTRL_COLOR: goto(STAGE_COLOR);
-			CTRL_CODE_03: goto(STAGE_IDLE);
+			CTRL_PATTERN: goto(STAGE_PATTERN);
 			CTRL_CURSOR: goto(STAGE_CURSOR1);
 			CTRL_ATTRIBUTE: goto(STAGE_ATTRIBUTE);
 			CTRL_PARAMETER: goto(STAGE_PARAMETER);
@@ -258,7 +258,7 @@ task stage_idle;
 	end else begin
 		ready_n <= TRUE_n;
 		goto(STAGE_IDLE);
-		set(VIDEO_CURSOR_POSITION, {10'b0, text_y, text_x});
+		set(VIDEO_CURSOR_POSITION, {9'b0, cursor_visible, text_y, text_x});
 	end
 endtask
 
@@ -370,8 +370,11 @@ task clear_next;
 	begin
 		wr_request <= FALSE;
 		if (wr_done) begin
-			if (wr_address >= wr_address_end) begin
+			if (wr_address == wr_address_end) begin
 				goto(STAGE_IDLE);
+			end else if (wr_address == { 8'b0, 6'd51, 7'd80, 2'b00 }) begin
+				wr_address <= 'd0;
+				goto(STAGE_CLEAR_WRITE);
 			end else begin
 				wr_address <= wr_address + 'd4;
 				goto(STAGE_CLEAR_WRITE);
@@ -386,7 +389,8 @@ localparam
 task clear_screen;
 	begin
 		set(VIDEO_SET_FIRST_ROW, 'd0);
-		reset_all();
+		first_row <= FIRST_ROW;
+		reset_position();
 		wr_address <= 'd0;
 		wr_address_end <= PAGE_SIZE - 'd4;
 		wr_burst_length <= CLEAR_SCREEN_BURST;
@@ -447,10 +451,15 @@ task stage_clear;
 				ready_n <= FALSE_n;
 				clear('d0, text_y, COLUMNS, text_y);
 			end
-			//CLEAR_CHARS:
+
 			default: begin
-				ready_n <= TRUE_n;
-				goto(STAGE_IDLE);
+				if (unicode >= CLEAR_CHARS) begin
+					ready_n <= FALSE_n;
+					clear(text_x, text_y, text_x + (unicode - CLEAR_CHARS), text_y);
+				end else begin
+					ready_n <= TRUE_n;
+					goto(STAGE_IDLE);
+				end
 			end
 		endcase
 	end else
@@ -518,9 +527,9 @@ endtask
 task stage_parameter;
 	if (unicode_available) begin
 		case (unicode[6:0])
-			CURSOR_VISIBLE: func <= 'd0;
+			CURSOR_VISIBLE: cursor_visible <= TRUE;
 			CURSOR_EMPHASIZE: func <= 'd0;
-			CURSOR_HIDDEN: func <= 'd0;
+			CURSOR_HIDDEN: cursor_visible <= FALSE;
 			default: func <= func;
 		endcase
 
@@ -529,9 +538,22 @@ task stage_parameter;
 		goto(STAGE_PARAMETER);
 endtask
 
-/*
-			STAGE_REPEAT: stage_repeat();
-*/
+
+task stage_pattern;
+	if (unicode_available) begin
+		if (unicode[6]) begin
+			func <= unicode[1:0];
+			pattern <= unicode[5:2];
+		end else begin
+			func <= func;
+			pattern <= pattern;
+		end
+
+		goto(STAGE_IDLE);
+	end else
+		goto(STAGE_PATTERN);
+endtask
+
 // =============================================================================
 // Automaton
 // =============================================================================
@@ -567,6 +589,6 @@ always @(posedge clk)
 			STAGE_CURSOR2: stage_cursor2();
 			STAGE_ATTRIBUTE: stage_attribute();
 			STAGE_PARAMETER: stage_parameter();
-			//STAGE_REPEAT: stage_repeat();
+			STAGE_PATTERN: stage_pattern();
 		endcase
 endmodule

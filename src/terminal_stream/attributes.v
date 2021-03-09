@@ -29,7 +29,7 @@ localparam
 	LOGICAL_OR         = 2'b01,
 	LOGICAL_XOR        = 2'b10,
 	LOGICAL_NONE       = 2'b11,
-	
+
 	PATTERN_NONE       = 4'b0000
 ;
 
@@ -37,6 +37,7 @@ localparam
 reg [5:0] first_row;
 reg [6:0] text_x;
 reg [5:0] text_y;
+reg cursor_visible;
 
 reg [9:0] charpage_base;
 
@@ -55,6 +56,7 @@ reg [3:0] pattern;
 task reset_all;
     begin
         first_row <= 'd0;
+        cursor_visible <= TRUE;
         reset_position();
         reset_attributes();
     end
@@ -121,18 +123,18 @@ function [31:0] generate_cell_part;
 	);
 endfunction
 
-function clear_cell;
-	input [7:0] ord;
+function [31:0] clear_cell;
+	input [9:0] ord;
 	clear_cell = generate_cell(
-		.ord ({ CHARPAGE_0, 5'b0 } + { 2'b0, ord }),
+		.ord (ord),
 		.size (SIZE_NORMAL),
 		.part (PART_TOP_LEFT),
 		.blink (BLINK_NONE),
 		.invert (FALSE),
 		.underline (FALSE),
-		.func (LOGICAL_OR),
+		.func (LOGICAL_AND),
 		.pattern (PATTERN_NONE),
-		.foreground (foreground),
+		.foreground (foreground | { bold, 3'b000 }),
 		.background (background)
 	);
 endfunction

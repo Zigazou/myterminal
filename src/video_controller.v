@@ -56,17 +56,20 @@ reg [22:0] base_address;
 reg [22:0] first_row;
 reg [5:0] cursor_row;
 reg [6:0] cursor_col;
+reg cursor_visible;
 always @(posedge clk)
 	if (reset) begin
 		base_address <= 'd0;
 		first_row <= 'd0;
 		cursor_row <= 'd1;
 		cursor_col <= 'd1;
+		cursor_visible <= TRUE;
 	end else
 		case (register_index)
 			VIDEO_SET_BASE_ADDRESS: base_address <= register_value;
 			VIDEO_SET_FIRST_ROW: first_row <= register_value;
 			VIDEO_CURSOR_POSITION: begin
+				cursor_visible <= register_value[13];
 				cursor_row <= register_value[12:7];
 				cursor_col <= register_value[6:0];
 			end
@@ -118,7 +121,7 @@ always @(posedge clk)
 		palette[15] <= 9'b110_111_110;
 		*/
 		
-		`include "video_controller/ubuntu_palette.v"
+		`include "video_controller/ansi_palette.v"
 	end
 
 // =============================================================================
@@ -353,6 +356,7 @@ wire blink =
 	charattr[15:14] != 2'b00 ? (charattr[15:14] == frame_count[6:5]) : FALSE;
 
 wire cursor_blink = frame_count[4];
+reg underline;
 
 reg [15:0] bitmap;
 always @(posedge clk)
@@ -360,6 +364,7 @@ always @(posedge clk)
 		step <= STEP_CHARATTR_READ;
 		rd_index <= 'd0;
 		wr_pixel_addr <= 'd0;
+		underline <= 'b0;
 	end	else if (xpos > 'd3 && ~(rd_index == COLUMNS && step == STEP_NEXT)) begin
 		case (step)
 			STEP_CHARATTR_READ: begin
@@ -373,6 +378,9 @@ always @(posedge clk)
 					fg <= blink ? charattr[31:28] : charattr[27:24];
 					bg <= charattr[31:28];
 				end
+
+				// Underline
+				underline <= charattr[17] && char_row == 'd17 && charattr[13] == charattr[11];
 
 				font_address <=
 					{ 5'b0, charattr[9:0] } * 15'd20 +
@@ -393,22 +401,29 @@ always @(posedge clk)
 
 			STEP_DRAW_BITMAP: begin
 				wr_pixel_enable <= TRUE;
-				wr_pixel_data[3:0] <= bitmap[15] ? fg : bg;
-				wr_pixel_data[7:4] <= bitmap[14] ? fg : bg;
-				wr_pixel_data[11:8] <= bitmap[13] ? fg : bg;
-				wr_pixel_data[15:12] <= bitmap[12] ? fg : bg;
-				wr_pixel_data[19:16] <= bitmap[11] ? fg : bg;
-				wr_pixel_data[23:20] <= bitmap[10] ? fg : bg;
-				wr_pixel_data[27:24] <= bitmap[9] ? fg : bg;
-				wr_pixel_data[31:28] <= bitmap[8] ? fg : bg;
-				wr_pixel_data[35:32] <= bitmap[7] ? fg : bg;
-				wr_pixel_data[39:36] <= bitmap[6] ? fg : bg;
-				wr_pixel_data[43:40] <= bitmap[5] ? fg : bg;
-				wr_pixel_data[47:44] <= bitmap[4] ? fg : bg;
-				wr_pixel_data[51:48] <= bitmap[3] ? fg : bg;
-				wr_pixel_data[55:52] <= bitmap[2] ? fg : bg;
-				wr_pixel_data[59:56] <= bitmap[1] ? fg : bg;
-				wr_pixel_data[63:60] <= bitmap[0] ? fg : bg;
+				if (underline) begin
+					wr_pixel_data <= {
+						fg, fg, fg, fg, fg, fg, fg, fg,
+						fg, fg, fg, fg, fg, fg, fg, fg
+					};
+				end else begin
+					wr_pixel_data[3:0] <= bitmap[15] ? fg : bg;
+					wr_pixel_data[7:4] <= bitmap[14] ? fg : bg;
+					wr_pixel_data[11:8] <= bitmap[13] ? fg : bg;
+					wr_pixel_data[15:12] <= bitmap[12] ? fg : bg;
+					wr_pixel_data[19:16] <= bitmap[11] ? fg : bg;
+					wr_pixel_data[23:20] <= bitmap[10] ? fg : bg;
+					wr_pixel_data[27:24] <= bitmap[9] ? fg : bg;
+					wr_pixel_data[31:28] <= bitmap[8] ? fg : bg;
+					wr_pixel_data[35:32] <= bitmap[7] ? fg : bg;
+					wr_pixel_data[39:36] <= bitmap[6] ? fg : bg;
+					wr_pixel_data[43:40] <= bitmap[5] ? fg : bg;
+					wr_pixel_data[47:44] <= bitmap[4] ? fg : bg;
+					wr_pixel_data[51:48] <= bitmap[3] ? fg : bg;
+					wr_pixel_data[55:52] <= bitmap[2] ? fg : bg;
+					wr_pixel_data[59:56] <= bitmap[1] ? fg : bg;
+					wr_pixel_data[63:60] <= bitmap[0] ? fg : bg;
+				end
 			end
 
 			STEP_NEXT: begin
@@ -429,10 +444,10 @@ always @(posedge clk) current_pixel <= palette[current_pixel_index];
 
 always @(posedge clk)
 	if (y_visible && x_visible && ~reset) begin
-		if (cursor_blink && current_col == cursor_col && current_row == cursor_row) begin
-			pixel_red <= 'b111;
-			pixel_green <= 'b111;
-			pixel_blue <= 'b111;
+		if (cursor_visible && cursor_blink && current_col == cursor_col && current_row == cursor_row) begin
+			pixel_red <= ~current_pixel[8:6];
+			pixel_green <= ~current_pixel[5:3];
+			pixel_blue <= ~current_pixel[2:0];
 		end else begin
 			pixel_red <= current_pixel[8:6];
 			pixel_green <= current_pixel[5:3];
