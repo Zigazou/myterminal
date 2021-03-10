@@ -61,8 +61,8 @@ always @(posedge clk)
 	if (reset) begin
 		base_address <= 'd0;
 		first_row <= 'd0;
-		cursor_row <= 'd1;
-		cursor_col <= 'd1;
+		cursor_row <= 'd0;
+		cursor_col <= 'd0;
 		cursor_visible <= TRUE;
 	end else
 		case (register_index)

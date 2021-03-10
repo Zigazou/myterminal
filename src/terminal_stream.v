@@ -168,93 +168,93 @@ endfunction
 // =============================================================================
 task stage_idle;
 	if (unicode_available) begin
-		case (unicode)
-			CTRL_CODE_00: goto(STAGE_IDLE);
-			CTRL_CLEAR: goto(STAGE_CLEAR);
-			CTRL_COLOR: goto(STAGE_COLOR);
-			CTRL_PATTERN: goto(STAGE_PATTERN);
-			CTRL_CURSOR: goto(STAGE_CURSOR1);
-			CTRL_ATTRIBUTE: goto(STAGE_ATTRIBUTE);
-			CTRL_PARAMETER: goto(STAGE_PARAMETER);
-			BELL: goto(STAGE_IDLE);
-			CTRL_CODE_08: goto(STAGE_IDLE);
-			TAB: goto(STAGE_IDLE);
+		if (unicode[7:5] == 3'b0)
+			case (unicode)
+				CTRL_CODE_00: goto(STAGE_IDLE);
+				CTRL_CLEAR: goto(STAGE_CLEAR);
+				CTRL_COLOR: goto(STAGE_COLOR);
+				CTRL_PATTERN: goto(STAGE_PATTERN);
+				CTRL_CURSOR: goto(STAGE_CURSOR1);
+				CTRL_ATTRIBUTE: goto(STAGE_ATTRIBUTE);
+				CTRL_PARAMETER: goto(STAGE_PARAMETER);
+				BELL: goto(STAGE_IDLE);
+				CTRL_CODE_08: goto(STAGE_IDLE);
+				TAB: goto(STAGE_IDLE);
 
-			LF: begin
-				ready_n <= FALSE_n;
-				line_feed();
-			end
+				LF: begin
+					ready_n <= FALSE_n;
+					line_feed();
+				end
 
-			CTRL_SCROLL_UP: begin
-				ready_n <= FALSE_n;
-				scroll_up();
-			end
+				CTRL_SCROLL_UP: begin
+					ready_n <= FALSE_n;
+					scroll_up();
+				end
 
-			CTRL_SCROLL_DOWN: begin
-				ready_n <= FALSE_n;
-				scroll_down();
-			end
+				CTRL_SCROLL_DOWN: begin
+					ready_n <= FALSE_n;
+					scroll_down();
+				end
 
-			CR: begin
-				text_x <= 'd0;
-				goto(STAGE_IDLE);
-			end
+				CR: begin
+					text_x <= 'd0;
+					goto(STAGE_IDLE);
+				end
 
-			CTRL_CURSOR_UP: begin
-				text_y <= text_y == 'd0 ? text_y : text_y - 'd1;
-				goto(STAGE_IDLE);
-			end
-			CTRL_CURSOR_DOWN: begin
-				text_y <= text_y == ROWS - 'd1 ? text_y : text_y + 'd1;
-				goto(STAGE_IDLE);
-			end
-			CTRL_CURSOR_LEFT: begin
-				text_x <= text_x == 'd0 ? text_x : text_x - 'd1;
-				goto(STAGE_IDLE);
-			end
-			CTRL_CURSOR_RIGHT: begin
-				text_x <= text_x == COLUMNS - 'd1 ? text_x : text_x + 'd1;
-				goto(STAGE_IDLE);
-			end
+				CTRL_CURSOR_UP: begin
+					text_y <= text_y == 'd0 ? text_y : text_y - 'd1;
+					goto(STAGE_IDLE);
+				end
+				CTRL_CURSOR_DOWN: begin
+					text_y <= text_y == ROWS - 'd1 ? text_y : text_y + 'd1;
+					goto(STAGE_IDLE);
+				end
+				CTRL_CURSOR_LEFT: begin
+					text_x <= text_x == 'd0 ? text_x : text_x - 'd1;
+					goto(STAGE_IDLE);
+				end
+				CTRL_CURSOR_RIGHT: begin
+					text_x <= text_x == COLUMNS - 'd1 ? text_x : text_x + 'd1;
+					goto(STAGE_IDLE);
+				end
 
-			CTRL_CHARPAGE_0: begin
-				charpage_base <= CHARPAGE_0;
-				goto(STAGE_IDLE);
-			end
-			CTRL_CHARPAGE_1: begin
-				charpage_base <= CHARPAGE_1;
-				goto(STAGE_IDLE);
-			end
-			CTRL_CHARPAGE_2: begin
-				charpage_base <= CHARPAGE_2;
-				goto(STAGE_IDLE);
-			end
-			CTRL_CHARPAGE_3: begin
-				charpage_base <= CHARPAGE_3;
-				goto(STAGE_IDLE);
-			end
-			CTRL_CHARPAGE_4: begin
-				charpage_base <= CHARPAGE_4;
-				goto(STAGE_IDLE);
-			end
+				CTRL_CHARPAGE_0: begin
+					charpage_base <= CHARPAGE_0;
+					goto(STAGE_IDLE);
+				end
+				CTRL_CHARPAGE_1: begin
+					charpage_base <= CHARPAGE_1;
+					goto(STAGE_IDLE);
+				end
+				CTRL_CHARPAGE_2: begin
+					charpage_base <= CHARPAGE_2;
+					goto(STAGE_IDLE);
+				end
+				CTRL_CHARPAGE_3: begin
+					charpage_base <= CHARPAGE_3;
+					goto(STAGE_IDLE);
+				end
+				CTRL_CHARPAGE_4: begin
+					charpage_base <= CHARPAGE_4;
+					goto(STAGE_IDLE);
+				end
 
-			CTRL_CODE_18: goto(STAGE_IDLE);
-			CTRL_CODE_19: goto(STAGE_IDLE);
-			CTRL_CODE_1A: goto(STAGE_IDLE);
-			CTRL_CODE_1B: goto(STAGE_IDLE);
-			CTRL_CODE_1C: goto(STAGE_IDLE);
-			CTRL_CODE_1D: goto(STAGE_IDLE);
-			CTRL_CODE_1E: goto(STAGE_IDLE);
-			CTRL_CODE_1F: goto(STAGE_IDLE);
-
-			default: begin
-				ready_n <= FALSE_n;
-				wr_request <= TRUE;
-				wr_address <= address_from_position(text_x, text_y);
-				wr_data <= generate_cell_part(unicode, PART_TOP_LEFT);
-				goto(STAGE_WRITE_TOP_LEFT);
-			end
-		endcase
+				CTRL_CODE_18: goto(STAGE_IDLE);
+				CTRL_CODE_19: goto(STAGE_IDLE);
+				CTRL_CODE_1A: goto(STAGE_IDLE);
+				CTRL_CODE_1B: goto(STAGE_IDLE);
+				CTRL_CODE_1C: goto(STAGE_IDLE);
+				CTRL_CODE_1D: goto(STAGE_IDLE);
+				CTRL_CODE_1E: goto(STAGE_IDLE);
+				CTRL_CODE_1F: goto(STAGE_IDLE);
+			endcase
+		else begin
+			ready_n <= FALSE_n;
+			wr_request <= TRUE;
+			wr_address <= address_from_position(text_x, text_y);
+			wr_data <= generate_cell_part(unicode, PART_TOP_LEFT);
+			goto(STAGE_WRITE_TOP_LEFT);
+		end
 	end else begin
 		ready_n <= TRUE_n;
 		goto(STAGE_IDLE);
@@ -353,7 +353,7 @@ task clear;
 	begin
 		wr_burst_length <= 'd1;
 		wr_address <= address_from_position(from_x, from_y);
-		wr_address_end <= address_from_position(to_x, to_y) - 'd4;
+		wr_address_end <= address_from_position(to_x, to_y);
 		goto(STAGE_CLEAR_WRITE);
 	end
 endtask
@@ -433,11 +433,11 @@ task stage_clear;
 			end
 			CLEAR_BOL: begin
 				ready_n <= FALSE_n;
-				clear('d0, text_y, text_x + 'd1, text_y);
+				clear('d0, text_y, text_x, text_y);
 			end
 			CLEAR_EOL: begin
 				ready_n <= FALSE_n;
-				clear(text_x, text_y, COLUMNS, text_y);
+				clear(text_x, text_y, COLUMNS - 'd1, text_y);
 			end
 			CLEAR_BOD: begin
 				ready_n <= FALSE_n;
@@ -445,11 +445,11 @@ task stage_clear;
 			end
 			CLEAR_EOD: begin
 				ready_n <= FALSE_n;
-				clear(text_x, text_y, COLUMNS, ROWS);
+				clear(text_x, text_y, COLUMNS - 'd1, ROWS - 'd1);
 			end
 			CLEAR_LINE: begin
 				ready_n <= FALSE_n;
-				clear('d0, text_y, COLUMNS, text_y);
+				clear('d0, text_y, COLUMNS - 'd1, text_y);
 			end
 
 			default: begin
