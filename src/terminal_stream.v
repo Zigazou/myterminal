@@ -507,7 +507,7 @@ task stage_attribute;
 			ATTRIBUTE_RESET: reset_attributes();
 			SET_UNDERLINE_ON: underline <= TRUE;
 			SET_UNDERLINE_OFF: underline <= FALSE;
-			SET_BLINK_ON: blink <= BLINK_FAST;
+			SET_BLINK_ON: blink <= BLINK_NORMAL;
 			SET_BLINK_OFF: blink <= BLINK_NONE;
 			SET_HIGHLIGHT_ON: bold <= TRUE;
 			SET_HIGHLIGHT_OFF: bold <= FALSE;

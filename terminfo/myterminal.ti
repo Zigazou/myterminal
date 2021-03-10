@@ -13,8 +13,8 @@ myterminal|MyTerminal,
 	widcs#2,
 # Screen erased with background color
 	bce,
-	mir,
-	msgr,
+#	mir,
+#	msgr,
 # == String capabilities =======================================================
 # Clear screen, home cursor
 	clear=^A!,
@@ -38,6 +38,13 @@ myterminal|MyTerminal,
 	setab=^B%p1%'P'%+%c,
 # Reset attributes
 	sgr0=^E*,
+	sgr=%?%p1%t^EH^ER%;
+		%?%p2%t^EU%;
+		%?%p3%t^ER%;
+		%?%p4%t^EB%;
+		%?%p5%t^Eh%;
+		%?%p6%t^EH%;
+		%?%p9%t^U%e^S%;,
 # Cursor movement with no auto-margins (up/down/left/right)
 	cuu1=^N,
 	cud1=^O,

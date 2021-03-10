@@ -101,26 +101,6 @@ reg [COLOR_DEPTH - 1:0] palette [PALETTE_SIZE - 1:0];
 
 always @(posedge clk)
 	if (reset) begin
-		// Defaults to DawnBringer’s palette v1.0 converted to 9 bits RGB
-		/*
-		palette[0] <= 9'b000_000_000;
-		palette[1] <= 9'b010_001_001;
-		palette[2] <= 9'b001_001_011;
-		palette[3] <= 9'b010_010_010;
-		palette[4] <= 9'b100_010_001;
-		palette[5] <= 9'b001_011_001;
-		palette[6] <= 9'b110_010_010;
-		palette[7] <= 9'b011_011_011;
-		palette[8] <= 9'b010_011_110;
-		palette[9] <= 9'b110_011_001;
-		palette[10] <= 9'b100_100_101;
-		palette[11] <= 9'b011_101_001;
-		palette[12] <= 9'b110_101_100;
-		palette[13] <= 9'b011_110_110;
-		palette[14] <= 9'b110_110_010;
-		palette[15] <= 9'b110_111_110;
-		*/
-		
 		`include "video_controller/ansi_palette.v"
 	end
 
@@ -352,8 +332,16 @@ pixels pixels (
 	.dob (current_pixel_index)
 );
 
-wire blink =
-	charattr[15:14] != 2'b00 ? (charattr[15:14] == frame_count[6:5]) : FALSE;
+/*wire blink =
+	charattr[15:14] != 2'b00 ? (charattr[15:14] == frame_count[6:5]) : FALSE;*/
+reg blink;
+always @(posedge clk)
+    case (charattr[15:14])
+        2'b00: blink <= FALSE; // off
+        2'b01: blink <= frame_count[5]; // slow
+        2'b10: blink <= frame_count[4]; // norm
+        2'b11: blink <= frame_count[3]; // fast
+    endcase 	
 
 wire cursor_blink = frame_count[4];
 reg underline;

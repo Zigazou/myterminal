@@ -433,7 +433,7 @@ task stage_read;
 		end else
 			rd_available <= FALSE;
 
-		goto_when(STAGE_IDLE, rd_burst_stop + 'd1 + tRP);
+		goto_when(STAGE_IDLE, rd_burst_stop + CAS_LATENCY + tRP);
 	end
 endtask
 
