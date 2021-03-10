@@ -8,9 +8,9 @@ set_pin_assignment	{ cts }	{ LOCATION = B10; IOSTANDARD = LVCMOS33; }
 set_pin_assignment	{ vga_blue[0] }	{ LOCATION = N5; IOSTANDARD = LVCMOS33; }
 set_pin_assignment	{ vga_blue[1] }	{ LOCATION = P5; IOSTANDARD = LVCMOS33; }
 set_pin_assignment	{ vga_blue[2] }	{ LOCATION = T7; IOSTANDARD = LVCMOS33; }
-set_pin_assignment	{ vga_green[0] }	{ LOCATION = P11; IOSTANDARD = LVCMOS33; }
-set_pin_assignment	{ vga_green[1] }	{ LOCATION = M10; IOSTANDARD = LVCMOS33; }
-set_pin_assignment	{ vga_green[2] }	{ LOCATION = R7; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ vga_green[0] }	{ LOCATION = R7; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ vga_green[1] }	{ LOCATION = P11; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ vga_green[2] }	{ LOCATION = M10; IOSTANDARD = LVCMOS33; }
 set_pin_assignment	{ vga_hsync }	{ LOCATION = N11; IOSTANDARD = LVCMOS33; }
 set_pin_assignment	{ vga_red[0] }	{ LOCATION = A4; IOSTANDARD = LVCMOS33; }
 set_pin_assignment	{ vga_red[1] }	{ LOCATION = A3; IOSTANDARD = LVCMOS33; }
