@@ -1,0 +1,52 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>List colors on MyTerminal</title>
+    </head>
+    <body>
+        <h1>MyTerminal demo</h1>
+        <p>
+            At the time of writing, this JavaScript demo cannot work on the
+            Firefox web browser (even nightly versions). See
+            <a href="https://github.com/mozilla/standards-positions/issues/336">
+                Request for position on Serial API
+            </a>
+        </p>
+        <button id="connectButton">List colors on MyTerminal</button>
+
+        <script src="myterminal.js"></script>
+        <script>
+            document.getElementById('connectButton').addEventListener('click', () => {
+                const titlebar = new MyCode()
+                    .resetAttributes()
+                    .cursor(false)
+                    .background(2)
+                    .foreground(15)
+                    .clearScreen()
+                    .background(4)
+                    .clearEndOfLine()
+                    .print("List of colors\n")
+                    .background(2)
+                    .characterPage(3)
+                    .print("P".repeat(80))
+                    .characterPage(0)
+
+                const myTerminal = new MyTerminal()
+                myTerminal.connect().then(() => {
+                    myTerminal.write(titlebar)
+
+                    for (let i = 0; i < 16; i++) {
+                        let code = new MyCode()
+                            .resetAttributes()
+                            .size(3)
+                            .locate(i > 9 ? 29 : 30, 2 + i * 3)
+                            .background(i)
+                            .foreground(i > 6 && i != 12 ? 0 : 15)
+                            .print(" Color " + i + " ")
+                        myTerminal.write(code)
+                    }
+                })
+            })
+        </script>
+    </body>
+</html>
