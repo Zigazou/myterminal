@@ -57,6 +57,8 @@ task reset_all;
     begin
         first_row <= 'd0;
         cursor_visible <= TRUE;
+		foreground <= DEFAULT_FOREGROUND;
+		background <= DEFAULT_BACKGROUND;
         reset_position();
         reset_attributes();
     end
@@ -72,8 +74,6 @@ endtask
 task reset_attributes;
 	begin
 		charpage_base <= CHARPAGE_0;
-		foreground <= DEFAULT_FOREGROUND;
-		background <= DEFAULT_BACKGROUND;
 		bold <= FALSE;
 		blink <= BLINK_NONE;
 		size <= SIZE_NORMAL;

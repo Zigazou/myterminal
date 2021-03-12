@@ -1,0 +1,68 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>List colors on MyTerminal</title>
+    </head>
+    <body>
+        <h1>MyTerminal demo</h1>
+        <p>
+            At the time of writing, this JavaScript demo cannot work on the
+            Firefox web browser (even nightly versions). See
+            <a href="https://github.com/mozilla/standards-positions/issues/336">
+                Request for position on Serial API
+            </a>
+        </p>
+
+        <button id="connect">Connect to MyTerminal</button>
+        <button id="colors" class="need-connection" disabled>
+            List colors
+        </button>
+        <button id="frames" class="need-connection" disabled>
+            Frames and patterns
+        </button>
+        <button id="gauges" class="need-connection" disabled>
+            Gauges and progress bars
+        </button>
+        <button id="age-pyramid" class="need-connection" disabled>
+            Age pyramid
+        </button>
+
+        <script src="myterminal.js"></script>
+        <script src="demo-colors.js"></script>
+        <script src="demo-frames.js"></script>
+        <script src="demo-gauges.js"></script>
+        <script src="demo-age-pyramid.js"></script>
+        <script>
+            document.getElementById('connect').addEventListener('click', () => {
+                const myTerminal = new MyTerminal()
+                myTerminal.connect().then(() => {
+                    document.querySelectorAll(".need-connection").forEach(
+                        elt => { elt.disabled = false; }
+                    )
+
+                    document.getElementById('colors').addEventListener(
+                        'click',
+                        () => demoColors(myTerminal)
+                    )
+
+                    document.getElementById('frames').addEventListener(
+                        'click',
+                        () => demoFrames(myTerminal)
+                    )
+
+                    document.getElementById('gauges').addEventListener(
+                        'click',
+                        () => demoGauges(myTerminal)
+                    )
+
+                    document.getElementById('age-pyramid').addEventListener(
+                        'click',
+                        () => demoAgePyramid(myTerminal)
+                    )
+                }).catch((error) => {
+                    alert("Unable to connect to serial port: " + error)
+                })
+            })
+        </script>
+    </body>
+</html>

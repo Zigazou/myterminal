@@ -36,9 +36,11 @@ myterminal|MyTerminal,
 # Set foreground/background color
 	setaf=^B%p1%'@'%+%c,
 	setab=^B%p1%'P'%+%c,
+# Set default foreground and background colors
+	op=^BG^BP,
 # Reset attributes
 	sgr0=^E*,
-	sgr=%?%p1%t^EH^ER%;
+	sgr=^E*%?%p1%t^EH^ER%;
 		%?%p2%t^EU%;
 		%?%p3%t^ER%;
 		%?%p4%t^EB%;
@@ -63,12 +65,12 @@ myterminal|MyTerminal,
 	civis=^Fc,
 # Bold
 	bold=^EH,
-	dim=^Eh,
 # Blinking
 	blink=^EB,
-	blink=^Eb,
 # Reverse video mode
 	rev=^ER,
+	smso=^ER
+	rmso=^Er
 #   rrev=^Er,
 # Underline mode enter/end
 	smul=^EU,

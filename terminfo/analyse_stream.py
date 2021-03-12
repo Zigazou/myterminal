@@ -135,7 +135,7 @@ while offset < len(stream):
         description = "CONTROL CODE {:02x}".format(byte)
     else:
         next_offset = offset + 1
-        while stream[next_offset] >= 0x20 and next_offset < len(stream):
+        while next_offset < len(stream) and stream[next_offset] >= 0x20:
             next_offset += 1
 
         length = next_offset - offset
