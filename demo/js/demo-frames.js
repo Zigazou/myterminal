@@ -14,7 +14,6 @@ function demoFrames(myTerminal) {
         .characterPage(0)
     )
 
-
     const interestingForLight = [ 0, 1, 2, 3, 5, 6, 7, 8, 10, 11, 12 ]
     const interestingForStrong = [ 0, 1, 2, 3, 5, 6, 7, 8, 10, 11, 12, 13 ]
     const interestingForDouble = [ 0, 1, 2, 3, 7, 8 ]
