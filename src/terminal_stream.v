@@ -97,13 +97,15 @@ task scroll_down;
 		if (first_row == LAST_ROW) begin
 			first_row <= FIRST_ROW;
 			set(VIDEO_SET_FIRST_ROW, real_row_address(FIRST_ROW));
+			wr_address <= real_row_address(FIRST_ROW);
+			wr_address_end <= real_row_address(FIRST_ROW) + ROW_SIZE - 'd4;
 		end else begin
 			first_row <= first_row + 'd1;
-			set(VIDEO_SET_FIRST_ROW, real_row_address(first_row));
+			set(VIDEO_SET_FIRST_ROW, real_row_address(first_row + 'd1));
+			wr_address <= real_row_address(first_row);
+			wr_address_end <= real_row_address(first_row) + ROW_SIZE - 'd4;
 		end
 
-		wr_address <= real_row_address(first_row);
-		wr_address_end <= real_row_address(first_row) + ROW_SIZE - 'd4;
 		goto(STAGE_CLEAR_WRITE);
 	end
 endtask

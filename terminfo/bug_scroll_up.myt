@@ -18,7 +18,7 @@ locate 37 50
 print "ROW 50"
 locate 37 25
 print "AAA"
-scroll up
+scroll down
 print "BBB"
-scroll up
+scroll down
 print "CCC"
