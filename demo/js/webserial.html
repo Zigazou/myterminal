@@ -28,6 +28,12 @@
                 background-color: brown;
                 color: white;
             }
+
+            textarea {
+                padding: 0.5em;
+                background-color: whitesmoke;
+                border-radius: 0.5em;
+            }
         </style>
     </head>
     <body>
@@ -69,12 +75,37 @@
             Send file to MyTerminal
         </button>
 
+        <h2>Execute a MyTerminal script</h2>
+        <textarea cols="80" rows="40" id="script-source"># Hello, World!
+reset
+foreground lightyellow
+background black
+cursor visible
+clearscreen
+size double
+locate 30 24
+print "MyTerminal"
+locate 20 26
+size normal
+foreground blue
+charpage 3
+print "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
+charpage 0
+locate 30 27
+foreground white
+print "par Frédéric BISSON"
+</textarea>
+        <button id="run-script" class="need-connection" disabled>
+            Run script
+        </button>
+
         <script src="myterminal.js"></script>
         <script src="demo-colors.js"></script>
         <script src="demo-frames.js"></script>
         <script src="demo-gauges.js"></script>
         <script src="demo-age-pyramid.js"></script>
         <script src="demo-load-rawfile.js"></script>
+        <script src="compile-stream.js"></script>
         <script>
             document.getElementById('connect').addEventListener('click', () => {
                 const myTerminal = new MyTerminal()
@@ -109,6 +140,19 @@
                             myTerminal,
                             document.getElementById("select-file").files
                         )
+                    )
+
+                    document.getElementById('run-script').addEventListener(
+                        'click',
+                        () => {
+                            const compiled = compileStream(
+                                document.getElementById("script-source").value
+                            );
+
+                            const code = new MyCode();
+                            code.print(compiled);
+                            myTerminal.write(code);
+                        }
                     )
                 }).catch((error) => {
                     alert("Unable to connect to serial port: " + error)

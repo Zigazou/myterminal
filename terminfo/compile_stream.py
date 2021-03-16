@@ -47,25 +47,25 @@ def interpret_boolean(string):
     return string.strip().lower() in [ 'on', 'yes', 'true', 'visible' ]
 
 def command_nul():
-    return b'\x00'
+    return bytes([ 0x00 ])
 
 def command_clearscreen():
-    return b'\x01\x21'
+    return bytes([ 0x01, 0x21 ])
 
 def command_clear_bol():
-    return b'\x01\x29'
+    return bytes([ 0x01, 0x29 ])
 
 def command_clear_eol():
-    return b'\x01\x28'
+    return bytes([ 0x01, 0x28 ])
 
 def command_clear_bod():
-    return b'\x01\x2b'
+    return bytes([ 0x01, 0x2b ])
 
 def command_clear_eod():
-    return b'\x01\x2a'
+    return bytes([ 0x01, 0x2a ])
 
 def command_clear_line():
-    return b'\x01\x2d'
+    return bytes([ 0x01, 0x2d ])
 
 def command_clear_chars(count):
     return bytes([ 0x01, 0x30 + interpret_number(count) ])
@@ -84,70 +84,70 @@ def command_locate(x, y):
     ])
 
 def command_reset():
-    return b'\x05\x2a'
+    return bytes([ 0x05, 0x2a ])
 
 def command_underline(state):
     if interpret_boolean(state):
-        return b'\x05\x55'
+        return bytes([ 0x05, 0x55 ])
     else:
-        return b'\x05\x75'
+        return bytes([ 0x05, 0x75 ])
 
 def command_blink(state):
     if interpret_boolean(state):
-        return b'\x05\x42'
+        return bytes([ 0x05, 0x42 ])
     else:
-        return b'\x05\x62'
+        return bytes([ 0x05, 0x62 ])
 
 def command_highlight(state):
     if interpret_boolean(state):
-        return b'\x05\x48'
+        return bytes([ 0x05, 0x48 ])
     else:
-        return b'\x05\x68'
+        return bytes([ 0x05, 0x68 ])
 
 def command_reverse(state):
     if interpret_boolean(state):
-        return b'\x05\x52'
+        return bytes([ 0x05, 0x52 ])
     else:
-        return b'\x05\x72'
+        return bytes([ 0x05, 0x72 ])
 
 def command_size(state):
     state = state.strip().lower()
     if state == 'normal':
-        return b'\x05\x30'
+        return bytes([ 0x05, 0x30 ])
     elif state == 'doublewidth':
-        return b'\x05\x31'
+        return bytes([ 0x05, 0x31 ])
     elif state == 'doublewidth':
-        return b'\x05\x32'
+        return bytes([ 0x05, 0x32 ])
     elif state == 'double':
-        return b'\x05\x33'
+        return bytes([ 0x05, 0x33 ])
     else:
         raise TypeError("Expected normal, doublewidth, doubleheight or double")
 
 def command_cursor(state):
     if interpret_boolean(state):
-        return b'\x06\x43'
+        return bytes([ 0x06, 0x43 ])
     else:
-        return b'\x06\x63'
+        return bytes([ 0x06, 0x63 ])
 
 def command_scroll(direction):
     direction = direction.strip().lower()
     if direction == 'up':
-        return b'\x0b'
+        return bytes([ 0x0b ])
     elif direction == 'down':
-        return b'\x0c'
+        return bytes([ 0x0c ])
     else:
         raise TypeError("Expected up or down")
 
 def command_move(direction):
     direction = direction.strip().lower()
     if direction == 'up':
-        return b'\x0e'
+        return bytes([ 0x0e ])
     elif direction == 'right':
-        return b'\x11'
+        return bytes([ 0x11 ])
     elif direction == 'down':
-        return b'\x0f'
+        return bytes([ 0x0f ])
     elif direction == 'left':
-        return b'\x10'
+        return bytes([ 0x10 ])
     else:
         raise TypeError("Expected up, down, left or right")
 
@@ -190,7 +190,7 @@ program = []
 for line in fileinput.input():
     program.append(line.rstrip())
 
-stream = b""
+stream = bytes()
 for line, command in enumerate(program):
     arguments = shlex.split(command, comments=True)
 
