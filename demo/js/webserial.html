@@ -2,6 +2,33 @@
     <head>
         <meta charset="UTF-8">
         <title>List colors on MyTerminal</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            html {
+                background-color: rgb(194, 239, 253);
+            }
+
+            body {
+                max-width: 40em;
+                margin: 2em auto;
+                border: 0.1em solid gray;
+                padding: 1em;
+                background-color: white;
+                box-shadow: 0.5em 0.5em 0.25em 0 rgba(110, 210, 243,0.75);
+                border-radius: 0.5em;
+            }
+
+            button {
+                padding: 0.5em 1em;
+                border-radius: 0.25em;
+            }
+
+            .todo {
+                font-size: 125%;
+                background-color: brown;
+                color: white;
+            }
+        </style>
     </head>
     <body>
         <h1>MyTerminal demo</h1>
@@ -13,7 +40,15 @@
             </a>
         </p>
 
-        <button id="connect">Connect to MyTerminal</button>
+        <h2>First: connect to MyTerminal</h2>
+        <p>
+            The other buttons won't be enabled unless a connection to MyTerminal
+            has been established.
+        </p>
+        <button id="connect" class="todo">Connect to MyTerminal</button>
+
+        <h2>Graphic effects</h2>
+
         <button id="colors" class="need-connection" disabled>
             List colors
         </button>
@@ -27,11 +62,19 @@
             Age pyramid
         </button>
 
+        <h2>Send a file to MyTerminal</h2>
+
+        <input type="file" id="select-file">
+        <button id="load-file" class="need-connection" disabled>
+            Send file to MyTerminal
+        </button>
+
         <script src="myterminal.js"></script>
         <script src="demo-colors.js"></script>
         <script src="demo-frames.js"></script>
         <script src="demo-gauges.js"></script>
         <script src="demo-age-pyramid.js"></script>
+        <script src="demo-load-rawfile.js"></script>
         <script>
             document.getElementById('connect').addEventListener('click', () => {
                 const myTerminal = new MyTerminal()
@@ -58,6 +101,14 @@
                     document.getElementById('age-pyramid').addEventListener(
                         'click',
                         () => demoAgePyramid(myTerminal)
+                    )
+
+                    document.getElementById('load-file').addEventListener(
+                        'click',
+                        () => loadRawFile(
+                            myTerminal,
+                            document.getElementById("select-file").files
+                        )
                     )
                 }).catch((error) => {
                     alert("Unable to connect to serial port: " + error)

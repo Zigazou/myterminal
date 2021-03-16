@@ -16,6 +16,16 @@ const FUNCTION_BORDER = 3
 const FILLED = true
 const NOT_FILLED = false
 
+class RawCode {
+    constructor(bytes) {
+        this.bytes = bytes;
+    }
+
+    getArrayBuffer() {
+        return this.bytes.buffer;
+    }
+}
+
 class MyCode {
     constructor() {
         this.string = ""
