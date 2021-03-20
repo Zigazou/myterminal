@@ -6,6 +6,7 @@ localparam
 	CHARPAGE_2         = 5'h0b,
 	CHARPAGE_3         = 5'h12,
 	CHARPAGE_4         = 5'h19,
+	CHARPAGE_GFX       = 5'h1f,
 
 	DEFAULT_FOREGROUND = 4'd7,
 	DEFAULT_BACKGROUND = 4'd0,
@@ -39,7 +40,11 @@ reg [6:0] text_x;
 reg [5:0] text_y;
 reg cursor_visible;
 
-reg [9:0] charpage_base;
+reg [13:0] current_pixels;
+reg [1:0] current_pixels_offset;
+
+//reg [9:0] charpage_base;
+reg [4:0] charpage_base;
 
 reg [3:0] foreground;
 reg [3:0] background;
@@ -81,6 +86,8 @@ task reset_attributes;
 		pattern <= PATTERN_NONE;
 		invert <= FALSE;
 		underline <= FALSE;
+		current_pixels <= 20'b0;
+		current_pixels_offset <= 2'b0;
 	end
 endtask
 
@@ -118,6 +125,23 @@ function [31:0] generate_cell_part;
 		.underline (underline),
 		.func (func),
 		.pattern (pattern),
+		.foreground (foreground | { bold, 3'b000 }),
+		.background (background)
+	);
+endfunction
+
+function [31:0] generate_cell_gfx;
+	input [19:0] pixels;
+
+	generate_cell_gfx = generate_cell(
+		.ord (pixels[9:0]),
+		.size (SIZE_NORMAL),
+		.part (PART_TOP_RIGHT),
+		.blink (pixels[11:10]),
+		.invert (pixels[12]),
+		.underline (pixels[13]),
+		.func (pixels[15:14]),
+		.pattern (pixels[19:16]),
 		.foreground (foreground | { bold, 3'b000 }),
 		.background (background)
 	);

@@ -332,64 +332,119 @@ pixels pixels (
 	.dob (current_pixel_index)
 );
 
-/*wire blink =
-	charattr[15:14] != 2'b00 ? (charattr[15:14] == frame_count[6:5]) : FALSE;*/
+reg gfxmode;
 reg blink;
 always @(posedge clk)
-    case (charattr[15:14])
-        2'b00: blink <= FALSE; // off
-        2'b01: blink <= frame_count[5]; // slow
-        2'b10: blink <= frame_count[4]; // norm
-        2'b11: blink <= frame_count[3]; // fast
-    endcase 	
+	if (gfxmode)
+		blink <= FALSE;
+	else
+	    case (charattr[15:14])
+	        2'b00: blink <= FALSE; // off
+	        2'b01: blink <= frame_count[5]; // slow
+	        2'b10: blink <= frame_count[4]; // norm
+	        2'b11: blink <= frame_count[3]; // fast
+	    endcase 	
 
 wire cursor_blink = frame_count[4];
 reg underline;
 
 reg [15:0] bitmap;
+reg [15:0] gfx_row_bitmap;
 always @(posedge clk)
 	if (reset || xpos == HORZ_TOTAL - 1 || ypos < VERT_VISIBLE_START || ypos >= VERT_VISIBLE_END) begin
 		step <= STEP_CHARATTR_READ;
 		rd_index <= 'd0;
 		wr_pixel_addr <= 'd0;
-		underline <= 'b0;
+		underline <= FALSE;
+		gfxmode <= FALSE;
 	end	else if (xpos > 'd3 && ~(rd_index == COLUMNS && step == STEP_NEXT)) begin
 		case (step)
 			STEP_CHARATTR_READ: begin
 				rd_index <= rd_index + 'd1;
 
-				// Apply blink and invert attribute
-				if (charattr[16]) begin
-					fg <= blink ? charattr[27:24] : charattr[31:28];
-					bg <= charattr[27:24];
-				end else begin
-					fg <= blink ? charattr[31:28] : charattr[27:24];
+				if (charattr[13:10] == 4'b0100) begin
 					bg <= charattr[31:28];
-				end
+					fg <= charattr[27:24];
+					underline <= FALSE;
+					gfxmode <= TRUE;
+					pattern <= generate_pattern(4'b0, 4'b0);
+					func <= 2'b0;
+				end else begin
+					gfxmode <= FALSE;
+					// Apply blink and invert attribute
+					if (charattr[16]) begin
+						fg <= blink ? charattr[27:24] : charattr[31:28];
+						bg <= charattr[27:24];
+					end else begin
+						fg <= blink ? charattr[31:28] : charattr[27:24];
+						bg <= charattr[31:28];
+					end
 
-				// Underline
-				underline <= charattr[17] && char_row == 'd17 && charattr[13] == charattr[11];
+					// Underline
+					underline <= charattr[17] && char_row == 'd17 && charattr[13] == charattr[11];
+					gfxmode <= FALSE;
+
+					pattern <= generate_pattern(charattr[23:20], ypos[3:0]);
+					func <= charattr[19:18];
+				end
 
 				font_address <=
 					{ 5'b0, charattr[9:0] } * 15'd20 +
 					{ 10'b0, vertical_resize(charattr[11], charattr[13], char_row) };
-				
-				pattern <= generate_pattern(charattr[23:20], ypos[3:0]);
-				func <= charattr[19:18];
 
 				horz_size <= charattr[10];
 				horz_part <= charattr[12];
+
+				case (char_row)
+					'd00, 'd01, 'd02, 'd03: gfx_row_bitmap <= {
+						charattr[23], charattr[23], charattr[23], charattr[23],
+						charattr[22], charattr[22], charattr[22], charattr[22],
+						charattr[21], charattr[21], charattr[21], charattr[21],
+						charattr[20], charattr[20], charattr[20], charattr[20]
+					};
+
+					'd04, 'd05, 'd06, 'd07: gfx_row_bitmap <= {
+						charattr[19], charattr[19], charattr[19], charattr[19],
+						charattr[18], charattr[18], charattr[18], charattr[18],
+						charattr[17], charattr[17], charattr[17], charattr[17],
+						charattr[16], charattr[16], charattr[16], charattr[16]
+					};
+
+					'd08, 'd09, 'd10, 'd11: gfx_row_bitmap <= {
+						charattr[15], charattr[15], charattr[15], charattr[15],
+						charattr[14], charattr[14], charattr[14], charattr[14],
+						charattr[9], charattr[9], charattr[9], charattr[9],
+						charattr[8], charattr[8], charattr[8], charattr[8]
+					};
+
+					'd12, 'd13, 'd14, 'd15: gfx_row_bitmap <= {
+						charattr[7], charattr[7], charattr[7], charattr[7],
+						charattr[6], charattr[6], charattr[6], charattr[6],
+						charattr[5], charattr[5], charattr[5], charattr[5],
+						charattr[4], charattr[4], charattr[4], charattr[4]
+					};
+
+					default: gfx_row_bitmap <= {
+						charattr[3], charattr[3], charattr[3], charattr[3],
+						charattr[2], charattr[2], charattr[2], charattr[2],
+						charattr[1], charattr[1], charattr[1], charattr[1],
+						charattr[0], charattr[0], charattr[0], charattr[0]
+					};
+				endcase
 			end
 
 			STEP_HORZ_RESIZE:
-				bitmap <= horizontal_resize(horz_size, horz_part, char_row_bitmap);
+				if (gfxmode)
+					bitmap <= gfx_row_bitmap;
+				else
+					bitmap <= horizontal_resize(horz_size, horz_part, char_row_bitmap);
 
 			STEP_APPLY_PATTERN:
 				bitmap <= apply_pattern(func, bitmap, pattern);
 
 			STEP_DRAW_BITMAP: begin
 				wr_pixel_enable <= TRUE;
-				if (underline) begin
+				if (underline & !gfxmode) begin
 					wr_pixel_data <= {
 						fg, fg, fg, fg, fg, fg, fg, fg,
 						fg, fg, fg, fg, fg, fg, fg, fg

@@ -241,7 +241,12 @@ task stage_idle;
 					goto(STAGE_IDLE);
 				end
 
-				CTRL_CODE_18: goto(STAGE_IDLE);
+				CTRL_CHARPAGE_GFX: begin
+					current_pixels_offset <= 2'd0;
+					charpage_base <= CHARPAGE_GFX;
+					goto(STAGE_IDLE);
+				end
+
 				CTRL_CODE_19: goto(STAGE_IDLE);
 				CTRL_CODE_1A: goto(STAGE_IDLE);
 				CTRL_CODE_1B: goto(STAGE_IDLE);
@@ -251,11 +256,34 @@ task stage_idle;
 				CTRL_CODE_1F: goto(STAGE_IDLE);
 			endcase
 		else begin
-			ready_n <= FALSE_n;
-			wr_request <= TRUE;
-			wr_address <= address_from_position(text_x, text_y);
-			wr_data <= generate_cell_part(unicode, PART_TOP_LEFT);
-			goto(STAGE_WRITE_TOP_LEFT);
+			if (charpage_base == CHARPAGE_GFX) begin
+				if (current_pixels_offset == 2'd0) begin
+					ready_n <= TRUE_n;
+					current_pixels[13:7] <= unicode[6:0];
+					current_pixels_offset <= 2'd1;
+					goto(STAGE_IDLE);
+				end else if (current_pixels_offset == 2'd1) begin
+					ready_n <= TRUE_n;
+					current_pixels[6:0] <= unicode[6:0];
+					current_pixels_offset <= 2'd2;
+					goto(STAGE_IDLE);
+				end else begin
+					ready_n <= FALSE_n;
+					size <= SIZE_NORMAL;
+					wr_request <= TRUE;
+					wr_address <= address_from_position(text_x, text_y);
+					wr_data <= generate_cell_gfx({ current_pixels, unicode[5:0] });
+					current_pixels_offset <= 2'd0;
+					goto(STAGE_WRITE_TOP_LEFT);
+				end
+			end else begin
+				ready_n <= FALSE_n;
+				wr_request <= TRUE;
+				wr_address <= address_from_position(text_x, text_y);
+				wr_data <= generate_cell_part(unicode, PART_TOP_LEFT);
+				current_pixels_offset <= 2'd0;
+				goto(STAGE_WRITE_TOP_LEFT);
+			end
 		end
 	end else begin
 		ready_n <= TRUE_n;
