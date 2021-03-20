@@ -132,11 +132,12 @@ endfunction
 
 function [31:0] generate_cell_gfx;
 	input [19:0] pixels;
+	input disjoint;
 
 	generate_cell_gfx = generate_cell(
 		.ord (pixels[9:0]),
 		.size (SIZE_NORMAL),
-		.part (PART_TOP_RIGHT),
+		.part (disjoint ? PART_BOTTOM_LEFT : PART_TOP_RIGHT),
 		.blink (pixels[11:10]),
 		.invert (pixels[12]),
 		.underline (pixels[13]),

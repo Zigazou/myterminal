@@ -272,7 +272,7 @@ task stage_idle;
 					size <= SIZE_NORMAL;
 					wr_request <= TRUE;
 					wr_address <= address_from_position(text_x, text_y);
-					wr_data <= generate_cell_gfx({ current_pixels, unicode[5:0] });
+					wr_data <= generate_cell_gfx({ current_pixels, unicode[5:0] }, unicode[6]);
 					current_pixels_offset <= 2'd0;
 					goto(STAGE_WRITE_TOP_LEFT);
 				end

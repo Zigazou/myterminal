@@ -283,6 +283,10 @@ class ImageMyTerminal:
                 # Recherche les deux couleurs les plus fréquentes
                 # un caractère ne peut avoir que deux couleurs !
                 arp, avp = _deux_couleurs(pixels)
+                if avp == 0:
+                    swap = arp
+                    arp = avp
+                    avp = swap
 
                 # Réduit à deux le nombre de couleurs dans un bloc de 20 pixels
                 # Cela peut faire apparaître des artefacts mais est inévitable
@@ -313,7 +317,7 @@ class ImageMyTerminal:
 
                 byte2 = int(''.join([
                     "1",
-                    "0",
+                    "1",
                     str(pixels[14]),
                     str(pixels[15]),
                     str(pixels[16]),
