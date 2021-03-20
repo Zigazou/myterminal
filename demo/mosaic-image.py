@@ -47,8 +47,8 @@ def cls():
 
 def myt_label(colonne, ligne, sublabel):
     myt_print([ 0x04, 0x30 + ligne, 0x30 + colonne, 0x13 ])
-    myt_print([ 0x05, 0x33, 0x02, 0x40 + 11, 0x02, 0x50 + 4 ])
-    myt_print("MyTerminal    ")
+    myt_print([ 0x05, 0x33, 0x02, 0x40 + 4, 0x02, 0x50 + 11 ])
+    myt_print("MyTerminal      ")
     myt_print([ 0x04, 0x30 + ligne + 2, 0x30 + colonne ])
     myt_print([ 0x05, 0x30 ])
     myt_print(sublabel)
@@ -342,9 +342,9 @@ class ImageMyTerminal:
             self.sequences.append(sequence)
 
 convert = ImageMyTerminal()
-bear = Image.open("cat-marta-simon-pixabay.png")
+bear = Image.open("panda-clker-free-vector-images-pixabay.png")
 convert.importer(bear)
 cls()
 bear_out = convert.envoyer()[:-3]
 myt_print(bear_out)
-myt_label(80 - 29, 48, "Cat by Marta Simon / Pixabay")
+myt_label(80 - 34, 48, "Panda by Clker-Free-Vector-Images")
