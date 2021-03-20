@@ -362,7 +362,7 @@ always @(posedge clk)
 			STEP_CHARATTR_READ: begin
 				rd_index <= rd_index + 'd1;
 
-				if (charattr[13:10] == 4'b0100) begin
+				if (charattr[13:10] == 4'b0100 || charattr[13:10] == 4'b1000) begin
 					bg <= charattr[31:28];
 					fg <= charattr[27:24];
 					underline <= FALSE;
@@ -395,42 +395,83 @@ always @(posedge clk)
 				horz_size <= charattr[10];
 				horz_part <= charattr[12];
 
-				case (char_row)
-					'd00, 'd01, 'd02, 'd03: gfx_row_bitmap <= {
-						charattr[23], charattr[23], charattr[23], charattr[23],
-						charattr[22], charattr[22], charattr[22], charattr[22],
-						charattr[21], charattr[21], charattr[21], charattr[21],
-						charattr[20], charattr[20], charattr[20], charattr[20]
-					};
+				if (charattr[13])
+					case (char_row)
+						'd01, 'd02: gfx_row_bitmap <= {
+							1'b0, charattr[23], charattr[23], 1'b0,
+							1'b0, charattr[22], charattr[22], 1'b0,
+							1'b0, charattr[21], charattr[21], 1'b0,
+							1'b0, charattr[20], charattr[20], 1'b0
+						};
 
-					'd04, 'd05, 'd06, 'd07: gfx_row_bitmap <= {
-						charattr[19], charattr[19], charattr[19], charattr[19],
-						charattr[18], charattr[18], charattr[18], charattr[18],
-						charattr[17], charattr[17], charattr[17], charattr[17],
-						charattr[16], charattr[16], charattr[16], charattr[16]
-					};
+						'd05, 'd06: gfx_row_bitmap <= {
+							1'b0, charattr[19], charattr[19], 1'b0,
+							1'b0, charattr[18], charattr[18], 1'b0,
+							1'b0, charattr[17], charattr[17], 1'b0,
+							1'b0, charattr[16], charattr[16], 1'b0
+						};
 
-					'd08, 'd09, 'd10, 'd11: gfx_row_bitmap <= {
-						charattr[15], charattr[15], charattr[15], charattr[15],
-						charattr[14], charattr[14], charattr[14], charattr[14],
-						charattr[9], charattr[9], charattr[9], charattr[9],
-						charattr[8], charattr[8], charattr[8], charattr[8]
-					};
+						'd09, 'd10: gfx_row_bitmap <= {
+							1'b0, charattr[15], charattr[15], 1'b0,
+							1'b0, charattr[14], charattr[14], 1'b0,
+							1'b0, charattr[9], charattr[9], 1'b0,
+							1'b0, charattr[8], charattr[8], 1'b0
+						};
 
-					'd12, 'd13, 'd14, 'd15: gfx_row_bitmap <= {
-						charattr[7], charattr[7], charattr[7], charattr[7],
-						charattr[6], charattr[6], charattr[6], charattr[6],
-						charattr[5], charattr[5], charattr[5], charattr[5],
-						charattr[4], charattr[4], charattr[4], charattr[4]
-					};
+						'd13, 'd14: gfx_row_bitmap <= {
+							1'b0, charattr[7], charattr[7], 1'b0,
+							1'b0, charattr[6], charattr[6], 1'b0,
+							1'b0, charattr[5], charattr[5], 1'b0,
+							1'b0, charattr[4], charattr[4], 1'b0
+						};
 
-					default: gfx_row_bitmap <= {
-						charattr[3], charattr[3], charattr[3], charattr[3],
-						charattr[2], charattr[2], charattr[2], charattr[2],
-						charattr[1], charattr[1], charattr[1], charattr[1],
-						charattr[0], charattr[0], charattr[0], charattr[0]
-					};
-				endcase
+						'd00, 'd04, 'd08, 'd12, 'd16, 'd03, 'd07, 'd11, 'd15, 'd19:
+							gfx_row_bitmap <= 16'b0;
+
+						default: gfx_row_bitmap <= {
+							1'b0, charattr[3], charattr[3], 1'b0,
+							1'b0, charattr[2], charattr[2], 1'b0,
+							1'b0, charattr[1], charattr[1], 1'b0,
+							1'b0, charattr[0], charattr[0], 1'b0
+						};
+					endcase
+				else
+					case (char_row)
+						'd00, 'd01, 'd02, 'd03: gfx_row_bitmap <= {
+							charattr[23], charattr[23], charattr[23], charattr[23],
+							charattr[22], charattr[22], charattr[22], charattr[22],
+							charattr[21], charattr[21], charattr[21], charattr[21],
+							charattr[20], charattr[20], charattr[20], charattr[20]
+						};
+
+						'd04, 'd05, 'd06, 'd07: gfx_row_bitmap <= {
+							charattr[19], charattr[19], charattr[19], charattr[19],
+							charattr[18], charattr[18], charattr[18], charattr[18],
+							charattr[17], charattr[17], charattr[17], charattr[17],
+							charattr[16], charattr[16], charattr[16], charattr[16]
+						};
+
+						'd08, 'd09, 'd10, 'd11: gfx_row_bitmap <= {
+							charattr[15], charattr[15], charattr[15], charattr[15],
+							charattr[14], charattr[14], charattr[14], charattr[14],
+							charattr[9], charattr[9], charattr[9], charattr[9],
+							charattr[8], charattr[8], charattr[8], charattr[8]
+						};
+
+						'd12, 'd13, 'd14, 'd15: gfx_row_bitmap <= {
+							charattr[7], charattr[7], charattr[7], charattr[7],
+							charattr[6], charattr[6], charattr[6], charattr[6],
+							charattr[5], charattr[5], charattr[5], charattr[5],
+							charattr[4], charattr[4], charattr[4], charattr[4]
+						};
+
+						default: gfx_row_bitmap <= {
+							charattr[3], charattr[3], charattr[3], charattr[3],
+							charattr[2], charattr[2], charattr[2], charattr[2],
+							charattr[1], charattr[1], charattr[1], charattr[1],
+							charattr[0], charattr[0], charattr[0], charattr[0]
+						};
+					endcase
 			end
 
 			STEP_HORZ_RESIZE:

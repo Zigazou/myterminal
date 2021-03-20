@@ -47,8 +47,8 @@ def cls():
 
 def myt_label(colonne, ligne, sublabel):
     myt_print([ 0x04, 0x30 + ligne, 0x30 + colonne, 0x13 ])
-    myt_print([ 0x05, 0x33, 0x02, 0x40 + 11 ])
-    myt_print("MyTerminal")
+    myt_print([ 0x05, 0x33, 0x02, 0x40 + 11, 0x02, 0x50 + 4 ])
+    myt_print("MyTerminal    ")
     myt_print([ 0x04, 0x30 + ligne + 2, 0x30 + colonne ])
     myt_print([ 0x05, 0x30 ])
     myt_print(sublabel)
@@ -317,7 +317,7 @@ class ImageMyTerminal:
 
                 byte2 = int(''.join([
                     "1",
-                    "1",
+                    "0",
                     str(pixels[14]),
                     str(pixels[15]),
                     str(pixels[16]),
