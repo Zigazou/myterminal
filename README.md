@@ -16,7 +16,7 @@ Characteristics
 - fast serial input (tested at 3 Mbps)
   - CTSRTS control signal when doing “intensive” operations
   - 8 characters FIFO 
-  - UTF-8 support
+  - ISO-8859-15 support
 - low cost (cheap FPGA, 9 resistor DAC…)
 - written in Verilog
 - inspired by Videotex and text mode video card
@@ -28,6 +28,7 @@ Requirements
 - Tang Dynasty 4.6
 - Icarus Verilog
 - Python 3
+- Google Chrome if you wish to use the JavaScript demo files
 
 Notes
 -----
