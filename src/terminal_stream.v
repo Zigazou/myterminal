@@ -547,7 +547,6 @@ task stage_attribute;
 			SET_SIZE_DBLWIDTH: size <= SIZE_DOUBLE_WIDTH;
 			SET_SIZE_DBLHEIGHT: size <= SIZE_DOUBLE_HEIGHT;
 			SET_SIZE_DOUBLE: size <= SIZE_DOUBLE;
-			default: invert <= invert;
 		endcase
 		goto(STAGE_IDLE);
 	end else
@@ -560,7 +559,6 @@ task stage_parameter;
 			CURSOR_VISIBLE: cursor_visible <= TRUE;
 			CURSOR_EMPHASIZE: func <= 'd0;
 			CURSOR_HIDDEN: cursor_visible <= FALSE;
-			default: func <= func;
 		endcase
 
 		goto(STAGE_IDLE);

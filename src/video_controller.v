@@ -314,6 +314,11 @@ reg [15:0] pattern;
 reg [1:0] func;
 reg horz_size;
 reg horz_part;
+reg gfxmode;
+reg blink;
+reg underline;
+
+wire cursor_blink = frame_count[4];
 
 // Memory where pixels will be written
 reg wr_pixel_enable;
@@ -332,8 +337,6 @@ pixels pixels (
 	.dob (current_pixel_index)
 );
 
-reg gfxmode;
-reg blink;
 always @(posedge clk)
 	if (gfxmode)
 		blink <= FALSE;
@@ -345,32 +348,141 @@ always @(posedge clk)
 	        2'b11: blink <= frame_count[3]; // fast
 	    endcase 	
 
-wire cursor_blink = frame_count[4];
-reg underline;
 
 reg [15:0] bitmap;
 reg [15:0] gfx_row_bitmap;
+
 always @(posedge clk)
-	if (reset || xpos == HORZ_TOTAL - 1 || ypos < VERT_VISIBLE_START || ypos >= VERT_VISIBLE_END) begin
+	if (reset) begin
+		gfx_row_bitmap <= 'd0;
+	end	else begin
+		if (step == STEP_CHARATTR_READ) begin
+			if (charattr[13]) begin
+				case (char_row)
+					'd01, 'd02: gfx_row_bitmap <= {
+						1'b0, charattr[23], charattr[23], 1'b0,
+						1'b0, charattr[22], charattr[22], 1'b0,
+						1'b0, charattr[21], charattr[21], 1'b0,
+						1'b0, charattr[20], charattr[20], 1'b0
+					};
+
+					'd05, 'd06: gfx_row_bitmap <= {
+						1'b0, charattr[19], charattr[19], 1'b0,
+						1'b0, charattr[18], charattr[18], 1'b0,
+						1'b0, charattr[17], charattr[17], 1'b0,
+						1'b0, charattr[16], charattr[16], 1'b0
+					};
+
+					'd09, 'd10: gfx_row_bitmap <= {
+						1'b0, charattr[15], charattr[15], 1'b0,
+						1'b0, charattr[14], charattr[14], 1'b0,
+						1'b0, charattr[9], charattr[9], 1'b0,
+						1'b0, charattr[8], charattr[8], 1'b0
+					};
+
+					'd13, 'd14: gfx_row_bitmap <= {
+						1'b0, charattr[7], charattr[7], 1'b0,
+						1'b0, charattr[6], charattr[6], 1'b0,
+						1'b0, charattr[5], charattr[5], 1'b0,
+						1'b0, charattr[4], charattr[4], 1'b0
+					};
+
+					'd00, 'd04, 'd08, 'd12, 'd16, 'd03, 'd07, 'd11, 'd15, 'd19:
+						gfx_row_bitmap <= 16'b0;
+
+					default: gfx_row_bitmap <= {
+						1'b0, charattr[3], charattr[3], 1'b0,
+						1'b0, charattr[2], charattr[2], 1'b0,
+						1'b0, charattr[1], charattr[1], 1'b0,
+						1'b0, charattr[0], charattr[0], 1'b0
+					};
+				endcase
+			end else begin
+				case (char_row)
+					'd00, 'd01, 'd02, 'd03: gfx_row_bitmap <= {
+						charattr[23], charattr[23], charattr[23], charattr[23],
+						charattr[22], charattr[22], charattr[22], charattr[22],
+						charattr[21], charattr[21], charattr[21], charattr[21],
+						charattr[20], charattr[20], charattr[20], charattr[20]
+					};
+
+					'd04, 'd05, 'd06, 'd07: gfx_row_bitmap <= {
+						charattr[19], charattr[19], charattr[19], charattr[19],
+						charattr[18], charattr[18], charattr[18], charattr[18],
+						charattr[17], charattr[17], charattr[17], charattr[17],
+						charattr[16], charattr[16], charattr[16], charattr[16]
+					};
+
+					'd08, 'd09, 'd10, 'd11: gfx_row_bitmap <= {
+						charattr[15], charattr[15], charattr[15], charattr[15],
+						charattr[14], charattr[14], charattr[14], charattr[14],
+						charattr[9], charattr[9], charattr[9], charattr[9],
+						charattr[8], charattr[8], charattr[8], charattr[8]
+					};
+
+					'd12, 'd13, 'd14, 'd15: gfx_row_bitmap <= {
+						charattr[7], charattr[7], charattr[7], charattr[7],
+						charattr[6], charattr[6], charattr[6], charattr[6],
+						charattr[5], charattr[5], charattr[5], charattr[5],
+						charattr[4], charattr[4], charattr[4], charattr[4]
+					};
+
+					default: gfx_row_bitmap <= {
+						charattr[3], charattr[3], charattr[3], charattr[3],
+						charattr[2], charattr[2], charattr[2], charattr[2],
+						charattr[1], charattr[1], charattr[1], charattr[1],
+						charattr[0], charattr[0], charattr[0], charattr[0]
+					};
+				endcase
+			end
+		end else begin
+			gfx_row_bitmap <= gfx_row_bitmap;
+		end
+	end
+
+wire pixel_generate = xpos > 'd3 && ~(rd_index == COLUMNS && step == STEP_NEXT);
+wire pixel_reset =
+	reset ||
+	xpos == HORZ_TOTAL - 1 ||
+	ypos < VERT_VISIBLE_START ||
+	ypos >= VERT_VISIBLE_END;
+
+always @(posedge clk)
+	if (pixel_reset) begin
 		step <= STEP_CHARATTR_READ;
+	end else if (pixel_generate) begin
+		if (step == STEP_NEXT) step <= STEP_CHARATTR_READ;
+		else                   step <= step + 'd1;
+	end else begin
+		step <= step;
+	end
+
+wire enable_gfxmode = charattr[13:10] == 4'b0100 || charattr[13:10] == 4'b1000;
+always @(posedge clk)
+	if (pixel_reset) begin
+		gfxmode <= FALSE;
+	end	else if (pixel_generate && step == STEP_CHARATTR_READ) begin
+		gfxmode <= enable_gfxmode;
+	end else begin
+		gfxmode <= gfxmode;
+	end
+
+always @(posedge clk)
+	if (pixel_reset) begin
 		rd_index <= 'd0;
 		wr_pixel_addr <= 'd0;
-		underline <= FALSE;
-		gfxmode <= FALSE;
-	end	else if (xpos > 'd3 && ~(rd_index == COLUMNS && step == STEP_NEXT)) begin
+	end	else if (pixel_generate) begin
 		case (step)
 			STEP_CHARATTR_READ: begin
 				rd_index <= rd_index + 'd1;
 
-				if (charattr[13:10] == 4'b0100 || charattr[13:10] == 4'b1000) begin
+				if (enable_gfxmode) begin
 					bg <= charattr[31:28];
 					fg <= charattr[27:24];
 					underline <= FALSE;
-					gfxmode <= TRUE;
 					pattern <= generate_pattern(4'b0, 4'b0);
 					func <= 2'b0;
 				end else begin
-					gfxmode <= FALSE;
 					// Apply blink and invert attribute
 					if (charattr[16]) begin
 						fg <= blink ? charattr[27:24] : charattr[31:28];
@@ -381,104 +493,38 @@ always @(posedge clk)
 					end
 
 					// Underline
-					underline <= charattr[17] && char_row == 'd17 && charattr[13] == charattr[11];
-					gfxmode <= FALSE;
+					underline <=
+						charattr[17] &&
+						char_row == 'd17 &&
+						charattr[13] == charattr[11];
 
 					pattern <= generate_pattern(charattr[23:20], ypos[3:0]);
 					func <= charattr[19:18];
 				end
 
 				font_address <=
-					{ 5'b0, charattr[9:0] } * 15'd20 +
-					{ 10'b0, vertical_resize(charattr[11], charattr[13], char_row) };
+					/*{ 5'b0, charattr[9:0] } * 15'd20 // This uses one DSP! */
+					{ 3'b0, charattr[9:0], 2'b0 } +
+					{ 3'b0, charattr[9:0], 2'b0 } +
+					{ 3'b0, charattr[9:0], 2'b0 } +
+					{ 3'b0, charattr[9:0], 2'b0 } +
+					{ 3'b0, charattr[9:0], 2'b0 } +
+					{
+						10'b0,
+						vertical_resize(charattr[11], charattr[13], char_row)
+					};
 
 				horz_size <= charattr[10];
 				horz_part <= charattr[12];
-
-				if (charattr[13])
-					case (char_row)
-						'd01, 'd02: gfx_row_bitmap <= {
-							1'b0, charattr[23], charattr[23], 1'b0,
-							1'b0, charattr[22], charattr[22], 1'b0,
-							1'b0, charattr[21], charattr[21], 1'b0,
-							1'b0, charattr[20], charattr[20], 1'b0
-						};
-
-						'd05, 'd06: gfx_row_bitmap <= {
-							1'b0, charattr[19], charattr[19], 1'b0,
-							1'b0, charattr[18], charattr[18], 1'b0,
-							1'b0, charattr[17], charattr[17], 1'b0,
-							1'b0, charattr[16], charattr[16], 1'b0
-						};
-
-						'd09, 'd10: gfx_row_bitmap <= {
-							1'b0, charattr[15], charattr[15], 1'b0,
-							1'b0, charattr[14], charattr[14], 1'b0,
-							1'b0, charattr[9], charattr[9], 1'b0,
-							1'b0, charattr[8], charattr[8], 1'b0
-						};
-
-						'd13, 'd14: gfx_row_bitmap <= {
-							1'b0, charattr[7], charattr[7], 1'b0,
-							1'b0, charattr[6], charattr[6], 1'b0,
-							1'b0, charattr[5], charattr[5], 1'b0,
-							1'b0, charattr[4], charattr[4], 1'b0
-						};
-
-						'd00, 'd04, 'd08, 'd12, 'd16, 'd03, 'd07, 'd11, 'd15, 'd19:
-							gfx_row_bitmap <= 16'b0;
-
-						default: gfx_row_bitmap <= {
-							1'b0, charattr[3], charattr[3], 1'b0,
-							1'b0, charattr[2], charattr[2], 1'b0,
-							1'b0, charattr[1], charattr[1], 1'b0,
-							1'b0, charattr[0], charattr[0], 1'b0
-						};
-					endcase
-				else
-					case (char_row)
-						'd00, 'd01, 'd02, 'd03: gfx_row_bitmap <= {
-							charattr[23], charattr[23], charattr[23], charattr[23],
-							charattr[22], charattr[22], charattr[22], charattr[22],
-							charattr[21], charattr[21], charattr[21], charattr[21],
-							charattr[20], charattr[20], charattr[20], charattr[20]
-						};
-
-						'd04, 'd05, 'd06, 'd07: gfx_row_bitmap <= {
-							charattr[19], charattr[19], charattr[19], charattr[19],
-							charattr[18], charattr[18], charattr[18], charattr[18],
-							charattr[17], charattr[17], charattr[17], charattr[17],
-							charattr[16], charattr[16], charattr[16], charattr[16]
-						};
-
-						'd08, 'd09, 'd10, 'd11: gfx_row_bitmap <= {
-							charattr[15], charattr[15], charattr[15], charattr[15],
-							charattr[14], charattr[14], charattr[14], charattr[14],
-							charattr[9], charattr[9], charattr[9], charattr[9],
-							charattr[8], charattr[8], charattr[8], charattr[8]
-						};
-
-						'd12, 'd13, 'd14, 'd15: gfx_row_bitmap <= {
-							charattr[7], charattr[7], charattr[7], charattr[7],
-							charattr[6], charattr[6], charattr[6], charattr[6],
-							charattr[5], charattr[5], charattr[5], charattr[5],
-							charattr[4], charattr[4], charattr[4], charattr[4]
-						};
-
-						default: gfx_row_bitmap <= {
-							charattr[3], charattr[3], charattr[3], charattr[3],
-							charattr[2], charattr[2], charattr[2], charattr[2],
-							charattr[1], charattr[1], charattr[1], charattr[1],
-							charattr[0], charattr[0], charattr[0], charattr[0]
-						};
-					endcase
 			end
 
 			STEP_HORZ_RESIZE:
 				if (gfxmode)
 					bitmap <= gfx_row_bitmap;
 				else
-					bitmap <= horizontal_resize(horz_size, horz_part, char_row_bitmap);
+					bitmap <= horizontal_resize(
+						horz_size, horz_part, char_row_bitmap
+					);
 
 			STEP_APPLY_PATTERN:
 				bitmap <= apply_pattern(func, bitmap, pattern);
@@ -515,9 +561,6 @@ always @(posedge clk)
 				wr_pixel_addr <= wr_pixel_addr + 'd1;
 			end
 		endcase
-
-		if (step == STEP_NEXT) step <= STEP_CHARATTR_READ;
-		else                   step <= step + 'd1;
 	end
 
 // =============================================================================
@@ -526,9 +569,17 @@ always @(posedge clk)
 reg [8:0] current_pixel;
 always @(posedge clk) current_pixel <= palette[current_pixel_index];
 
+wire show_cursor =
+	cursor_visible &&
+	cursor_blink &&
+	current_col == cursor_col
+	&& current_row == cursor_row;
+
+wire emit_pixel = y_visible && x_visible && ~reset;
+
 always @(posedge clk)
-	if (y_visible && x_visible && ~reset) begin
-		if (cursor_visible && cursor_blink && current_col == cursor_col && current_row == cursor_row) begin
+	if (emit_pixel) begin
+		if (show_cursor) begin
 			pixel_red <= ~current_pixel[8:6];
 			pixel_green <= ~current_pixel[5:3];
 			pixel_blue <= ~current_pixel[2:0];
