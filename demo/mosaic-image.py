@@ -342,9 +342,9 @@ class ImageMyTerminal:
             self.sequences.append(sequence)
 
 convert = ImageMyTerminal()
-bear = Image.open("panda-clker-free-vector-images-pixabay.png")
+bear = Image.open("myterminal.png")
 convert.importer(bear)
 cls()
 bear_out = convert.envoyer()[:-3]
 myt_print(bear_out)
-myt_label(80 - 34, 48, "Panda by Clker-Free-Vector-Images")
+#myt_label(80 - 34, 48, "Panda by Clker-Free-Vector-Images")

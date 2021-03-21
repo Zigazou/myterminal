@@ -1,9 +1,0 @@
-[?1049h[1;14r(B[m[4l[?7h[?1h=[39;49m[39;49m[37m[40m[H[2JHello, World!
-Hello, World!
-Hello, World!
-Hello, World!
-Hello, World!
-Hello, World!
-Hello, World!
-Hello, World!
-Hello, World![?1l>[39;49m[14d[K[14;1H[?1049l[?1l>
