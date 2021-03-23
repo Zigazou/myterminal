@@ -21,6 +21,29 @@ Characteristics
 - written in Verilog
 - inspired by Videotex and text mode video card
 
+Semi-graphic?
+-------------
+
+Semi-graphic is a trick used by old video chipset to mimick graphic chipset
+while using only characters, thus requiring as little memory as possible.
+
+Thomson EF9345, used notably in the Minitel, is such a video chipset.
+
+Its physical resolution is 320×250 with a character matrix of 8×10, giving a
+40×25 array of characters. It has 64 special characters which represents every
+combination of a 2×3 array of pixels (2^6). These semi-graphic characters allows
+to display 80×75 “pixels” with color constraints (the 2×3 pixels, as a
+character, only have 2 colors available).
+
+MyTerminal has the same set of 64 characters, thus giving a 160×153 “pixels”
+graphic mode.
+
+As each MyTerminal text cell is stored in 32 bits, it offers a “high resolution”
+graphic mode of 320×255 “pixels”. Each text cell holds 20 “pixels” (4×5). These
+20 “pixels” are stored in place of attributes in the text cell. Only colors
+can be set while using this technique. And, again, 2 colors can be set for each
+4×5 “pixels” array.
+
 Requirements
 ------------
 
