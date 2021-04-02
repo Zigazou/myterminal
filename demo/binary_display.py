@@ -83,9 +83,5 @@ for number in range(256):
     set_foreground(13)
     binary(number, 8)
 
-locate(0, 0)
+locate(0, 40)
 sys.stdout.flush()
-for _ in range(30):
-    sleep(1)
-    myt_print(b'\x0b')
-    sys.stdout.flush()
