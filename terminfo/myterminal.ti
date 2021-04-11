@@ -69,19 +69,15 @@ myterminal|MyTerminal,
 	blink=^EB,
 # Reverse video mode
 	rev=^ER,
-	smso=^ER
-	rmso=^Er
+	smso=^ER,
+	rmso=^Er,
 #   rrev=^Er,
 # Underline mode enter/end
 	smul=^EU,
 	rmul=^Eu,
 # Character size
-#   normal_size=^E0
-#   double_width=^E1
     swidm=^E1,
 	rwidm=^E0,
-#   double_height=^E2
-#   double_size=^E3
 # List of superscriptable characters
 	supcs=aabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz,
 # Superscript mode enter/end
@@ -94,3 +90,72 @@ myterminal|MyTerminal,
 	acsc=+\315\,\317-\314.\316j\051k\054l\046m\043n\057q\052t\047u\055v\053w\056x\045,
 # Repeat char
 #	rep=%p1%c^R%p2%'0'%+%c,
+# Backspace
+	kbs=\376,
+# Cursor keys
+	kcuu1=^_@\346,
+	kcub1=^_@\347, kLFT=^_A\351,
+	kcud1=^_@\350,
+	kcuf1=^_@\351, kRIT=^_A\351,
+# Insert, home, page up, delete, end, page down
+	kich1=^_@\340, kIC=^_A\340,
+	khome=^_@\341, kHOM=^_A\341,
+	kpp=^_@\342,
+	kdch1=^_@\343, kDC=^_A\343,
+	kend=^_@\344, kEND=^_A\344,
+	knp=^_@\345,
+# Special keys
+	kopt=^_@\352, kOPT=^_A\352,
+	kprt=^_@\377,
+# The 12 function keys
+	kf1=^_@\361,
+	kf2=^_@\362,
+	kf3=^_@\363,
+	kf4=^_@\364,
+	kf5=^_@\365,
+	kf6=^_@\366,
+	kf7=^_@\367,
+	kf8=^_@\370,
+	kf9=^_@\371,
+	kf10=^_@\372,
+	kf11=^_@\373,
+	kf12=^_@\374,
+# The same 12 function keys shifted
+	kf13=^_A\361,
+	kf14=^_A\362,
+	kf15=^_A\363,
+	kf16=^_A\364,
+	kf17=^_A\365,
+	kf18=^_A\366,
+	kf19=^_A\367,
+	kf20=^_A\370,
+	kf21=^_A\371,
+	kf22=^_A\372,
+	kf23=^_A\373,
+	kf24=^_A\374,
+# The same 12 function keys ctrl'ed
+	kf25=^_B\361,
+	kf26=^_B\362,
+	kf27=^_B\363,
+	kf28=^_B\364,
+	kf29=^_B\365,
+	kf30=^_B\366,
+	kf31=^_B\367,
+	kf32=^_B\370,
+	kf33=^_B\371,
+	kf34=^_B\372,
+	kf35=^_B\373,
+	kf36=^_B\374,
+# The same 12 function keys alt'ed
+	kf37=^_D\361,
+	kf38=^_D\362,
+	kf39=^_D\363,
+	kf40=^_D\364,
+	kf41=^_D\365,
+	kf42=^_D\366,
+	kf43=^_D\367,
+	kf44=^_D\370,
+	kf45=^_D\371,
+	kf46=^_D\372,
+	kf47=^_D\373,
+	kf48=^_D\374,

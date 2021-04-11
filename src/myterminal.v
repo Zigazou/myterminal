@@ -8,6 +8,14 @@ module myterminal (
 	output wire tx,
 	output wire cts,
 
+	// PS/2 port 0,
+	input wire ps2_0_data,
+	input wire ps2_0_clock,
+
+	// PS/2 port 1,
+	input wire ps2_1_data,
+	input wire ps2_1_clock,
+
 	// VGA output
 	output wire [2:0] vga_red,
 	output wire [2:0] vga_green,
@@ -17,8 +25,6 @@ module myterminal (
 );
 
 `include "constant.v"
-
-assign tx = 'b1;
 
 wire clk;
 clock clock (
@@ -32,6 +38,7 @@ wire in_byte_available;
 serial_in #(
 	.CLK_FREQUENCY_HZ (108_000_000),
 	.SERIAL_BPS (3_000_000)
+	//.SERIAL_BPS (9_600)
 ) serial_in (
 	.clk (clk),
 	.reset (~reset_n),
@@ -136,6 +143,94 @@ video_controller video_controller (
 
 	.register_index (register_index),
 	.register_value (register_value)
+);
+
+wire ps2_byte_available;
+wire [7:0] ps2_byte;
+ps2_receiver ps2_0_receiver (
+	.clk (clk),
+	.reset (~reset_n),
+	
+	.ps2_data (ps2_0_data),
+	.ps2_clock (ps2_0_clock),
+
+	.rx_done_tick (ps2_byte_available),
+	.rx_data (ps2_byte)
+);
+
+wire [7:0] scan_code;
+wire scan_code_extended;
+wire keyboard_shift;
+wire keyboard_alt;
+wire keyboard_altgr;
+wire keyboard_ctrl;
+wire keyboard_meta;
+wire keyboard_state_ready;
+ps2_keyboard_state ps2_keyboard_state (
+	.clk (clk),
+	.reset (~reset_n),
+
+	.scan_code_ready (ps2_byte_available),
+	.scan_code_in (ps2_byte),
+
+	.keyboard_state_ready (keyboard_state_ready),
+	.scan_code_out (scan_code),
+	.scan_code_extended (scan_code_extended),
+	.keyboard_shift (keyboard_shift),
+	.keyboard_alt (keyboard_alt),
+	.keyboard_altgr (keyboard_altgr),
+	.keyboard_ctrl (keyboard_ctrl),
+	.keyboard_meta (keyboard_meta)
+);
+
+wire keyboard_ascii_ready;
+wire [7:0] keyboard_ascii;
+ps2_keyboard_ascii ps2_keyboard_ascii (
+	.clk (clk),
+	.reset (~reset_n),
+
+	.keyboard_state_ready (keyboard_state_ready),
+	.scan_code_in (scan_code),
+	.scan_code_extended (scan_code_extended),
+	.keyboard_shift (keyboard_shift),
+	.keyboard_alt (keyboard_alt),
+	.keyboard_altgr (keyboard_altgr),
+	.keyboard_ctrl (keyboard_ctrl),
+	.keyboard_meta (keyboard_meta),
+	
+	.keyboard_ascii_ready (keyboard_ascii_ready),
+	.keyboard_ascii (keyboard_ascii)
+);
+
+wire serial_out_sending;
+wire serial_out_available;
+wire [7:0] serial_out_data;
+simple_fifo #(
+	.DATA_WIDTH (8)
+) fifo_out (
+	.clk (clk),
+	.reset (~reset_n),
+
+	.in_data (keyboard_ascii),
+	.in_data_available (keyboard_ascii_ready),
+
+	.receiver_ready (~serial_out_sending),
+	.out_data_available (serial_out_available),
+	.out_data (serial_out_data)
+);
+
+serial_out #(
+	.CLK_FREQUENCY_HZ (108_000_000),
+	.SERIAL_BPS (3_000_000)
+) serial_out (
+	.clk (clk),
+	.reset (~reset_n),
+
+	.ie (serial_out_available),
+	.data (serial_out_data),
+
+	.tx (tx),
+	.sending (serial_out_sending)
 );
 
 endmodule

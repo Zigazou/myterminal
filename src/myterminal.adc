@@ -1,18 +1,42 @@
 set_pin_assignment	{ refclk }	{ LOCATION = K14; IOSTANDARD = LVCMOS33; }
 set_pin_assignment	{ reset_n }	{ LOCATION = T2; IOSTANDARD = LVCMOS33; }
 
-set_pin_assignment	{ rx }	{ LOCATION = C9; IOSTANDARD = LVCMOS33; }
-set_pin_assignment	{ tx }	{ LOCATION = B6; IOSTANDARD = LVCMOS33; }
-set_pin_assignment	{ cts }	{ LOCATION = B10; IOSTANDARD = LVCMOS33; }
+##set_pin_assignment	{ rx }	{ LOCATION = C9; IOSTANDARD = LVCMOS33; }
+##set_pin_assignment	{ tx }	{ LOCATION = B6; IOSTANDARD = LVCMOS33; }
+#set_pin_assignment	{ rx }	{ LOCATION = A14; IOSTANDARD = LVCMOS33; }
+#set_pin_assignment	{ tx }	{ LOCATION = B14; IOSTANDARD = LVCMOS33; }
+#set_pin_assignment	{ cts }	{ LOCATION = B10; IOSTANDARD = LVCMOS33; }
 
-set_pin_assignment	{ vga_blue[0] }	{ LOCATION = N5; IOSTANDARD = LVCMOS33; }
-set_pin_assignment	{ vga_blue[1] }	{ LOCATION = P5; IOSTANDARD = LVCMOS33; }
-set_pin_assignment	{ vga_blue[2] }	{ LOCATION = T7; IOSTANDARD = LVCMOS33; }
-set_pin_assignment	{ vga_green[0] }	{ LOCATION = R7; IOSTANDARD = LVCMOS33; }
-set_pin_assignment	{ vga_green[1] }	{ LOCATION = P11; IOSTANDARD = LVCMOS33; }
-set_pin_assignment	{ vga_green[2] }	{ LOCATION = M10; IOSTANDARD = LVCMOS33; }
-set_pin_assignment	{ vga_hsync }	{ LOCATION = N11; IOSTANDARD = LVCMOS33; }
+#set_pin_assignment	{ vga_blue[0] }	{ LOCATION = N5; IOSTANDARD = LVCMOS33; }
+#set_pin_assignment	{ vga_blue[1] }	{ LOCATION = P5; IOSTANDARD = LVCMOS33; }
+#set_pin_assignment	{ vga_blue[2] }	{ LOCATION = T7; IOSTANDARD = LVCMOS33; }
+#set_pin_assignment	{ vga_green[0] }	{ LOCATION = R7; IOSTANDARD = LVCMOS33; }
+#set_pin_assignment	{ vga_green[1] }	{ LOCATION = P11; IOSTANDARD = LVCMOS33; }
+#set_pin_assignment	{ vga_green[2] }	{ LOCATION = M10; IOSTANDARD = LVCMOS33; }
+#set_pin_assignment	{ vga_hsync }	{ LOCATION = N11; IOSTANDARD = LVCMOS33; }
+#set_pin_assignment	{ vga_red[0] }	{ LOCATION = A4; IOSTANDARD = LVCMOS33; }
+#set_pin_assignment	{ vga_red[1] }	{ LOCATION = A3; IOSTANDARD = LVCMOS33; }
+#set_pin_assignment	{ vga_red[2] }	{ LOCATION = C5; IOSTANDARD = LVCMOS33; }
+#set_pin_assignment	{ vga_vsync }	{ LOCATION = L10; IOSTANDARD = LVCMOS33; }
+
+
+set_pin_assignment	{ rx }	{ LOCATION = P12; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ tx }	{ LOCATION = N11; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ cts }	{ LOCATION = N12; IOSTANDARD = LVCMOS33; }
+
+set_pin_assignment	{ vga_blue[0] }	{ LOCATION = C5; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ vga_blue[1] }	{ LOCATION = A3; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ vga_blue[2] }	{ LOCATION = B14; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ vga_green[0] }	{ LOCATION = B10; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ vga_green[1] }	{ LOCATION = B6; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ vga_green[2] }	{ LOCATION = C9; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ vga_hsync }	{ LOCATION = P5; IOSTANDARD = LVCMOS33; }
 set_pin_assignment	{ vga_red[0] }	{ LOCATION = A4; IOSTANDARD = LVCMOS33; }
-set_pin_assignment	{ vga_red[1] }	{ LOCATION = A3; IOSTANDARD = LVCMOS33; }
-set_pin_assignment	{ vga_red[2] }	{ LOCATION = C5; IOSTANDARD = LVCMOS33; }
-set_pin_assignment	{ vga_vsync }	{ LOCATION = L10; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ vga_red[1] }	{ LOCATION = B15; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ vga_red[2] }	{ LOCATION = A14; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ vga_vsync }	{ LOCATION = N5; IOSTANDARD = LVCMOS33; }
+
+set_pin_assignment	{ ps2_0_data }	{ LOCATION = L10; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ ps2_0_clock }	{ LOCATION = P11; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ ps2_1_data }	{ LOCATION = M10; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ ps2_1_clock }	{ LOCATION = R7; IOSTANDARD = LVCMOS33; }

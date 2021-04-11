@@ -1,0 +1,34 @@
+# myterminal_inputrc - inputrc for myterminal
+# See readline(3readline) for more information.
+
+set input-meta on
+set output-meta on
+set bell-style none
+set convert-meta off
+
+# allow the use of the cursor keys
+"\037@\347": backward-char
+"\037@\351": forward-char
+"\037@\346": previous-history
+"\037@\350": next-history
+
+# allow the use of the Home/End keys
+"\037@\341": beginning-of-line
+"\037@\344": end-of-line
+
+# allow the use of the Delete/Insert keys
+"\037@\343": delete-char
+"\037@\340": quoted-insert
+
+# mappings for "page up" and "page down" to step to the beginning/end
+# of the history
+"\037@\342": beginning-of-history
+"\037@\345": end-of-history
+
+# alternate mappings for "page up" and "page down" to search the history
+# "\037@\342": history-search-backward
+# "\037@\345": history-search-forward
+
+# mappings for Ctrl-left-arrow and Ctrl-right-arrow for word moving
+"\037B\347": backward-word
+"\037B\351": forward-word

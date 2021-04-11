@@ -1,0 +1,160 @@
+# Configuration file for dircolors, a utility to help you set the
+# LS_COLORS environment variable used by GNU ls with the --color option.
+# Copyright (C) 1996-2016 Free Software Foundation, Inc.
+# Copying and distribution of this file, with or without modification,
+# are permitted provided the copyright notice and this notice are preserved.
+# The keywords COLOR, OPTIONS, and EIGHTBIT (honored by the
+# slackware version of dircolors) are recognized but ignored.
+# Below are TERM entries, which can be a glob patterns, to match
+# against the TERM environment variable to determine if it is colorizable.
+
+TERM myterminal
+LEFTCODE \031
+RIGHTCODE \031
+ENDCODE ^E*^BG^BP
+
+# Below are the color init strings for the basic file types. A color init
+# string consists of one or more of the following numeric codes:
+RESET O\005*^BP # reset to "normal" color
+DIR ^B\114 # directory
+LINK ^B\116 # symbolic link. (If you set this to 'target' instead of a
+          # numerical value, the color is as for the file pointed to.)
+MULTIHARDLINK O\005* # regular file with more than one link
+NORMAL ^BP^BG^E*
+FIFO ^B\120^B\103 # pipe
+SOCK ^B\115 # socket
+DOOR ^B\115 # door
+BLK ^B\120^B\113 # block device driver
+CHR ^B\120^B\113 # character device driver
+ORPHAN ^B\120^B\111 # symlink to nonexistent file, or non-stat'able file ...
+MISSING ^BG^E* # ... and the files they point to
+SETUID ^B\107^B\121 # file that is setuid (u+s)
+SETGID ^B\100^B\123 # file that is setgid (g+s)
+CAPABILITY ^B\100^B\121 # file with capability
+STICKY_OTHER_WRITABLE ^B\100^B\122 # dir that is sticky and other-writable (+t,o+w)
+OTHER_WRITABLE ^B\104^B\122 # dir that is other-writable (o+w) and not sticky
+STICKY ^B\107^B\124 # dir with the sticky bit set (+t) and not other-writable
+
+# This is for files with execute permission:
+EXEC ^B\112
+
+# List any file extensions like '.gz' or '.tar' that you would like ls
+# to colorize below. Put the extension, a space, and the color init string.
+# (and any comments you want to add after a '#')
+# archives or compressed (bright red)
+.tar ^B\111
+.tgz ^B\111
+.arc ^B\111
+.arj ^B\111
+.taz ^B\111
+.lha ^B\111
+.lz4 ^B\111
+.lzh ^B\111
+.lzma ^B\111
+.tlz ^B\111
+.txz ^B\111
+.tzo ^B\111
+.t7z ^B\111
+.zip ^B\111
+.z ^B\111
+.Z ^B\111
+.dz ^B\111
+.gz ^B\111
+.lrz ^B\111
+.lz ^B\111
+.lzo ^B\111
+.xz ^B\111
+.zst ^B\111
+.tzst ^B\111
+.bz2 ^B\111
+.bz ^B\111
+.tbz ^B\111
+.tbz2 ^B\111
+.tz ^B\111
+.deb ^B\111
+.rpm ^B\111
+.jar ^B\111
+.war ^B\111
+.ear ^B\111
+.sar ^B\111
+.rar ^B\111
+.alz ^B\111
+.ace ^B\111
+.zoo ^B\111
+.cpio ^B\111
+.7z ^B\111
+.rz ^B\111
+.cab ^B\111
+
+# image formats
+.jpg ^B\115
+.jpeg ^B\115
+.mjpg ^B\115
+.mjpeg ^B\115
+.gif ^B\115
+.bmp ^B\115
+.pbm ^B\115
+.pgm ^B\115
+.ppm ^B\115
+.tga ^B\115
+.xbm ^B\115
+.xpm ^B\115
+.tif ^B\115
+.tiff ^B\115
+.png ^B\115
+.svg ^B\115
+.svgz ^B\115
+.mng ^B\115
+.pcx ^B\115
+.mov ^B\115
+.mpg ^B\115
+.mpeg ^B\115
+.m2v ^B\115
+.mkv ^B\115
+.webm ^B\115
+.ogm ^B\115
+.mp4 ^B\115
+.m4v ^B\115
+.mp4v ^B\115
+.vob ^B\115
+.qt ^B\115
+.nuv ^B\115
+.wmv ^B\115
+.asf ^B\115
+.rm ^B\115
+.rmvb ^B\115
+.flc ^B\115
+.avi ^B\115
+.fli ^B\115
+.flv ^B\115
+.gl ^B\115
+.dl ^B\115
+.xcf ^B\115
+.xwd ^B\115
+.yuv ^B\115
+.cgm ^B\115
+.emf ^B\115
+
+# http://wiki.xiph.org/index.php/MIME_Types_and_File_Extensions
+.ogv ^B\115
+.ogx ^B\115
+
+# audio formats
+.aac ^B\106
+.au ^B\106
+.flac ^B\106
+.m4a ^B\106
+.mid ^B\106
+.midi ^B\106
+.mka ^B\106
+.mp3 ^B\106
+.mpc ^B\106
+.ogg ^B\106
+.ra ^B\106
+.wav ^B\106
+
+# http://wiki.xiph.org/index.php/MIME_Types_and_File_Extensions
+.oga ^B\106
+.opus ^B\106
+.spx ^B\106
+.xspf ^B\106

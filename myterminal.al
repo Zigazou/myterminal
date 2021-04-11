@@ -21,6 +21,12 @@
             <File>al_ip/pixels.v</File>
             <File>src/terminal_stream.v</File>
             <File>src/simple_fifo.v</File>
+            <File>src/ps2_receiver.v</File>
+            <File>src/serial_out.v</File>
+            <File>src/ps2_keyboard_state.v</File>
+            <File>src/ps2_keyboard_ascii.v</File>
+            <File>src/ps2_scan_code_set2_fr.v</File>
+            <File>src/ps2_ascii_codes.v</File>
         </Verilog>
         <ADC_FILE>src/myterminal.adc</ADC_FILE>
         <SDC_FILE>src/myterminal.sdc</SDC_FILE>
@@ -44,8 +50,8 @@
         <PlaceProperty/>
     </Property>
     <Project_Settings>
-        <Step_Last_Change>2021-03-21 20:08:19</Step_Last_Change>
-        <Current_Step>0</Current_Step>
+        <Step_Last_Change>2021-04-10 22:29:46</Step_Last_Change>
+        <Current_Step>60</Current_Step>
         <Step_Status>true</Step_Status>
     </Project_Settings>
 </Project>

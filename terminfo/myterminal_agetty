@@ -1,0 +1,40 @@
+#!/bin/bash
+if [ "$USER" != "root" ]
+then
+    printf "This script needs to be run as root or with sudo\n"
+    exit 1
+fi
+
+export TTY_DEVICE=ttyUSB0
+
+export TERM=myterminal
+export COLUMNS=80
+export LINES=51
+export LANG="fr_FR.iso885915@euro"
+export LANGUAGE=
+export LC_CTYPE="fr_FR.iso885915@euro"
+export LC_NUMERIC="fr_FR.iso885915@euro"
+export LC_TIME="fr_FR.iso885915@euro"
+export LC_COLLATE="fr_FR.iso885915@euro"
+export LC_MONETARY="fr_FR.iso885915@euro"
+export LC_MESSAGES="fr_FR.iso885915@euro"
+export LC_PAPER="fr_FR.iso885915@euro"
+export LC_NAME="fr_FR.iso885915@euro"
+export LC_ADDRESS="fr_FR.iso885915@euro"
+export LC_TELEPHONE="fr_FR.iso885915@euro"
+export LC_MEASUREMENT="fr_FR.iso885915@euro"
+export LC_IDENTIFICATION="fr_FR.iso885915@euro"
+export LC_ALL=
+export INPUTRC=/home/fred/Documents/dev/FPGA/myterminal/terminfo/myterminal_inputrc
+
+# Run terminal
+setsid agetty \
+    --8bits \
+    --flow-control \
+    --keep-baud \
+    --nohints \
+    --local-line \
+    --login-options "-p -- \\u" \
+    $TTY_DEVICE \
+    3000000 \
+    myterminal
