@@ -8,8 +8,6 @@ fi
 export TTY_DEVICE=ttyUSB0
 
 export TERM=myterminal
-export COLUMNS=80
-export LINES=51
 export LANG="fr_FR.iso885915@euro"
 export LANGUAGE=
 export LC_CTYPE="fr_FR.iso885915@euro"
