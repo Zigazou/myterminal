@@ -57,6 +57,9 @@ reg [22:0] first_row;
 reg [5:0] cursor_row;
 reg [6:0] cursor_col;
 reg cursor_visible;
+reg [10:0] mouse_x;
+reg [9:0] mouse_y;
+reg [1:0] mouse_cursor;
 always @(posedge clk)
 	if (reset) begin
 		base_address <= 'd0;
@@ -67,11 +70,20 @@ always @(posedge clk)
 	end else
 		case (register_index)
 			VIDEO_SET_BASE_ADDRESS: base_address <= register_value;
+
 			VIDEO_SET_FIRST_ROW: first_row <= register_value;
+
 			VIDEO_CURSOR_POSITION: begin
 				cursor_visible <= register_value[13];
 				cursor_row <= register_value[12:7];
 				cursor_col <= register_value[6:0];
+			end
+
+			VIDEO_MOUSE_CURSOR: mouse_cursor <= register_value[1:0];
+
+			VIDEO_MOUSE_POSITION: begin
+				mouse_x <= register_value[10:0];
+				mouse_y <= register_value[20:11];
 			end
 		endcase
 

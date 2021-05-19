@@ -17,7 +17,10 @@ module terminal_stream (
 
 	// Video registers
 	output reg [3:0] register_index,
-	output reg [22:0] register_value
+	output reg [22:0] register_value,
+
+	// Mouse control
+	output reg [1:0] mouse_control
 );
 
 `include "constant.v"
@@ -37,7 +40,7 @@ endtask
 // =============================================================================
 // Stage management
 // =============================================================================
-reg [3:0] stage;
+reg [4:0] stage;
 localparam
 	STAGE_IDLE               = 'd0,
 	STAGE_CLEAR_WRITE        = 'd1,
@@ -54,10 +57,11 @@ localparam
 	STAGE_CURSOR2            = 'd12,
 	STAGE_ATTRIBUTE          = 'd13,
 	STAGE_PARAMETER          = 'd14,
-	STAGE_PATTERN            = 'd15;
+	STAGE_PATTERN            = 'd15,
+	STAGE_MOUSE_CONTROL      = 'd16;
 
 task goto;
-	input [3:0] next_stage;
+	input [4:0] next_stage;
 	stage <= next_stage;
 endtask
 
@@ -247,7 +251,8 @@ task stage_idle;
 					goto(STAGE_IDLE);
 				end
 
-				CTRL_CODE_19: goto(STAGE_IDLE);
+				CTRL_MOUSE_CONTROL: goto(STAGE_MOUSE_CONTROL);
+
 				CTRL_CODE_1A: goto(STAGE_IDLE);
 				CTRL_CODE_1B: goto(STAGE_IDLE);
 				CTRL_CODE_1C: goto(STAGE_IDLE);
@@ -582,6 +587,17 @@ task stage_pattern;
 		goto(STAGE_PATTERN);
 endtask
 
+task stage_mouse_control;
+	if (unicode_available) begin
+		case (unicode[7:4])
+			4'd3: set(VIDEO_MOUSE_CURSOR, { 21'b0, unicode[3:0] });
+			4'd4: mouse_control <= unicode[1:0];
+		endcase
+		goto(STAGE_IDLE);
+	end else
+		goto(STAGE_MOUSE_CONTROL);
+endtask
+
 // =============================================================================
 // Automaton
 // =============================================================================
@@ -618,5 +634,6 @@ always @(posedge clk)
 			STAGE_ATTRIBUTE: stage_attribute();
 			STAGE_PARAMETER: stage_parameter();
 			STAGE_PATTERN: stage_pattern();
+			STAGE_MOUSE_CONTROL: stage_mouse_control();
 		endcase
 endmodule

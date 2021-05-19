@@ -1,0 +1,11 @@
+#ifndef MYTERMINAL_H
+#define MYTERMINAL_H
+
+#define MYT_COLUMNS (80)
+#define MYT_ROWS (51)
+#define MYT_CHARACTER_WIDTH (16)
+#define MYT_CHARACTER_HEIGHT (20)
+#define MYT_TOTAL_WIDTH (1280)
+#define MYT_TOTAL_HEIGHT (1024)
+
+#endif

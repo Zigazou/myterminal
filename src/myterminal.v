@@ -71,14 +71,32 @@ simple_fifo #(
 	.out_data (unicode)
 );
 
+wire [3:0] register_index_0;
+wire [22:0] register_value_0;
+wire [3:0] register_index_1;
+wire [22:0] register_value_1;
+wire [3:0] register_index;
+wire [22:0] register_value;
+register_muxer register_muxer (
+	.clk (clk),
+	.reset (~reset_n),
+	
+	.register_index_0 (register_index_0),
+	.register_index_1 (register_index_1),
+	.register_value_0 (register_value_0),
+	.register_value_1 (register_value_1),
+
+	.register_index (register_index),
+	.register_value (register_value)
+);
+
 wire [22:0] wr_address;
 wire [31:0] wr_data;
 wire [3:0] wr_mask;
 wire wr_request;
 wire wr_done;
 wire [8:0] wr_burst_length;
-wire [3:0] register_index;
-wire [22:0] register_value;
+wire [1:0] mouse_control;
 terminal_stream terminal_stream (
 	.clk (clk),
 	.reset (~reset_n),
@@ -91,8 +109,9 @@ terminal_stream terminal_stream (
 	.wr_mask (wr_mask),
 	.wr_done (wr_done),
 	.wr_burst_length (wr_burst_length),
-	.register_index (register_index),
-	.register_value (register_value)
+	.register_index (register_index_0),
+	.register_value (register_value_0),
+	.mouse_control (mouse_control)
 );
 
 wire rd_request;
@@ -145,8 +164,8 @@ video_controller video_controller (
 	.register_value (register_value)
 );
 
-wire ps2_byte_available;
-wire [7:0] ps2_byte;
+wire ps2_0_byte_available;
+wire [7:0] ps2_0_byte;
 ps2_receiver ps2_0_receiver (
 	.clk (clk),
 	.reset (~reset_n),
@@ -154,8 +173,8 @@ ps2_receiver ps2_0_receiver (
 	.ps2_data (ps2_0_data),
 	.ps2_clock (ps2_0_clock),
 
-	.rx_done_tick (ps2_byte_available),
-	.rx_data (ps2_byte)
+	.rx_done_tick (ps2_0_byte_available),
+	.rx_data (ps2_0_byte)
 );
 
 wire [7:0] scan_code;
@@ -170,8 +189,8 @@ ps2_keyboard_state ps2_keyboard_state (
 	.clk (clk),
 	.reset (~reset_n),
 
-	.scan_code_ready (ps2_byte_available),
-	.scan_code_in (ps2_byte),
+	.scan_code_ready (ps2_0_byte_available),
+	.scan_code_in (ps2_0_byte),
 
 	.keyboard_state_ready (keyboard_state_ready),
 	.scan_code_out (scan_code),
@@ -183,8 +202,8 @@ ps2_keyboard_state ps2_keyboard_state (
 	.keyboard_meta (keyboard_meta)
 );
 
-wire keyboard_ascii_ready;
-wire [7:0] keyboard_ascii;
+wire [31:0] keyboard_sequence_out;
+wire [2:0] keyboard_sequence_out_count;
 ps2_keyboard_ascii ps2_keyboard_ascii (
 	.clk (clk),
 	.reset (~reset_n),
@@ -198,21 +217,89 @@ ps2_keyboard_ascii ps2_keyboard_ascii (
 	.keyboard_ctrl (keyboard_ctrl),
 	.keyboard_meta (keyboard_meta),
 	
-	.keyboard_ascii_ready (keyboard_ascii_ready),
-	.keyboard_ascii (keyboard_ascii)
+	.sequence_out (keyboard_sequence_out),
+	.sequence_out_count (keyboard_sequence_out_count)
+);
+
+wire ps2_1_byte_available;
+wire [7:0] ps2_1_byte;
+ps2_receiver ps2_1_receiver (
+	.clk (clk),
+	.reset (~reset_n),
+	
+	.ps2_data (ps2_1_data),
+	.ps2_clock (ps2_1_clock),
+
+	.rx_done_tick (ps2_1_byte_available),
+	.rx_data (ps2_1_byte)
+);
+
+wire mouse_button_left;
+wire mouse_button_right;
+wire mouse_button_middle;
+wire [6:0] mouse_x_text;
+wire [5:0] mouse_y_text;
+wire [10:0] mouse_x_screen;
+wire [9:0] mouse_y_screen;
+ps2_mouse_state ps2_mouse_state (
+	.clk (clk),
+	.reset (~reset_n),
+
+	.scan_code_ready (ps2_0_byte_available),
+	.scan_code_in (ps2_0_byte),
+
+	.mouse_state_ready (mouse_state_ready),
+	.button_left (mouse_button_left),
+	.button_middle (mouse_button_middle),
+	.button_right (mouse_button_right),
+	.x_text (mouse_x_text),
+	.y_text (mouse_y_text),
+	.x_screen (mouse_x_screen),
+	.y_screen (mouse_y_screen),
+
+	.register_index (register_index_1),
+	.register_value (register_value_1)
+);
+
+
+wire [31:0] mouse_sequence_out;
+wire [2:0] mouse_sequence_out_count;
+ps2_mouse_ascii ps2_mouse_ascii (
+	.clk (clk),
+	.reset (~reset_n),
+
+	.mouse_control (mouse_control),
+
+	.keyboard_shift (keyboard_shift),
+	.keyboard_alt (keyboard_alt),
+	.keyboard_ctrl (keyboard_ctrl),
+	.keyboard_meta (keyboard_meta),
+
+	.mouse_state_ready (mouse_state_ready),
+	.button_left (mouse_button_left),
+	.button_middle (mouse_button_middle),
+	.button_right (mouse_button_right),
+	.x_text (mouse_x_text),
+	.y_text (mouse_y_text),
+	.x_screen (mouse_x_screen),
+	.y_screen (mouse_y_screen),
+
+	.sequence_out (mouse_sequence_out),
+	.sequence_out_count (mouse_sequence_out_count)
 );
 
 wire serial_out_sending;
 wire serial_out_available;
 wire [7:0] serial_out_data;
-simple_fifo #(
-	.DATA_WIDTH (8)
-) fifo_out (
+dual_serializer dual_serializer (
 	.clk (clk),
 	.reset (~reset_n),
 
-	.in_data (keyboard_ascii),
-	.in_data_available (keyboard_ascii_ready),
+	.in_data_0 (keyboard_sequence_out),
+	.in_data_count_0 (keyboard_sequence_out_count),
+
+	.in_data_1 (mouse_sequence_out),
+	.in_data_count_1 (mouse_sequence_out_count),
 
 	.receiver_ready (~serial_out_sending),
 	.out_data_available (serial_out_available),

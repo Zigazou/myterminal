@@ -68,7 +68,8 @@ module clock(refclk,
 		.daddr(6'b000000),
 		.do({open, open, open, open, open, open, open, open}),
 		.fbclk(clk0_out),
-		.clkc({open, open, open, open, clk0_buf}));
+		.clkc({open, open, open, open, clk0_buf}),
+		.load_reg(1'b0));
 
 endmodule
 
