@@ -2,7 +2,7 @@
 <Project>
     <Project_Created_Time>2020-09-01 19:32:05</Project_Created_Time>
     <TD_Version>4.6.25304</TD_Version>
-    <UCode>10111011</UCode>
+    <UCode>10111100</UCode>
     <Name>myterminal</Name>
     <HardWare>
         <Family>EG4</Family>
@@ -27,10 +27,11 @@
             <File>src/ps2_keyboard_ascii.v</File>
             <File>src/ps2_scan_code_set2_fr.v</File>
             <File>src/ps2_ascii_codes.v</File>
-            <File>src/ps2_mouse_state.v</File>
+            <File>src/sequence_to_bytes.v</File>
+            <File>src/muxer.v</File>
             <File>src/register_muxer.v</File>
+            <File>src/ps2_mouse_state.v</File>
             <File>src/ps2_mouse_ascii.v</File>
-            <File>src/dual_serializer.v</File>
         </Verilog>
         <ADC_FILE>src/myterminal.adc</ADC_FILE>
         <SDC_FILE>src/myterminal.sdc</SDC_FILE>
@@ -48,16 +49,14 @@
     </Device_Settings>
     <Property>
         <RtlProperty>
-            <fix_undriven>auto</fix_undriven>
-            <keep_hierarchy>auto</keep_hierarchy>
             <opt_mux>on</opt_mux>
         </RtlProperty>
         <GateProperty/>
         <PlaceProperty/>
     </Property>
     <Project_Settings>
-        <Step_Last_Change>2021-04-14 17:55:48</Step_Last_Change>
-        <Current_Step>30</Current_Step>
+        <Step_Last_Change>2021-05-28 07:44:52</Step_Last_Change>
+        <Current_Step>60</Current_Step>
         <Step_Status>true</Step_Status>
     </Project_Settings>
 </Project>

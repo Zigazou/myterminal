@@ -58,7 +58,8 @@ font font (
 wire [7:0] unicode;
 wire unicode_available;
 simple_fifo #(
-	.DATA_WIDTH (8)
+	.DATA_WIDTH (8),
+	.FIFO_SIZE (16)
 ) simple_fifo (
 	.clk (clk),
 	.reset (~reset_n),
@@ -245,8 +246,8 @@ ps2_mouse_state ps2_mouse_state (
 	.clk (clk),
 	.reset (~reset_n),
 
-	.scan_code_ready (ps2_0_byte_available),
-	.scan_code_in (ps2_0_byte),
+	.scan_code_ready (ps2_1_byte_available),
+	.scan_code_in (ps2_1_byte),
 
 	.mouse_state_ready (mouse_state_ready),
 	.button_left (mouse_button_left),
@@ -260,7 +261,6 @@ ps2_mouse_state ps2_mouse_state (
 	.register_index (register_index_1),
 	.register_value (register_value_1)
 );
-
 
 wire [31:0] mouse_sequence_out;
 wire [2:0] mouse_sequence_out_count;
@@ -288,18 +288,69 @@ ps2_mouse_ascii ps2_mouse_ascii (
 	.sequence_out_count (mouse_sequence_out_count)
 );
 
-wire serial_out_sending;
-wire serial_out_available;
-wire [7:0] serial_out_data;
-dual_serializer dual_serializer (
+wire [34:0] in_muxer_keyboard_data;
+wire in_muxer_keyboard_ready;
+wire in_muxer_keyboard_available;
+simple_fifo #(.DATA_WIDTH (35)) keyboard_sequence_fifo (
 	.clk (clk),
 	.reset (~reset_n),
 
-	.in_data_0 (keyboard_sequence_out),
-	.in_data_count_0 (keyboard_sequence_out_count),
+	.in_data ({ keyboard_sequence_out_count, keyboard_sequence_out }),
+	.in_data_available (keyboard_sequence_out_count != 3'd0),
 
-	.in_data_1 (mouse_sequence_out),
-	.in_data_count_1 (mouse_sequence_out_count),
+	.receiver_ready (in_muxer_keyboard_ready),
+	.out_data_available (in_muxer_keyboard_available),
+	.out_data (in_muxer_keyboard_data)
+);
+
+
+wire [34:0] in_muxer_mouse_data;
+wire in_muxer_mouse_ready;
+wire in_muxer_mouse_available;
+simple_fifo #(.DATA_WIDTH (35)) mouse_sequence_fifo (
+	.clk (clk),
+	.reset (~reset_n),
+
+	.in_data ({ mouse_sequence_out_count, mouse_sequence_out }),
+	.in_data_available (mouse_sequence_out_count != 3'd0),
+
+	.receiver_ready (in_muxer_mouse_ready),
+	.out_data_available (in_muxer_mouse_available),
+	.out_data (in_muxer_mouse_data)
+);
+
+wire serial_out_sending;
+wire muxer_out_available;
+wire [34:0] muxer_out_data;
+wire sequence_to_bytes_ready;
+muxer #(
+	.DATA_WIDTH (35)
+) muxer (
+	.clk (clk),
+	.reset (~reset_n),
+
+	.in_data_0 (in_muxer_keyboard_data),
+	.in_data_0_available (in_muxer_keyboard_available),
+	.in_data_0_ready (in_muxer_keyboard_ready),
+
+	.in_data_1 (in_muxer_mouse_data),
+	.in_data_1_available (in_muxer_mouse_available),
+	.in_data_1_ready (in_muxer_mouse_ready),
+
+	.receiver_ready (sequence_to_bytes_ready),
+	.out_data_available (muxer_out_available),
+	.out_data (muxer_out_data)
+);
+
+wire [7:0] serial_out_data;
+wire serial_out_available;
+sequence_to_bytes sequence_to_bytes(
+	.clk (clk),
+	.reset (~reset_n),
+
+	.in_sequence (muxer_out_data),
+	.in_sequence_available (muxer_out_available),
+	.in_sequence_ready (sequence_to_bytes_ready),
 
 	.receiver_ready (~serial_out_sending),
 	.out_data_available (serial_out_available),

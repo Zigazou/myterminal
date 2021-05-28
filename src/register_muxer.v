@@ -15,9 +15,11 @@ module register_muxer (
 reg switch = 1'b0;
 
 always @(posedge clk)
-    if (reset)
+    if (reset) begin
         switch <= 1'b0;
-    else if (switch == 1'b0) begin
+        register_index <= 'd0;
+        register_value <= 'd0;
+    end else if (switch == 1'b0) begin
         switch <= 1'b1;
         register_index <= register_index_0;
         register_value <= register_value_0;

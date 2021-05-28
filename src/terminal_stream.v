@@ -140,6 +140,7 @@ task gotoxy;
 
 		if (y < ROWS) begin
 			text_y <= y;
+			ready_n <= TRUE_n;
 			goto(STAGE_IDLE);
 		end else begin
 			text_y <= ROWS - 6'd1;
@@ -148,15 +149,15 @@ task gotoxy;
 			goto(STAGE_CLEAR_WRITE);
 		end
 	end else
-		gotoxy('d0, y + { 5'b0, size[1] } + 'd1);
+		gotoxy('d0, y + { 5'b0, size[1] } + 6'd1);
 endtask
 
 task line_feed;
-	gotoxy('d0, text_y + { 5'b0, size[1] } + 'd1);
+	gotoxy('d0, text_y + { 5'b0, size[1] } + 6'd1);
 endtask
 
 task next_char;
-	gotoxy(text_x + { 6'b0, size[0] } + 'd1, text_y);
+	gotoxy(text_x + { 6'b0, size[0] } + 7'd1, text_y);
 endtask
 
 wire [5:0] first_row_diff = ROWS - first_row;
@@ -330,7 +331,7 @@ task stage_write_top_right;
 		case (size)
 			SIZE_DOUBLE: begin
 				wr_request <= TRUE;
-				wr_address <= wr_address + ROW_SIZE - CHARATTR_SIZE;
+				wr_address <= wr_address + {ROW_SIZE - CHARATTR_SIZE};
 				wr_data <= generate_cell_part(unicode, PART_BOTTOM_LEFT);
 				goto(STAGE_WRITE_BOTTOM_LEFT);
 			end
@@ -490,7 +491,7 @@ task stage_clear;
 			default: begin
 				if (unicode >= CLEAR_CHARS) begin
 					ready_n <= FALSE_n;
-					clear(text_x, text_y, text_x + (unicode - CLEAR_CHARS), text_y);
+					clear(text_x, text_y, text_x + unicode[6:0] - CLEAR_CHARS[6:0], text_y);
 				end else begin
 					ready_n <= TRUE_n;
 					goto(STAGE_IDLE);

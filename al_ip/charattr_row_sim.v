@@ -1,8 +1,8 @@
-// Verilog netlist created by TD v4.6.14314
-// Thu Sep  3 19:52:24 2020
+// Verilog netlist created by TD v5.0.27252
+// Sun May 23 21:50:22 2021
 
 `timescale 1ns / 1ps
-module charattr_row  // al_ip/charattr_row.v(14)
+module charattr_row  // charattr_row.v(14)
   (
   addra,
   addrb,
@@ -13,14 +13,24 @@ module charattr_row  // al_ip/charattr_row.v(14)
   dob
   );
 
-  input [6:0] addra;  // al_ip/charattr_row.v(23)
-  input [6:0] addrb;  // al_ip/charattr_row.v(24)
-  input cea;  // al_ip/charattr_row.v(25)
-  input clka;  // al_ip/charattr_row.v(26)
-  input clkb;  // al_ip/charattr_row.v(27)
-  input [31:0] dia;  // al_ip/charattr_row.v(22)
-  output [31:0] dob;  // al_ip/charattr_row.v(19)
+  input [6:0] addra;  // charattr_row.v(35)
+  input [6:0] addrb;  // charattr_row.v(36)
+  input cea;  // charattr_row.v(37)
+  input clka;  // charattr_row.v(38)
+  input clkb;  // charattr_row.v(39)
+  input [31:0] dia;  // charattr_row.v(34)
+  output [31:0] dob;  // charattr_row.v(31)
 
+  parameter ADDR_WIDTH_A = 7;
+  parameter ADDR_WIDTH_B = 7;
+  parameter DATA_DEPTH_A = 80;
+  parameter DATA_DEPTH_B = 80;
+  parameter DATA_WIDTH_A = 32;
+  parameter DATA_WIDTH_B = 32;
+  parameter REGMODE_A = "NOREG";
+  parameter REGMODE_B = "NOREG";
+  parameter WRITEMODE_A = "NORMAL";
+  parameter WRITEMODE_B = "NORMAL";
 
   EG_PHY_CONFIG #(
     .DONE_PERSISTN("ENABLE"),
@@ -28,7 +38,7 @@ module charattr_row  // al_ip/charattr_row.v(14)
     .JTAG_PERSISTN("DISABLE"),
     .PROGRAMN_PERSISTN("DISABLE"))
     config_inst ();
-  // address_offset=0;data_offset=0;depth=80;width=18;num_section=1;width_per_section=18;section_size=32;working_depth=512;working_width=18;address_step=1;bytes_in_per_section=1;
+  // address_offset=0;data_offset=0;depth=80;width=18;num_section=1;width_per_section=18;section_size=32;working_depth=512;working_width=18;mode_ecc=0;address_step=1;bytes_in_per_section=1;
   EG_PHY_BRAM #(
     .CEAMUX("1"),
     .CEBMUX("1"),
@@ -62,7 +72,7 @@ module charattr_row  // al_ip/charattr_row.v(14)
     .dib(dia[17:9]),
     .doa(dob[8:0]),
     .dob(dob[17:9]));
-  // address_offset=0;data_offset=18;depth=80;width=14;num_section=1;width_per_section=14;section_size=32;working_depth=512;working_width=18;address_step=1;bytes_in_per_section=1;
+  // address_offset=0;data_offset=18;depth=80;width=14;num_section=1;width_per_section=14;section_size=32;working_depth=512;working_width=18;mode_ecc=0;address_step=1;bytes_in_per_section=1;
   EG_PHY_BRAM #(
     .CEAMUX("1"),
     .CEBMUX("1"),

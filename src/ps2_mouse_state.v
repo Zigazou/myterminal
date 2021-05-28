@@ -108,7 +108,7 @@ task state_send;
 	begin
 		mouse_state_ready <= TRUE;
 		x_text <= x_screen[10:4];
-		y_text <= y_screen / 'd20;
+		/* TEST */y_text <= y_screen[9:4]; //y_screen / 'd20;
 		register_index <= VIDEO_MOUSE_POSITION;
 		register_value <= { 2'b0, y_screen, x_screen };
 		state <= STATE_IDLE;
@@ -128,6 +128,8 @@ always @(posedge clk)
 		y_screen <= 'd0;
 		incoming_byte_1 <= 'd0;
 		incoming_byte_2 <= 'd0;
+		register_index <= VIDEO_NOP;
+		register_value <= 'd0;
 	end else begin
 		case (state)
 			STATE_IDLE: state_idle();

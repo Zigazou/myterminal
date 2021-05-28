@@ -161,6 +161,15 @@ def command_charpage(page):
 def command_print(string):
     return apply_escaped_sequences(string).encode('ISO-8859-15')
 
+def command_mouse(control):
+    control = control.strip().lower()
+    if control == 'enable':
+        return bytes([ 0x19, 0x41])
+    elif control == 'disable':
+        return bytes([ 0x19, 0x40])
+    else:
+        raise TypeError("Expected enable or disable")
+
 commands = {
     "nul": command_nul,
     "clearscreen": command_clearscreen,
@@ -184,6 +193,7 @@ commands = {
     "move": command_move,
     "charpage": command_charpage,
     "print": command_print,
+    "mouse": command_mouse,
 }
 
 program = []

@@ -23,7 +23,7 @@ export LC_TELEPHONE="fr_FR.iso885915@euro"
 export LC_MEASUREMENT="fr_FR.iso885915@euro"
 export LC_IDENTIFICATION="fr_FR.iso885915@euro"
 export LC_ALL=
-export INPUTRC=/home/fred/Documents/dev/FPGA/myterminal/terminfo/myterminal_inputrc
+export INPUTRC=/home/fred/Documents/dev/FPGA/myterminal-backport/terminfo/myterminal_inputrc
 
 # Run terminal
 setsid agetty \

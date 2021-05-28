@@ -63,7 +63,7 @@ endtask
 task send_extended;
 	input wire [7:0] ascii;
 	begin
-		sequence_out <= { 8'h00, ascii, extended_modifier, 8'h1f };
+		sequence_out <= { 8'h00, 8'h1f, extended_modifier, ascii };
 		sequence_out_count <= 'd3;
 	end
 endtask
