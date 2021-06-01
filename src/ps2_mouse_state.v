@@ -38,10 +38,10 @@ localparam
 	STATE_SEND       = 'd3;
 
 
-reg [1:0] state;
+reg [1:0] state = STATE_IDLE;
 
-reg [7:0] incoming_byte_1;
-reg [7:0] incoming_byte_2;
+reg [7:0] incoming_byte_1 = 'd0;
+reg [7:0] incoming_byte_2 = 'd0;
 
 task state_idle;
 	begin
@@ -68,14 +68,14 @@ endtask
 
 task state_byte_2;
 	begin
-		if (scan_code_ready) begin
+		/*if (scan_code_ready) begin*/
 			state <= STATE_SEND;
 			button_left <= incoming_byte_1[BIT_BUTTON_LEFT];
 			button_right <= incoming_byte_1[BIT_BUTTON_RIGHT];
 			button_middle <= incoming_byte_1[BIT_BUTTON_MIDDLE];
 
 			if (incoming_byte_1[BIT_X_SIGN]) begin
-				if (x_screen < { 3'b0, incoming_byte_1})
+				if (x_screen < { 3'b0, incoming_byte_1 })
 					x_screen <= 'd0;
 				else
 					x_screen <= x_screen - incoming_byte_1;
@@ -87,7 +87,7 @@ task state_byte_2;
 			end
 
 			if (incoming_byte_1[BIT_Y_SIGN]) begin
-				if (y_screen < { 3'b0, scan_code_in})
+				if (y_screen < { 3'b0, scan_code_in })
 					y_screen <= 'd0;
 				else
 					y_screen <= y_screen - scan_code_in;
@@ -97,10 +97,9 @@ task state_byte_2;
 				else
 					y_screen <= y_screen + scan_code_in;
 			end
-		end else begin
-			mouse_state_ready <= FALSE;
+		/*end else begin
 			state <= STATE_BYTE_2;
-		end
+		end*/
 	end
 endtask
 

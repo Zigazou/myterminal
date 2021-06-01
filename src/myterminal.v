@@ -13,8 +13,8 @@ module myterminal (
 	input wire ps2_0_clock,
 
 	// PS/2 port 1,
-	input wire ps2_1_data,
-	input wire ps2_1_clock,
+	inout wire ps2_1_data,
+	inout wire ps2_1_clock,
 
 	// VGA output
 	output wire [2:0] vga_red,
@@ -53,6 +53,15 @@ font font (
 	.clk (clk),
 	.font_address (font_address),
 	.char_row_bitmap (char_row_bitmap)
+);
+
+wire [8:0] cursor_address;
+wire [15:0] cursor_row_bitmap;
+cursor_ram cursor_ram (
+	.clka (clk),
+	.rsta (~reset_n),
+	.doa (cursor_row_bitmap),
+	.addra (cursor_address)
 );
 
 wire [7:0] unicode;
@@ -161,6 +170,9 @@ video_controller video_controller (
 	.font_address (font_address),
 	.char_row_bitmap (char_row_bitmap),
 
+	.cursor_address (cursor_address),
+	.cursor_row_bitmap (cursor_row_bitmap),
+
 	.register_index (register_index),
 	.register_value (register_value)
 );
@@ -224,6 +236,7 @@ ps2_keyboard_ascii ps2_keyboard_ascii (
 
 wire ps2_1_byte_available;
 wire [7:0] ps2_1_byte;
+/*
 ps2_receiver ps2_1_receiver (
 	.clk (clk),
 	.reset (~reset_n),
@@ -234,7 +247,71 @@ ps2_receiver ps2_1_receiver (
 	.rx_done_tick (ps2_1_byte_available),
 	.rx_data (ps2_1_byte)
 );
+*/
 
+wire left_button;
+wire right_button;
+wire [8:0] x_increment;
+wire [8:0] y_increment;
+wire data_ready;
+wire read;
+wire error_no_ack;
+ps2_mouse_interface #(
+	.WATCHDOG_TIMER_VALUE_PP (43200),
+	.WATCHDOG_TIMER_BITS_PP (16),
+	.DEBOUNCE_TIMER_VALUE_PP (408),
+	.DEBOUNCE_TIMER_BITS_PP (9)
+) ps2_1_receiver (
+	.clk (clk),
+	.reset (~reset_n),
+	
+	.ps2_data (ps2_1_data),
+	.ps2_clk (ps2_1_clock),
+
+	.left_button (left_button),
+	.right_button (right_button),
+	.x_increment (x_increment),
+	.y_increment (y_increment),
+	.data_ready (data_ready),
+	.read (read),
+	.error_no_ack(error_no_ack)
+
+	//.rx_done_tick (ps2_1_byte_available),
+	//.rx_data (ps2_1_byte)
+);
+
+wire mouse_button_left;
+wire mouse_button_right;
+wire mouse_button_middle;
+wire [6:0] mouse_x_text;
+wire [5:0] mouse_y_text;
+wire [10:0] mouse_x_screen;
+wire [9:0] mouse_y_screen;
+ps2_mouse_state2 ps2_mouse_state (
+	.clk (clk),
+	.reset (~reset_n),
+
+	.left_button (left_button),
+	.right_button (right_button),
+	.x_increment (x_increment),
+	.y_increment (y_increment),
+	.data_ready (data_ready),
+	.read (read),
+
+	.mouse_state_ready (mouse_state_ready),
+	.button_left (mouse_button_left),
+	.button_middle (mouse_button_middle),
+	.button_right (mouse_button_right),
+	.x_text (mouse_x_text),
+	.y_text (mouse_y_text),
+	.x_screen (mouse_x_screen),
+	.y_screen (mouse_y_screen),
+
+	.register_index (register_index_1),
+	.register_value (register_value_1)
+);
+
+/*
 wire mouse_button_left;
 wire mouse_button_right;
 wire mouse_button_middle;
@@ -261,6 +338,7 @@ ps2_mouse_state ps2_mouse_state (
 	.register_index (register_index_1),
 	.register_value (register_value_1)
 );
+*/
 
 wire [31:0] mouse_sequence_out;
 wire [2:0] mouse_sequence_out_count;

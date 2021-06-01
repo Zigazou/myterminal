@@ -2,7 +2,7 @@
 <Project>
     <Project_Created_Time>2020-09-01 19:32:05</Project_Created_Time>
     <TD_Version>4.6.25304</TD_Version>
-    <UCode>10111100</UCode>
+    <UCode>10101000</UCode>
     <Name>myterminal</Name>
     <HardWare>
         <Family>EG4</Family>
@@ -11,7 +11,6 @@
     <Source_Files>
         <Verilog>
             <File>al_ip/clock.v</File>
-            <File>src/myterminal.v</File>
             <File>src/video_controller.v</File>
             <File>src/serial_in.v</File>
             <File>src/embedded_sdram.v</File>
@@ -30,8 +29,11 @@
             <File>src/sequence_to_bytes.v</File>
             <File>src/muxer.v</File>
             <File>src/register_muxer.v</File>
-            <File>src/ps2_mouse_state.v</File>
             <File>src/ps2_mouse_ascii.v</File>
+            <File>src/ps2_mouse_state2.v</File>
+            <File>src/ps2_mouse_receiver.v</File>
+            <File>al_ip/cursor_ram.v</File>
+            <File>src/myterminal.v</File>
         </Verilog>
         <ADC_FILE>src/myterminal.adc</ADC_FILE>
         <SDC_FILE>src/myterminal.sdc</SDC_FILE>
@@ -40,7 +42,7 @@
     <TOP_MODULE>
         <LABEL/>
         <MODULE>myterminal</MODULE>
-        <CREATEINDEX>user</CREATEINDEX>
+        <CREATEINDEX>auto</CREATEINDEX>
     </TOP_MODULE>
     <Device_Settings>
         <EG4X>
@@ -55,8 +57,8 @@
         <PlaceProperty/>
     </Property>
     <Project_Settings>
-        <Step_Last_Change>2021-05-28 07:44:52</Step_Last_Change>
-        <Current_Step>60</Current_Step>
+        <Step_Last_Change>2021-06-01 06:38:44</Step_Last_Change>
+        <Current_Step>0</Current_Step>
         <Step_Status>true</Step_Status>
     </Project_Settings>
 </Project>

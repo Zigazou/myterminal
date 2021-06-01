@@ -60,7 +60,7 @@ endtask
 always @(posedge clk)
 	if (reset)
 		send_nothing();
-	else if (mouse_state_ready && (mouse_control != 'd0))
+	else if (mouse_state_ready) /* && (mouse_control != 'd0))*/
 		send_event();
 	else
 		send_nothing();
