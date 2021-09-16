@@ -128,6 +128,7 @@ module ps2_mouse_interface (
   ps2_data,
   left_button,
   right_button,
+  middle_button,
   x_increment,
   y_increment,
   data_ready,       // rx_read_o
@@ -186,6 +187,7 @@ inout ps2_clk;
 inout ps2_data;
 output left_button;
 output right_button;
+output middle_button;
 output [8:0] x_increment;
 output [8:0] y_increment;
 output data_ready;
@@ -194,6 +196,7 @@ output error_no_ack;
  
 reg left_button;
 reg right_button;
+reg middle_button;
 reg [8:0] x_increment;
 reg [8:0] y_increment;
 reg data_ready;
@@ -528,6 +531,7 @@ begin
   begin
     left_button <= 0;
     right_button <= 0;
+    middle_button <= 0;
     x_increment <= 0;
     y_increment <= 0;
   end
@@ -535,6 +539,7 @@ begin
   begin
     left_button <= q[1];
     right_button <= q[2];
+    middle_button <= q[3];
     x_increment <= {q[5],q[19:12]};
     y_increment <= {q[6],q[30:23]};
   end

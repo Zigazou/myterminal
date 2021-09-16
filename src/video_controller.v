@@ -40,6 +40,9 @@ module video_controller #(
 	output reg [8:0] cursor_address,
 	input wire [15:0] cursor_row_bitmap,
 
+	// Mouse control
+	input wire [1:0] mouse_control,
+
 	// Registers
 	input wire [3:0] register_index,
 	input wire [22:0] register_value
@@ -73,7 +76,7 @@ always @(posedge clk)
 		cursor_row <= 'd0;
 		cursor_col <= 'd0;
 		cursor_visible <= TRUE;
-		mouse_cursor <= 'd0;
+		mouse_cursor <= CURSOR_DEFAULT;
 		mouse_x <= 'd0;
 		mouse_y <= 'd0;
 	end else
@@ -715,7 +718,7 @@ wire emit_pixel = y_visible && x_visible && ~reset;
 
 always @(posedge clk)
 	if (emit_pixel) begin
-		if (show_mouse_cursor) begin
+		if (show_mouse_cursor && mouse_control != 'd0) begin
 			pixel_red <= current_cursor_pixel[8:6];
 			pixel_green <= current_cursor_pixel[5:3];
 			pixel_blue <= current_cursor_pixel[2:0];

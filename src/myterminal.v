@@ -173,6 +173,8 @@ video_controller video_controller (
 	.cursor_address (cursor_address),
 	.cursor_row_bitmap (cursor_row_bitmap),
 
+	.mouse_control (mouse_control),
+
 	.register_index (register_index),
 	.register_value (register_value)
 );
@@ -251,6 +253,7 @@ ps2_receiver ps2_1_receiver (
 
 wire left_button;
 wire right_button;
+wire middle_button;
 wire [8:0] x_increment;
 wire [8:0] y_increment;
 wire data_ready;
@@ -259,8 +262,8 @@ wire error_no_ack;
 ps2_mouse_interface #(
 	.WATCHDOG_TIMER_VALUE_PP (43200),
 	.WATCHDOG_TIMER_BITS_PP (16),
-	.DEBOUNCE_TIMER_VALUE_PP (408),
-	.DEBOUNCE_TIMER_BITS_PP (9)
+	.DEBOUNCE_TIMER_VALUE_PP (700),
+	.DEBOUNCE_TIMER_BITS_PP (10)
 ) ps2_1_receiver (
 	.clk (clk),
 	.reset (~reset_n),
@@ -270,6 +273,7 @@ ps2_mouse_interface #(
 
 	.left_button (left_button),
 	.right_button (right_button),
+	.middle_button (middle_button),
 	.x_increment (x_increment),
 	.y_increment (y_increment),
 	.data_ready (data_ready),
@@ -293,6 +297,7 @@ ps2_mouse_state2 ps2_mouse_state (
 
 	.left_button (left_button),
 	.right_button (right_button),
+	.middle_button (middle_button),
 	.x_increment (x_increment),
 	.y_increment (y_increment),
 	.data_ready (data_ready),

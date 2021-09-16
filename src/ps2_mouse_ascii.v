@@ -48,10 +48,10 @@ endtask
 task send_event;
 	begin
 		sequence_out <= {
-			event_y,
+			8'h1E,
 			event_x,
-			event_modifier,
-			8'h1E
+			event_y,
+			event_modifier
 		};
 		sequence_out_count <= 'd4;
 	end
@@ -60,7 +60,7 @@ endtask
 always @(posedge clk)
 	if (reset)
 		send_nothing();
-	else if (mouse_state_ready) /* && (mouse_control != 'd0))*/
+	else if (mouse_state_ready && mouse_control != 'd0)
 		send_event();
 	else
 		send_nothing();
