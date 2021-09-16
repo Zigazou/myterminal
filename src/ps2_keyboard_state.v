@@ -118,6 +118,7 @@ task state_break;
 			SCAN_SHIFT_LEFT: keyboard_shift_left <= FALSE;
 			SCAN_SHIFT_RIGHT: keyboard_shift_right <= FALSE;
 			SCAN_CTRL_LEFT: keyboard_ctrl_left <= FALSE;
+			SCAN_ALT: keyboard_alt <= FALSE;
 		endcase
 	end
 endtask

@@ -63,7 +63,7 @@ localparam
 	CTRL_CHARPAGE_3        = 'h16, // ^V
 	CTRL_CHARPAGE_4        = 'h17, // ^W
 	CTRL_CHARPAGE_GFX      = 'h18, // ^X
-	CTRL_CODE_19           = 'h19, // ^Y
+	CTRL_MOUSE_CONTROL     = 'h19, // ^Y
 	CTRL_CODE_1A           = 'h1a, // ^Z
 	CTRL_CODE_1B           = 'h1b, // ^[
 	CTRL_CODE_1C           = 'h1c, // ^\

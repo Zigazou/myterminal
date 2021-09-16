@@ -3,6 +3,8 @@ localparam
     VIDEO_SET_BASE_ADDRESS = 'd1,
     VIDEO_SET_FIRST_ROW    = 'd2,
     VIDEO_CURSOR_POSITION  = 'd3,
+    VIDEO_MOUSE_CURSOR     = 'd4,
+    VIDEO_MOUSE_POSITION   = 'd5,
 
     COLUMNS                = 'd80,
     COLUMNS_REAL           = 'd128,

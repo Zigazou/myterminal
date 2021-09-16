@@ -1,23 +1,23 @@
-// Verilog netlist created by TD v4.6.14314
-// Tue Sep  1 19:44:21 2020
+// Verilog netlist created by TD v5.0.27252
+// Sat May 22 05:58:12 2021
 
 `timescale 1ns / 1ps
-module clock  // al_ip/clock.v(22)
+module clock  // clock.v(22)
   (
   refclk,
   reset,
   clk0_out
   );
 
-  input refclk;  // al_ip/clock.v(26)
-  input reset;  // al_ip/clock.v(27)
-  output clk0_out;  // al_ip/clock.v(28)
+  input refclk;  // clock.v(26)
+  input reset;  // clock.v(27)
+  output clk0_out;  // clock.v(28)
 
-  wire clk0_buf;  // al_ip/clock.v(30)
+  wire clk0_buf;  // clock.v(30)
 
   EG_PHY_GCLK bufg_feedback (
     .clki(clk0_buf),
-    .clko(clk0_out));  // al_ip/clock.v(32)
+    .clko(clk0_out));  // clock.v(32)
   EG_PHY_CONFIG #(
     .DONE_PERSISTN("ENABLE"),
     .INIT_PERSISTN("ENABLE"),
@@ -96,6 +96,7 @@ module clock  // al_ip/clock.v(22)
     .di(8'b00000000),
     .dwe(1'b0),
     .fbclk(clk0_out),
+    .load_reg(1'b0),
     .psclk(1'b0),
     .psclksel(3'b000),
     .psdown(1'b0),
@@ -103,8 +104,7 @@ module clock  // al_ip/clock.v(22)
     .refclk(refclk),
     .reset(reset),
     .stdby(1'b0),
-    .clkc({open_n47,open_n48,open_n49,open_n50,clk0_buf}));  // al_ip/clock.v(55)
+    .clkc({open_n47,open_n48,open_n49,open_n50,clk0_buf}));  // clock.v(55)
 
 endmodule 
-
 

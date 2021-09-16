@@ -9,13 +9,28 @@
             }
 
             body {
+                font-family: sans-serif;
                 max-width: 40em;
+                height: auto;
                 margin: 2em auto;
                 border: 0.1em solid gray;
                 padding: 1em;
                 background-color: white;
                 box-shadow: 0.5em 0.5em 0.25em 0 rgba(110, 210, 243,0.75);
                 border-radius: 0.5em;
+            }
+
+            @media screen and (min-width: 82em) {
+                h1 { margin-top: 0; }
+
+                body {
+                    max-width: 82em;
+                    columns: 2;
+                    column-gap: 2em;
+                    column-rule: solid gray;
+                }
+
+                .dont-break { break-inside: avoid; }
             }
 
             button {
@@ -30,6 +45,8 @@
             }
 
             textarea {
+                box-sizing: border-box;
+                max-width: 100%;
                 padding: 0.5em;
                 background-color: whitesmoke;
                 border-radius: 0.5em;
@@ -53,6 +70,18 @@
         </p>
         <button id="connect" class="todo">Connect to MyTerminal</button>
 
+        <h2>Inputs</h2>
+
+        <button id="mouse-enable" class="need-connection" disabled>
+            Enable mouse
+        </button>
+        <button id="mouse-disable" class="need-connection" disabled>
+            Disable mouse
+        </button>
+
+        <textarea cols="80" rows="5" id="input-console"></textarea>
+        <button id="clear-console">Clear inputs</button>
+
         <h2>Graphic effects</h2>
 
         <button id="colors" class="need-connection" disabled>
@@ -75,8 +104,9 @@
             Send file to MyTerminal
         </button>
 
-        <h2>Execute a MyTerminal script</h2>
-        <textarea cols="80" rows="40" id="script-source"># Hello, World!
+        <div class="dont-break">
+            <h2>Execute a MyTerminal script</h2>
+            <textarea cols="80" rows="40" id="script-source"># Hello, World!
 reset
 foreground lightyellow
 background black
@@ -95,9 +125,10 @@ locate 30 27
 foreground white
 print "par Frédéric BISSON"
 </textarea>
-        <button id="run-script" class="need-connection" disabled>
-            Run script
-        </button>
+            <button id="run-script" class="need-connection" disabled>
+                Run script
+            </button>
+        </div>
 
         <script src="myterminal.js"></script>
         <script src="demo-colors.js"></script>
@@ -110,8 +141,37 @@ print "par Frédéric BISSON"
             document.getElementById('connect').addEventListener('click', () => {
                 const myTerminal = new MyTerminal()
                 myTerminal.connect().then(() => {
+                    const inConsole = document.getElementById("input-console")
+                    myTerminal.onInput = (value) => {
+                        if (value instanceof MyTerminalMouse) {
+                            if (value.modifiers.left) {
+                                myTerminal.write(myCode()
+                                    .locate(value.x, value.y)
+                                    .print("\x90")
+                                )
+                            }
+                        } else {
+                            inConsole.value += value
+                        }
+                    }
+
+                    document.getElementById("clear-console").addEventListener(
+                        'click',
+                        () => inConsole.value = ''
+                    )
+
                     document.querySelectorAll(".need-connection").forEach(
                         elt => { elt.disabled = false; }
+                    )
+
+                    document.getElementById('mouse-enable').addEventListener(
+                        'click',
+                        () => myTerminal.write(myCode().mouse(true))
+                    )
+
+                    document.getElementById('mouse-disable').addEventListener(
+                        'click',
+                        () => myTerminal.write(myCode().mouse(false))
                     )
 
                     document.getElementById('colors').addEventListener(

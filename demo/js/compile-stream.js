@@ -80,12 +80,10 @@ const commands = {
     },
 
     foreground: function(color) {
-        console.log(color);
         return String.fromCharCode(0x02, 0x40 + interpretNumber(color));
     },
 
     background: function(color) {
-        console.log(color);
         return String.fromCharCode(0x02, 0x50 + interpretNumber(color));
     },
 
@@ -156,6 +154,14 @@ const commands = {
             return String.fromCharCode(0x06, 0x43);
         } else {
             return String.fromCharCode(0x06, 0x63);
+        }
+    },
+
+    mouse: function(state) {
+        if (interpretBoolean(state)) {
+            return String.fromCharCode(0x19, 0x41);
+        } else {
+            return String.fromCharCode(0x19, 0x40);
         }
     },
 

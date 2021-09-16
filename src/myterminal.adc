@@ -38,5 +38,5 @@ set_pin_assignment	{ vga_vsync }	{ LOCATION = N5; IOSTANDARD = LVCMOS33; }
 
 set_pin_assignment	{ ps2_0_data }	{ LOCATION = L10; IOSTANDARD = LVCMOS33; }
 set_pin_assignment	{ ps2_0_clock }	{ LOCATION = P11; IOSTANDARD = LVCMOS33; }
-set_pin_assignment	{ ps2_1_data }	{ LOCATION = M10; IOSTANDARD = LVCMOS33; }
-set_pin_assignment	{ ps2_1_clock }	{ LOCATION = R7; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ ps2_1_data }	{ LOCATION = R7; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ ps2_1_clock }	{ LOCATION = M10; IOSTANDARD = LVCMOS33; }

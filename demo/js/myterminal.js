@@ -26,6 +26,26 @@ class RawCode {
     }
 }
 
+class LineBreakTransformer {
+    constructor() {
+        // A container for holding stream data until a new line.
+        this.chunks = ""
+    }
+
+    transform(chunk, controller) {
+        // Append new chunks to existing chunks.
+        this.chunks += chunk
+        // For each line breaks in chunks, send the parsed lines out.
+        const lines = this.chunks.split("\r\n")
+        this.chunks = lines.pop()
+        lines.forEach((line) => controller.enqueue(line))
+    }
+
+    flush(controller) {
+        controller.enqueue(this.chunks)
+    }
+}
+
 class MyCode {
     constructor() {
         this.string = ""
@@ -135,6 +155,11 @@ class MyCode {
             case 4: this.string += "\x17"; break
         }
 
+        return this
+    }
+
+    mouse(state) {
+        this.string += "\x19" + (state ? "A" : "@")
         return this
     }
 
@@ -323,19 +348,242 @@ class MyCode {
     }
 }
 
+class MyTerminalChar {
+    constructor(byte) {
+        this.char = String.fromCharCode(byte)
+    }
+    
+    toString() {
+        return this.char
+    }
+}
+
+class MyTerminalKeyModifiers {
+    constructor(byte) {
+        this.meta = (byte & 0x10) !== 0
+        this.altgr = (byte & 0x08) !== 0
+        this.alt = (byte & 0x04) !== 0
+        this.ctrl = (byte & 0x02) !== 0
+        this.shift = (byte & 0x01) !== 0
+    }
+
+    toString() {
+        const modifiers = []
+        if (this.meta) modifiers.push("meta")
+        if (this.altgr) modifiers.push("altgr")
+        if (this.alt) modifiers.push("alt")
+        if (this.ctrl) modifiers.push("ctrl")
+        if (this.shift) modifiers.push("shift")
+    
+        return "[" + modifiers.join(', ') + "]"
+    }
+}
+
+class MyTerminalKey {
+    static INSERT = 0xe0
+    static HOME = 0xe1
+    static PAGE_UP = 0xe2
+    static DELETE = 0xe3
+    static END = 0xe4
+    static PAGE_DOWN = 0xe5
+    static UP = 0xe6
+    static LEFT = 0xe7
+    static DOWN = 0xe8
+    static RIGHT = 0xe9
+    static CONTEXTUAL = 0xea
+    static PAUSE = 0xeb
+    static SCROLL = 0xf0
+    static F1 = 0xf1
+    static F2 = 0xf2
+    static F3 = 0xf3
+    static F4 = 0xf4
+    static F5 = 0xf5
+    static F6 = 0xf6
+    static F7 = 0xf7
+    static F8 = 0xf8
+    static F9 = 0xf9
+    static F10 = 0xfa
+    static F11 = 0xfb
+    static F12 = 0xfc
+    static PRNT_SCR = 0xff
+
+    static NAMES = {
+        0xe0: "INSERT",
+        0xe1: "HOME",
+        0xe2: "PAGE_UP",
+        0xe3: "DELETE",
+        0xe4: "END",
+        0xe5: "PAGE_DOWN",
+        0xe6: "UP",
+        0xe7: "LEFT",
+        0xe8: "DOWN",
+        0xe9: "RIGHT",
+        0xea: "CONTEXTUAL",
+        0xeb: "PAUSE",
+        0xf0: "SCROLL",
+        0xf1: "F1",
+        0xf2: "F2",
+        0xf3: "F3",
+        0xf4: "F4",
+        0xf5: "F5",
+        0xf6: "F6",
+        0xf7: "F7",
+        0xf8: "F8",
+        0xf9: "F9",
+        0xfa: "F10",
+        0xfb: "F11",
+        0xfc: "F12",
+        0xff: "PRNT_SCR"
+    }
+
+    constructor(byte1, byte2) {
+        this.key = byte2
+        this.modifiers = new MyTerminalKeyModifiers(byte1)
+    }
+
+    toString() {
+        return MyTerminalKey.NAMES[this.key] + this.modifiers.toString()
+    }
+}
+
+class MyTerminalMouseModifiers {
+    constructor(byte) {
+        this.meta = (byte & 0x40) !== 0
+        this.alt = (byte & 0x20) !== 0
+        this.ctrl = (byte & 0x10) !== 0
+        this.shift = (byte & 0x08) !== 0
+        this.middle = (byte & 0x04) !== 0
+        this.right = (byte & 0x02) !== 0
+        this.left = (byte & 0x01) !== 0
+    }
+
+    toString() {
+        const modifiers = []
+        if (this.meta) modifiers.push("meta")
+        if (this.altgr) modifiers.push("altgr")
+        if (this.alt) modifiers.push("alt")
+        if (this.ctrl) modifiers.push("ctrl")
+        if (this.shift) modifiers.push("shift")
+    
+        return "[" + modifiers.join(', ') + "]"
+    }
+}
+
+class MyTerminalMouse {
+    constructor(byte1, byte2, byte3) {
+        this.x = byte1 & 0x7F
+        this.y = byte2 & 0x7F
+        this.modifiers = new MyTerminalMouseModifiers(byte3)
+    }
+
+    toString() {
+        return '(' + this.x + ', ' + this.y + ')' + this.modifiers.toString()
+    }
+}
+
+class MyTerminalTransformer {
+    static STATE_INIT = 0
+    static STATE_EXTENDED_KEY_1 = 1
+    static STATE_EXTENDED_KEY_2 = 2
+    static STATE_MOUSE_X = 3
+    static STATE_MOUSE_Y = 4
+    static STATE_MOUSE_MODIFIERS = 5
+
+    static START_EXTENDED_KEY = 0x1f
+    static START_MOUSE = 0x1e
+
+    constructor() {
+        this.state = MyTerminalTransformer.STATE_INIT
+        this.resetBytes()
+    }
+
+    start() {
+        // Nothing to do
+    }
+
+    resetBytes() {
+        this.byte2 = 0
+        this.byte3 = 0
+    }
+
+    readByte(byte, controller) {
+        if (this.state === MyTerminalTransformer.STATE_INIT) {
+            this.resetBytes()
+
+            if (byte === MyTerminalTransformer.START_MOUSE) {
+                this.state = MyTerminalTransformer.STATE_MOUSE_X
+            } else if (byte === MyTerminalTransformer.START_EXTENDED_KEY) {
+                this.state = MyTerminalTransformer.STATE_EXTENDED_KEY_1
+            } else {
+                controller.enqueue(new MyTerminalChar(byte))
+                this.state = MyTerminalTransformer.STATE_INIT
+            }
+        } else if (this.state === MyTerminalTransformer.STATE_EXTENDED_KEY_1) {
+            this.byte2 = byte
+            this.state = MyTerminalTransformer.STATE_EXTENDED_KEY_2
+        } else if (this.state === MyTerminalTransformer.STATE_EXTENDED_KEY_2) {
+            controller.enqueue(new MyTerminalKey(this.byte2, byte))
+            this.state = MyTerminalTransformer.STATE_INIT
+        } else if (this.state === MyTerminalTransformer.STATE_MOUSE_X) {
+            this.byte2 = byte
+            this.state = MyTerminalTransformer.STATE_MOUSE_Y
+        } else if (this.state === MyTerminalTransformer.STATE_MOUSE_Y) {
+            this.byte3 = byte
+            this.state = MyTerminalTransformer.STATE_MOUSE_MODIFIERS
+        } else if (this.state === MyTerminalTransformer.STATE_MOUSE_MODIFIERS) {
+            controller.enqueue(
+                new MyTerminalMouse(this.byte2, this.byte3, byte)
+            )
+            this.state = MyTerminalTransformer.STATE_INIT
+        }
+    }
+
+    transform(chunk, controller) {
+        chunk.forEach(byte => { return this.readByte(byte, controller) } )
+    }
+
+    flush() {
+        // Nothing to do
+    }
+}
+
 class MyTerminal {
     static BAUDRATE = 3000000
+    static FLOWCONTROL = "hardware"
 
     constructor() {
         this.serialPort = null
         this.writer = null
+        this.reader = null
+        this.onInput = null
     }    
 
     async connect() {
         if (this.serialPort == null) {
             this.serialPort = await navigator.serial.requestPort()
-            await this.serialPort.open({ baudRate: MyTerminal.BAUDRATE })
+            await this.serialPort.open({
+                baudRate: MyTerminal.BAUDRATE,
+                flowControl: MyTerminal.FLOWCONTROL,
+            })
             this.writer = this.serialPort.writable.getWriter()
+            this.reader = this.serialPort.readable
+              .pipeThrough(new TransformStream(new MyTerminalTransformer()))
+              .getReader()
+
+            this.listen()
+        }
+    }
+
+    async listen() {
+        try {
+            while (true) {
+                const { value, done } = await this.reader.read()
+                if (!done && this.onInput != null) this.onInput(value)
+            }
+        } catch (error) {
+            console.log(error)
+        } finally {
+            this.reader.releaseLock()
         }
     }
 

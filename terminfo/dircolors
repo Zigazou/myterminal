@@ -9,8 +9,8 @@
 # against the TERM environment variable to determine if it is colorizable.
 
 TERM myterminal
-LEFTCODE \031
-RIGHTCODE \031
+LEFTCODE \000
+RIGHTCODE \000
 ENDCODE ^E*^BG^BP
 
 # Below are the color init strings for the basic file types. A color init
