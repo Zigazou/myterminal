@@ -45,6 +45,7 @@ task send_nothing;
 	end
 endtask
 
+reg [23:0] previous_sequence = 24'h000000;
 task send_event;
 	begin
 		sequence_out <= {
@@ -53,14 +54,21 @@ task send_event;
 			event_y,
 			event_modifier
 		};
+
+		previous_sequence <= { event_x,	event_y, event_modifier };
+
 		sequence_out_count <= 'd4;
 	end
 endtask
 
+wire state_is_new = previous_sequence != { event_x, event_y, event_modifier };
+wire mouse_enabled = mouse_control != 'd0;
+
 always @(posedge clk)
-	if (reset)
+	if (reset) begin
+		previous_sequence <= 'd0;
 		send_nothing();
-	else if (mouse_state_ready && mouse_control != 'd0)
+	end else if (mouse_state_ready && mouse_enabled && state_is_new)
 		send_event();
 	else
 		send_nothing();
