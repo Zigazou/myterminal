@@ -116,7 +116,7 @@ def command_size(state):
         return bytes([ 0x05, 0x30 ])
     elif state == 'doublewidth':
         return bytes([ 0x05, 0x31 ])
-    elif state == 'doublewidth':
+    elif state == 'doubleheight':
         return bytes([ 0x05, 0x32 ])
     elif state == 'double':
         return bytes([ 0x05, 0x33 ])
