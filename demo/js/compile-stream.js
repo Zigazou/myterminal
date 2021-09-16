@@ -138,7 +138,7 @@ const commands = {
             return String.fromCharCode(0x05, 0x30);
         } else if (state == 'doublewidth') {
             return String.fromCharCode(0x05, 0x31);
-        } else if (state == 'doublewidth') {
+        } else if (state == 'doubleheight') {
             return String.fromCharCode(0x05, 0x32);
         } else if (state == 'double') {
             return String.fromCharCode(0x05, 0x33);
