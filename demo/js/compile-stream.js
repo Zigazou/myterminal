@@ -165,6 +165,12 @@ const commands = {
         }
     },
 
+    mousecursor: function(cursorNumber) {
+        return String.fromCharCode(
+            0x19, 0x30 | (interpretNumber(cursorNumber) & 0x07)
+        )
+    },
+
     scroll: function(direction) {
         direction = direction.trim().toLowerCase();
 
@@ -274,20 +280,20 @@ function splitCommand(command) {
 function compileStream(sourceCode) {
     stream = "";
     sourceCode.split(/ *\r?\n */).forEach((command, line) => {
-        let arguments = splitCommand(command);
+        let args = splitCommand(command);
 
         // Ignores empty lines or comments
-        if (arguments.length == 0) return;
+        if (args.length == 0) return;
 
-        let instruction = arguments[0].toLowerCase()
-        arguments.shift();
+        let instruction = args[0].toLowerCase()
+        args.shift();
         
         if (commands[instruction] === undefined) {
             throw new Error("Unknown instruction: " + instruction);
         }
 
         try {
-            stream += commands[instruction](...arguments);
+            stream += commands[instruction](...args);
         } catch (err) {
             console.log(
                 err.toString() +
