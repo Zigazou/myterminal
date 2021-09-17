@@ -163,6 +163,11 @@ class MyCode {
         return this
     }
 
+    mouseCursor(cursor) {
+        this.string += "\x19" + String.fromCharCode(0x30 | (cursor & 0x07))
+        return this
+    }
+
     applyPattern(patternId, functionId) {
         this.print(String.fromCharCode(0x03))
             .print(String.fromCharCode(0x40 | functionId | (patternId * 4)))

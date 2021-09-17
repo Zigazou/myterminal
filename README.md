@@ -78,8 +78,8 @@ stty -F /dev/ttyUSB0 3000000 raw
 Note: `/dev/ttyUSB0` must be replaced with the device file attributed to
 MyTerminal by your Linux OS.
 
-Escape codes
-------------
+Escape codes (from host to terminal)
+------------------------------------
 
 | Code (hexa)   | Function                                                    |
 | ------------- |-------------------------------------------------------------|
@@ -117,8 +117,8 @@ Escape codes
 | 05 72         | Disable reverse video                                       |
 | 05 75         | Disable underline                                           |
 |               |                                                             |
-| 06 43         | Show cursor                                                 |
-| 06 63         | Hide cursor                                                 |
+| 06 43         | Show text cursor                                            |
+| 06 63         | Hide text cursor                                            |
 |               |                                                             |
 | 0B            | Scroll screen up (does not move cursor)                     |
 | 0C            | Scroll screen down (does not move cursor)                   |
@@ -135,6 +135,17 @@ Escape codes
 | 17            | Use character page 4, see [charpage.pdf](font/charpage.pdf) |
 |               |                                                             |
 | 18            | Use hi-res graphics                                         |
+|               |                                                             |
+| 19 30         | Mouse cursor default ![](cursor/cursor-default.png)         |
+| 19 31         | Mouse cursor pointer ![](cursor/cursor-pointer.png)         |
+| 19 32         | Mouse cursor not allowed ![](cursor/cursor-not-allowed.png) |
+| 19 33         | Mouse cursor wait ![](cursor/cursor-wait.png)               |
+| 19 34         | Mouse cursor move ![](cursor/cursor-move.png)               |
+| 19 35         | Mouse cursor grab ![](cursor/cursor-grab.png)               |
+| 19 36         | Mouse cursor crosshair ![](cursor/cursor-crosshair.png)     |
+| 19 37         | Mouse cursor cell ![](cursor/cursor-cell.png)               |
+| 19 40         | Hide mouse cursor and disable mouse events                  |
+| 19 41         | Show mouse cursor and enable mouse events                   |
 
 Notes
 -----

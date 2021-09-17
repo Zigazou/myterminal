@@ -83,20 +83,49 @@ task state_send;
 	end
 endtask
 
+wire x_too_low = x_increment_is_negative && (new_x_screen > x_screen);
+wire x_too_high =
+	!x_increment_is_negative
+	&& (new_x_screen < x_screen || new_x_screen > 'd1279);
+
+wire y_too_low = !y_increment_is_negative && (new_y_screen > y_screen);
+wire y_too_high =
+	y_increment_is_negative
+	&& (new_y_screen < y_screen || new_y_screen > 'd1019);
+
 task state_sent;
 	begin
 		read <= FALSE;
 		mouse_state_ready <= TRUE;
 
-		x_screen <= new_x_screen;
-		y_screen <= new_y_screen;
+		if (x_too_low) begin
+			x_screen <= 'd0;
+			x_text <= 'd0;
+		end else if (x_too_high) begin
+			x_screen <= 'd1279;
+			x_text <= 'd79;
+		end else begin
+			x_screen <= new_x_screen;
+			x_text <= new_x_screen[10:4];
+		end
 
-		x_text <= new_x_screen[10:4];
-		/* TEST *///y_text <= new_y_screen[9:4]; //y_screen / 'd20;
-		/* TEST */y_text <= new_y_screen / 'd20;
+		if (y_too_low) begin
+			y_screen <= 'd0;
+			y_text <= 'd0;
+		end else if (y_too_high) begin
+			y_screen <= 'd1019;
+			y_text <= 'd50;
+		end else begin
+			y_screen <= new_y_screen;
+			y_text <= new_y_screen / 'd20;
+		end
 
 		register_index <= VIDEO_MOUSE_POSITION;
-		register_value <= { 2'b0, new_y_screen, new_x_screen };
+		register_value <= {
+			2'b0,
+			y_too_low ? 10'd0 : y_too_high ? 10'd1019 : new_y_screen,
+			x_too_low ? 11'd0 : x_too_high ? 11'd1279 : new_x_screen
+		};
 
 		state <= STATE_IDLE;
 	end
