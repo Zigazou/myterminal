@@ -1,3 +1,4 @@
+/* exported loadRawFile */
 function loadRawFile(myTerminal, fileList) {
     if (fileList.length !== 1) return;
 

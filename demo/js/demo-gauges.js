@@ -1,3 +1,4 @@
+/* exported demoGauges */
 function demoGauges(myTerminal) {
     myTerminal.write(myCode()
         .resetAttributes()
@@ -23,7 +24,7 @@ function demoGauges(myTerminal) {
             .characterPage(0)
             .foreground(7)
             .applyPattern(i % 15, 0)
-            .gauge(10, i / 47, EAST, false)
+            .gauge(10, i / 47, MyCode.EAST, false)
             .stopPattern()
             .print(String(i))
         )

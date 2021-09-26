@@ -1,3 +1,4 @@
+/* exported demoAgePyramid */
 function demoAgePyramid(myTerminal) {
     function center(string, width) {
         if (string.length >= width) {
@@ -65,15 +66,21 @@ function demoAgePyramid(myTerminal) {
         myTerminal.write(myCode()
             .foreground(11)
             .locate(35, vpos + francePopulation2020.labels.length - i)
-            .gauge(width, malePercent, WEST, false)
+            .gauge(width, malePercent, MyCode.WEST, false)
             .foreground(14)
             .locate(45, vpos + francePopulation2020.labels.length - i)
-            .gauge(width, femalePercent, EAST, false)
+            .gauge(width, femalePercent, MyCode.EAST, false)
             .foreground(7)
-            .locate(35 - 6 - width * malePercent, vpos + francePopulation2020.labels.length - i)
+            .locate(
+                35 - 6 - width * malePercent,
+                vpos + francePopulation2020.labels.length - i
+            )
             .print(String(francePopulation2020.male[i]).padStart(7))
             .foreground(7)
-            .locate(45 + 1 + width * femalePercent, vpos + francePopulation2020.labels.length - i)
+            .locate(
+                45 + 1 + width * femalePercent,
+                vpos + francePopulation2020.labels.length - i
+            )
             .print(String(francePopulation2020.female[i]))
             .foreground(9)
             .locate(37, vpos + francePopulation2020.labels.length - i)
@@ -83,15 +90,15 @@ function demoAgePyramid(myTerminal) {
 
     myTerminal.write(myCode()
         .locate(23 , vpos + francePopulation2020.labels.length + 2)
-        .size(SIZE_DOUBLE)
+        .size(MyCode.SIZE_DOUBLE)
         .foreground(15)
         .print("FRANCE POPULATION")
         .locate(25 , vpos + francePopulation2020.labels.length + 4)
-        .size(SIZE_DOUBLE_WIDTH)
+        .size(MyCode.SIZE_DOUBLE_WIDTH)
         .foreground(7)
         .print("January 1, 2020")
         .locate(5, vpos + francePopulation2020.labels.length + 5)
-        .size(SIZE_NORMAL)
+        .size(MyCode.SIZE_NORMAL)
         .foreground(10)
         .print("Source: Insee, estimations de population ")
         .print("(résultats arrêtés fin 2019)")

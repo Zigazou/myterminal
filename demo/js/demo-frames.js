@@ -1,3 +1,4 @@
+/* exported demoFrames */
 function demoFrames(myTerminal) {
     myTerminal.write(myCode()
         .resetAttributes()
@@ -29,7 +30,7 @@ function demoFrames(myTerminal) {
 
         myTerminal.write(myCode()
             .foreground(interestingForLight.includes(patternId) ? 15 : 10)
-            .applyPattern(patternId, FUNCTION_AND)
+            .applyPattern(patternId, MyCode.FUNCTION_AND)
             .lightFrame(3 + patternId*5, 3, 5, 3)
             .stopPattern()
             .locate(3 + patternId*5 + 1, 4)
@@ -38,7 +39,7 @@ function demoFrames(myTerminal) {
 
         myTerminal.write(myCode()
             .foreground(interestingForStrong.includes(patternId) ? 15 : 10)
-            .applyPattern(patternId, FUNCTION_AND)
+            .applyPattern(patternId, MyCode.FUNCTION_AND)
             .strongFrame(3 + patternId*5, 6, 5, 3)
             .stopPattern()
             .locate(3 + patternId*5 + 1, 7)
@@ -47,7 +48,7 @@ function demoFrames(myTerminal) {
 
         myTerminal.write(myCode()
             .foreground(interestingForDouble.includes(patternId) ? 15 : 10)
-            .applyPattern(patternId, FUNCTION_AND)
+            .applyPattern(patternId, MyCode.FUNCTION_AND)
             .doubleFrame(3 + patternId*5, 9, 5, 3)
             .stopPattern()
             .locate(3 + patternId*5 + 1, 10)
@@ -59,7 +60,7 @@ function demoFrames(myTerminal) {
     myTerminal.write(myCode()
         .background(2)
         .foreground(10)
-        .bubble(NOT_FILLED, 30, 13, 19, 2, 5, NORTH)
+        .bubble(MyCode.NOT_FILLED, 30, 13, 19, 2, 5, MyCode.NORTH)
         .locate(30, 13)
         .print("These combinations")
         .locate(30, 14)
@@ -69,7 +70,7 @@ function demoFrames(myTerminal) {
     myTerminal.write(myCode()
         .background(2)
         .foreground(15)
-        .bubble(FILLED, 5, 13, 23, 2, 5, NORTH)
+        .bubble(MyCode.FILLED, 5, 13, 23, 2, 5, MyCode.NORTH)
         .reverse(true)
         .locate(5, 13)
         .print("These combinations give")
@@ -77,20 +78,4 @@ function demoFrames(myTerminal) {
         .print("interesting results")
         .reverse(false)
     )
-
-/*
-    for (let i = 0; i < 47; i++) {
-        myTerminal.write(myCode()
-            .locate(60, 2 + i)
-            .characterPage(3)
-            .foreground(15)
-            .print(String.fromCharCode(0xb1))
-            .characterPage(0)
-            .foreground(7)
-            .applyPattern(i % 15, 0)
-            .horizontalGauge(10, i / 47)
-            .stopPattern()
-            .print(String(i))
-        )
-    }*/
 }
