@@ -33,6 +33,4 @@ screen += CHARPAGES[0]
 
 myt_print(b'\x0400\x02@\x02_')
 myt_print(LEFT_ROUND + ("Démo: mosaïque | MyTerminal").ljust(78).encode(MYT) + RIGHT_ROUND)
-myt_print(b'\x02O\x02P' + screen + screen)
-myt_print(bytes([0x04, 0x35, 0x39, 0x01, 0x28]))
-myt_print(b'top')
+myt_print(b'\x02O\x02P' + screen)

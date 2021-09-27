@@ -1,21 +1,4 @@
-const NORTH = 0
-const EAST = 1
-const SOUTH = 2
-const WEST = 3
-
-const SIZE_NORMAL = 0
-const SIZE_DOUBLE_WIDTH = 1
-const SIZE_DOUBLE_HEIGHT = 2
-const SIZE_DOUBLE = 3
-
-const FUNCTION_AND = 0
-const FUNCTION_OR = 1
-const FUNCTION_XOR = 2
-const FUNCTION_BORDER = 3
-
-const FILLED = true
-const NOT_FILLED = false
-
+/* exported RawCode, LineBreakTransformer, myCode */
 class RawCode {
     constructor(bytes) {
         this.bytes = bytes;
@@ -217,9 +200,9 @@ class MyCode {
     }
 
     bubble(filled, column, row, width, height, pointerOffset, pointerDirection) {
-        const pointers = (filled
-            ? [0x4f, 0x4d, 0x4e, 0x4c]
-            : [0x4b, 0x49, 0x4a, 0x48]       
+        const pointers = (
+            filled ? [0x4f, 0x4d, 0x4e, 0x4c]
+                   : [0x4b, 0x49, 0x4a, 0x48]       
         ).map(charCode => String.fromCharCode(charCode))
 
         const lines = [0x59, 0x40, 0x50, 0x47].map(
@@ -239,27 +222,27 @@ class MyCode {
 
         for (let y = 0; y < height; y++) {
             this.locate(column + width, row + y)
-                .print(lines[EAST])
+                .print(lines[MyCode.EAST])
                 .locate(column - 1, row + y)
-                .print(lines[WEST])
+                .print(lines[MyCode.WEST])
         }
 
         this.locate(column, row - 1)
-            .print(lines[NORTH].repeat(width))
+            .print(lines[MyCode.NORTH].repeat(width))
             .locate(column, row + height)
-            .print(lines[SOUTH].repeat(width))
+            .print(lines[MyCode.SOUTH].repeat(width))
 
         switch(pointerDirection) {
-            case NORTH:
+            case MyCode.NORTH:
                 this.locate(column + pointerOffset, row - 1)
                 break
-            case EAST:
+            case MyCode.EAST:
                 this.locate(column + width, row + pointerOffset)
                 break
-            case SOUTH:
+            case MyCode.SOUTH:
                 this.locate(column + offset, row + height)
                 break
-            case WEST:
+            case MyCode.WEST:
                 this.locate(column - 1, row + pointerOffset)
                 break
         }
@@ -272,10 +255,11 @@ class MyCode {
     gauge(width, percent, orientation=EAST, joint=true) {
         const offset = joint ? [ 0xc0, 0xa0, 0xe0, 0xb0 ][orientation]
                              : [ 0xd0, 0xa8, 0xf0, 0xb8 ][orientation]
-        const vertical = orientation == NORTH || orientation == SOUTH
+        const vertical = (
+            orientation == MyCode.NORTH || orientation == MyCode.SOUTH
+        )
         const divisions= vertical ? 11 : 9
         const barCount = Math.round(percent * width * divisions)
-        const totalSteps = width * divisions
 
         this.characterPage(3)
 
@@ -290,13 +274,13 @@ class MyCode {
             }
 
             switch(orientation) {
-                case NORTH:
+                case MyCode.NORTH:
                     this.print(String.fromCharCode(0x10, 0x0e))
                     break
-                case SOUTH:
+                case MyCode.SOUTH:
                     this.print(String.fromCharCode(0x10, 0x0f))
                     break
-                case WEST:
+                case MyCode.WEST:
                     this.print(String.fromCharCode(0x10, 0x10))
             }
 
@@ -353,6 +337,21 @@ class MyCode {
     }
 }
 
+MyCode.NORTH = 0
+MyCode.EAST = 1
+MyCode.SOUTH = 2
+MyCode.WEST = 3
+MyCode.SIZE_NORMAL = 0
+MyCode.SIZE_DOUBLE_WIDTH = 1
+MyCode.SIZE_DOUBLE_HEIGHT = 2
+MyCode.SIZE_DOUBLE = 3
+MyCode.FUNCTION_AND = 0
+MyCode.FUNCTION_OR = 1
+MyCode.FUNCTION_XOR = 2
+MyCode.FUNCTION_BORDER = 3
+MyCode.FILLED = true
+MyCode.NOT_FILLED = false
+
 class MyTerminalChar {
     constructor(byte) {
         this.char = String.fromCharCode(byte)
@@ -385,62 +384,6 @@ class MyTerminalKeyModifiers {
 }
 
 class MyTerminalKey {
-    static INSERT = 0xe0
-    static HOME = 0xe1
-    static PAGE_UP = 0xe2
-    static DELETE = 0xe3
-    static END = 0xe4
-    static PAGE_DOWN = 0xe5
-    static UP = 0xe6
-    static LEFT = 0xe7
-    static DOWN = 0xe8
-    static RIGHT = 0xe9
-    static CONTEXTUAL = 0xea
-    static PAUSE = 0xeb
-    static SCROLL = 0xf0
-    static F1 = 0xf1
-    static F2 = 0xf2
-    static F3 = 0xf3
-    static F4 = 0xf4
-    static F5 = 0xf5
-    static F6 = 0xf6
-    static F7 = 0xf7
-    static F8 = 0xf8
-    static F9 = 0xf9
-    static F10 = 0xfa
-    static F11 = 0xfb
-    static F12 = 0xfc
-    static PRNT_SCR = 0xff
-
-    static NAMES = {
-        0xe0: "INSERT",
-        0xe1: "HOME",
-        0xe2: "PAGE_UP",
-        0xe3: "DELETE",
-        0xe4: "END",
-        0xe5: "PAGE_DOWN",
-        0xe6: "UP",
-        0xe7: "LEFT",
-        0xe8: "DOWN",
-        0xe9: "RIGHT",
-        0xea: "CONTEXTUAL",
-        0xeb: "PAUSE",
-        0xf0: "SCROLL",
-        0xf1: "F1",
-        0xf2: "F2",
-        0xf3: "F3",
-        0xf4: "F4",
-        0xf5: "F5",
-        0xf6: "F6",
-        0xf7: "F7",
-        0xf8: "F8",
-        0xf9: "F9",
-        0xfa: "F10",
-        0xfb: "F11",
-        0xfc: "F12",
-        0xff: "PRNT_SCR"
-    }
-
     constructor(byte1, byte2) {
         this.key = byte2
         this.modifiers = new MyTerminalKeyModifiers(byte1)
@@ -449,6 +392,62 @@ class MyTerminalKey {
     toString() {
         return MyTerminalKey.NAMES[this.key] + this.modifiers.toString()
     }
+}
+
+MyTerminalKey.INSERT = 0xe0
+MyTerminalKey.HOME = 0xe1
+MyTerminalKey.PAGE_UP = 0xe2
+MyTerminalKey.DELETE = 0xe3
+MyTerminalKey.END = 0xe4
+MyTerminalKey.PAGE_DOWN = 0xe5
+MyTerminalKey.UP = 0xe6
+MyTerminalKey.LEFT = 0xe7
+MyTerminalKey.DOWN = 0xe8
+MyTerminalKey.RIGHT = 0xe9
+MyTerminalKey.CONTEXTUAL = 0xea
+MyTerminalKey.PAUSE = 0xeb
+MyTerminalKey.SCROLL = 0xf0
+MyTerminalKey.F1 = 0xf1
+MyTerminalKey.F2 = 0xf2
+MyTerminalKey.F3 = 0xf3
+MyTerminalKey.F4 = 0xf4
+MyTerminalKey.F5 = 0xf5
+MyTerminalKey.F6 = 0xf6
+MyTerminalKey.F7 = 0xf7
+MyTerminalKey.F8 = 0xf8
+MyTerminalKey.F9 = 0xf9
+MyTerminalKey.F10 = 0xfa
+MyTerminalKey.F11 = 0xfb
+MyTerminalKey.F12 = 0xfc
+MyTerminalKey.PRNT_SCR = 0xff
+
+MyTerminalKey.NAMES = {
+    0xe0: "INSERT",
+    0xe1: "HOME",
+    0xe2: "PAGE_UP",
+    0xe3: "DELETE",
+    0xe4: "END",
+    0xe5: "PAGE_DOWN",
+    0xe6: "UP",
+    0xe7: "LEFT",
+    0xe8: "DOWN",
+    0xe9: "RIGHT",
+    0xea: "CONTEXTUAL",
+    0xeb: "PAUSE",
+    0xf0: "SCROLL",
+    0xf1: "F1",
+    0xf2: "F2",
+    0xf3: "F3",
+    0xf4: "F4",
+    0xf5: "F5",
+    0xf6: "F6",
+    0xf7: "F7",
+    0xf8: "F8",
+    0xf9: "F9",
+    0xfa: "F10",
+    0xfb: "F11",
+    0xfc: "F12",
+    0xff: "PRNT_SCR"
 }
 
 class MyTerminalMouseModifiers {
@@ -487,16 +486,6 @@ class MyTerminalMouse {
 }
 
 class MyTerminalTransformer {
-    static STATE_INIT = 0
-    static STATE_EXTENDED_KEY_1 = 1
-    static STATE_EXTENDED_KEY_2 = 2
-    static STATE_MOUSE_X = 3
-    static STATE_MOUSE_Y = 4
-    static STATE_MOUSE_MODIFIERS = 5
-
-    static START_EXTENDED_KEY = 0x1f
-    static START_MOUSE = 0x1e
-
     constructor() {
         this.state = MyTerminalTransformer.STATE_INIT
         this.resetBytes()
@@ -552,10 +541,16 @@ class MyTerminalTransformer {
     }
 }
 
-class MyTerminal {
-    static BAUDRATE = 3000000
-    static FLOWCONTROL = "hardware"
+MyTerminalTransformer.STATE_INIT = 0
+MyTerminalTransformer.STATE_EXTENDED_KEY_1 = 1
+MyTerminalTransformer.STATE_EXTENDED_KEY_2 = 2
+MyTerminalTransformer.STATE_MOUSE_X = 3
+MyTerminalTransformer.STATE_MOUSE_Y = 4
+MyTerminalTransformer.STATE_MOUSE_MODIFIERS = 5
+MyTerminalTransformer.START_EXTENDED_KEY = 0x1f
+MyTerminalTransformer.START_MOUSE = 0x1e
 
+class MyTerminal {
     constructor() {
         this.serialPort = null
         this.writer = null
@@ -600,6 +595,9 @@ class MyTerminal {
         }
     }
 }
+
+MyTerminal.BAUDRATE = 3000000
+MyTerminal.FLOWCONTROL = "hardware"
 
 function myCode() {
     return new MyCode()

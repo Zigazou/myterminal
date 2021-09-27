@@ -19,7 +19,11 @@ set_pin_assignment	{ reset_n }	{ LOCATION = T2; IOSTANDARD = LVCMOS33; }
 #set_pin_assignment	{ vga_red[2] }	{ LOCATION = C5; IOSTANDARD = LVCMOS33; }
 #set_pin_assignment	{ vga_vsync }	{ LOCATION = L10; IOSTANDARD = LVCMOS33; }
 
+# MAX3232
+#set_pin_assignment	{ rx }	{ LOCATION = M12; IOSTANDARD = LVCMOS33; }
+#set_pin_assignment	{ tx }	{ LOCATION = R16; IOSTANDARD = LVCMOS33; }
 
+# FTDI232
 set_pin_assignment	{ rx }	{ LOCATION = P12; IOSTANDARD = LVCMOS33; }
 set_pin_assignment	{ tx }	{ LOCATION = N11; IOSTANDARD = LVCMOS33; }
 set_pin_assignment	{ cts }	{ LOCATION = N12; IOSTANDARD = LVCMOS33; }

@@ -1,3 +1,4 @@
+/* exported demoColors */
 function demoColors(myTerminal) {
     myTerminal.write(myCode()
         .resetAttributes()
@@ -28,11 +29,11 @@ function demoColors(myTerminal) {
 
         myTerminal.write(myCode()
             .locate(1, y)
-            .applyPattern(11, FUNCTION_AND)
+            .applyPattern(11, MyCode.FUNCTION_AND)
             .print(String.fromCharCode(0xdf).repeat(10))
             .stopPattern()
             .print(String.fromCharCode(0xdf).repeat(19))
-            .applyPattern(11, FUNCTION_AND)
+            .applyPattern(11, MyCode.FUNCTION_AND)
             .print(String.fromCharCode(0xdf).repeat(10))
             .stopPattern()
         )
