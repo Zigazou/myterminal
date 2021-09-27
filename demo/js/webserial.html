@@ -96,6 +96,9 @@
         <button id="age-pyramid" class="need-connection" disabled>
             Age pyramid
         </button>
+        <button id="hires" class="need-connection" disabled>
+            Hi-res graphics
+        </button>
 
         <h2>Send a file to MyTerminal</h2>
 
@@ -131,10 +134,12 @@ print "par Frédéric BISSON"
         </div>
 
         <script src="myterminal.js"></script>
+        <script src="hires-image.js"></script>
         <script src="demo-colors.js"></script>
         <script src="demo-frames.js"></script>
         <script src="demo-gauges.js"></script>
         <script src="demo-age-pyramid.js"></script>
+        <script src="demo-hires.js"></script>
         <script src="demo-load-rawfile.js"></script>
         <script src="compile-stream.js"></script>
         <script>
@@ -197,6 +202,11 @@ print "par Frédéric BISSON"
                     document.getElementById('age-pyramid').addEventListener(
                         'click',
                         () => demoAgePyramid(myTerminal)
+                    )
+
+                    document.getElementById('hires').addEventListener(
+                        'click',
+                        () => demoHires(myTerminal)
                     )
 
                     document.getElementById('load-file').addEventListener(
