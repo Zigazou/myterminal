@@ -379,7 +379,7 @@ always @(posedge clk)
 	if (gfxmode)
 		blink <= FALSE;
 	else
-	    case (charattr[15:14])
+	    case (charattr_source[15:14])
 	        2'b00: blink <= FALSE; // off
 	        2'b01: blink <= frame_count[5]; // slow
 	        2'b10: blink <= frame_count[4]; // norm
