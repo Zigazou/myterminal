@@ -50,22 +50,7 @@ function BMFastPixelArtLine(ctx, x1, y1, x2, y2) {
     ctx.fill();
 }
 
-function demoHires(myTerminal) {
-    myTerminal.write(myCode()
-        .resetAttributes()
-        .cursor(false)
-        .background(2)
-        .foreground(15)
-        .clearScreen()
-        .background(4)
-        .clearEndOfLine()
-        .print("Example hi-resolution graphics\n")
-        .background(2)
-        .characterPage(3)
-        .print("P".repeat(80))
-        .characterPage(0)
-    )
-
+function updateGraph(myTerminal) {
     const aCanvas = document.createElement('canvas')
     aCanvas.width = 240
     aCanvas.height = 200
@@ -133,4 +118,29 @@ function demoHires(myTerminal) {
     const raw = hires.convert(ctx)
 
     myTerminal.write(new RawCode(raw))
+}
+
+function demoHires(myTerminal) {
+    myTerminal.write(myCode()
+        .resetAttributes()
+        .cursor(false)
+        .background(2)
+        .foreground(15)
+        .clearScreen()
+        .background(4)
+        .clearEndOfLine()
+        .print("Example hi-resolution graphics\n")
+        .background(2)
+        .characterPage(3)
+        .print("P".repeat(80))
+        .characterPage(0)
+        .locate(70, 5)
+        .size(MyCode.SIZE_DOUBLE_HEIGHT)
+        .reverse(true)
+        .print("Refresh")
+        .resetAttributes()
+        .mouse(true)
+    )
+
+    updateGraph(myTerminal)
 }

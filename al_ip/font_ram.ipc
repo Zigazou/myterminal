@@ -19,7 +19,7 @@
         <mode_a>NORMAL</mode_a>
         <depth_a>20480</depth_a>
         <width_a>16</width_a>
-        <register_a>None</register_a>
+        <register_a>RegWithoutOre</register_a>
         <enable_a>disable</enable_a>
     </PortAOption>
     <MemoryInitialization>

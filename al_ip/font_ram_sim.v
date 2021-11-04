@@ -1,5 +1,5 @@
-// Verilog netlist created by TD v5.0.27252
-// Sat May 22 05:13:07 2021
+// Verilog netlist created by TD v5.0.38657
+// Fri Oct 29 07:15:02 2021
 
 `timescale 1ns / 1ps
 module font_ram  // font_ram.v(14)
@@ -7,6 +7,7 @@ module font_ram  // font_ram.v(14)
   addra,
   clka,
   dia,
+  rsta,
   wea,
   doa
   );
@@ -14,6 +15,7 @@ module font_ram  // font_ram.v(14)
   input [14:0] addra;  // font_ram.v(29)
   input clka;  // font_ram.v(31)
   input [15:0] dia;  // font_ram.v(28)
+  input rsta;  // font_ram.v(32)
   input wea;  // font_ram.v(30)
   output [15:0] doa;  // font_ram.v(26)
 
@@ -23,9 +25,10 @@ module font_ram  // font_ram.v(14)
   parameter DATA_DEPTH_B = 20480;
   parameter DATA_WIDTH_A = 16;
   parameter DATA_WIDTH_B = 16;
-  parameter REGMODE_A = "NOREG";
+  parameter REGMODE_A = "OUTREG";
   parameter WRITEMODE_A = "NORMAL";
   wire [0:2] addra_piped;
+  wire [0:2] addra_piped_piped;
   wire  \inst_doa_mux_b0/B0_0 ;
   wire  \inst_doa_mux_b0/B0_1 ;
   wire  \inst_doa_mux_b0/B1_0 ;
@@ -167,7 +170,7 @@ module font_ram  // font_ram.v(14)
     .clk(clka),
     .d(addra[12]),
     .en(wea_neg),
-    .sr(1'b0),
+    .sr(rsta),
     .ss(1'b0),
     .q(addra_piped[0]));
   AL_DFF_X addra_pipe_b1 (
@@ -176,7 +179,7 @@ module font_ram  // font_ram.v(14)
     .clk(clka),
     .d(addra[13]),
     .en(wea_neg),
-    .sr(1'b0),
+    .sr(rsta),
     .ss(1'b0),
     .q(addra_piped[1]));
   AL_DFF_X addra_pipe_b2 (
@@ -185,9 +188,36 @@ module font_ram  // font_ram.v(14)
     .clk(clka),
     .d(addra[14]),
     .en(wea_neg),
-    .sr(1'b0),
+    .sr(rsta),
     .ss(1'b0),
     .q(addra_piped[2]));
+  AL_DFF_X addra_piped_pipe_b0 (
+    .ar(1'b0),
+    .as(1'b0),
+    .clk(clka),
+    .d(addra_piped[0]),
+    .en(wea_neg),
+    .sr(rsta),
+    .ss(1'b0),
+    .q(addra_piped_piped[0]));
+  AL_DFF_X addra_piped_pipe_b1 (
+    .ar(1'b0),
+    .as(1'b0),
+    .clk(clka),
+    .d(addra_piped[1]),
+    .en(wea_neg),
+    .sr(rsta),
+    .ss(1'b0),
+    .q(addra_piped_piped[1]));
+  AL_DFF_X addra_piped_pipe_b2 (
+    .ar(1'b0),
+    .as(1'b0),
+    .clk(clka),
+    .d(addra_piped[2]),
+    .en(wea_neg),
+    .sr(rsta),
+    .ss(1'b0),
+    .q(addra_piped_piped[2]));
   and \and_Naddra[12]_Naddr  (\and_Naddra[12]_Naddr_o , ~addra[12], ~addra[13], ~addra[14]);
   and \and_Naddra[12]_Naddr_al_u16  (\and_Naddra[12]_Naddr_o_al_n16 , ~addra[12], ~addra[13], addra[14]);
   and \and_Naddra[12]_addra  (\and_Naddra[12]_addra_o , ~addra[12], addra[13], ~addra[14]);
@@ -199,7 +229,7 @@ module font_ram  // font_ram.v(14)
     .JTAG_PERSISTN("DISABLE"),
     .PROGRAMN_PERSISTN("DISABLE"))
     config_inst ();
-  // address_offset=0;data_offset=0;depth=4096;width=8;num_section=1;width_per_section=8;section_size=16;working_depth=4096;working_width=8;mode_ecc=0;address_step=1;bytes_in_per_section=1;
+  // address_offset=0;data_offset=0;depth=4096;width=8;num_section=1;width_per_section=8;section_size=16;working_depth=4096;working_width=8;working_numbyte=1;mode_ecc=0;address_step=1;bytes_in_per_section=1;
   EG_PHY_BRAM32K #(
     .CLKBMUX("0"),
     .CSBMUX("0"),
@@ -334,11 +364,10 @@ module font_ram  // font_ram.v(14)
     .INIT_7E(256'hC0C0000000000000E0E0000000000000E0E000C0C080000000000000E0E00000),
     .INIT_7F(256'hC0C0000000000000C0C000000000000000000000E0E0000000000000E0E00000),
     .MODE("SP16K"),
-    .OCEAMUX("0"),
+    .OCEAMUX("1"),
     .OCEBMUX("0"),
-    .REGMODE_A("NOREG"),
+    .REGMODE_A("OUTREG"),
     .REGMODE_B("NOREG"),
-    .RSTAMUX("0"),
     .RSTBMUX("0"),
     .SRMODE("SYNC"),
     .WEBMUX("0"),
@@ -352,9 +381,10 @@ module font_ram  // font_ram.v(14)
     .clka(clka),
     .csa(\and_Naddra[12]_Naddr_o ),
     .dia({open_n51,open_n52,open_n53,open_n54,open_n55,open_n56,open_n57,open_n58,dia[7:0]}),
+    .rsta(rsta),
     .wea(wea),
-    .doa({open_n80,open_n81,open_n82,open_n83,open_n84,open_n85,open_n86,open_n87,inst_doa_i0_007,inst_doa_i0_006,inst_doa_i0_005,inst_doa_i0_004,inst_doa_i0_003,inst_doa_i0_002,inst_doa_i0_001,inst_doa_i0_000}));
-  // address_offset=0;data_offset=8;depth=4096;width=8;num_section=1;width_per_section=8;section_size=16;working_depth=4096;working_width=8;mode_ecc=0;address_step=1;bytes_in_per_section=1;
+    .doa({open_n79,open_n80,open_n81,open_n82,open_n83,open_n84,open_n85,open_n86,inst_doa_i0_007,inst_doa_i0_006,inst_doa_i0_005,inst_doa_i0_004,inst_doa_i0_003,inst_doa_i0_002,inst_doa_i0_001,inst_doa_i0_000}));
+  // address_offset=0;data_offset=8;depth=4096;width=8;num_section=1;width_per_section=8;section_size=16;working_depth=4096;working_width=8;working_numbyte=1;mode_ecc=0;address_step=1;bytes_in_per_section=1;
   EG_PHY_BRAM32K #(
     .CLKBMUX("0"),
     .CSBMUX("0"),
@@ -489,11 +519,10 @@ module font_ram  // font_ram.v(14)
     .INIT_7E(256'h0C0C0000000000003F3F30303E3E30303F3F000C0F070300000000003F3F3030),
     .INIT_7F(256'h0F0F0303030303030F0F0003070E0C00000000003F3F30303E3E30303F3F0000),
     .MODE("SP16K"),
-    .OCEAMUX("0"),
+    .OCEAMUX("1"),
     .OCEBMUX("0"),
-    .REGMODE_A("NOREG"),
+    .REGMODE_A("OUTREG"),
     .REGMODE_B("NOREG"),
-    .RSTAMUX("0"),
     .RSTBMUX("0"),
     .SRMODE("SYNC"),
     .WEBMUX("0"),
@@ -506,10 +535,11 @@ module font_ram  // font_ram.v(14)
     .byteb(1'b0),
     .clka(clka),
     .csa(\and_Naddra[12]_Naddr_o ),
-    .dia({open_n108,open_n109,open_n110,open_n111,open_n112,open_n113,open_n114,open_n115,dia[15:8]}),
+    .dia({open_n107,open_n108,open_n109,open_n110,open_n111,open_n112,open_n113,open_n114,dia[15:8]}),
+    .rsta(rsta),
     .wea(wea),
-    .doa({open_n137,open_n138,open_n139,open_n140,open_n141,open_n142,open_n143,open_n144,inst_doa_i0_015,inst_doa_i0_014,inst_doa_i0_013,inst_doa_i0_012,inst_doa_i0_011,inst_doa_i0_010,inst_doa_i0_009,inst_doa_i0_008}));
-  // address_offset=4096;data_offset=0;depth=4096;width=8;num_section=1;width_per_section=8;section_size=16;working_depth=4096;working_width=8;mode_ecc=0;address_step=1;bytes_in_per_section=1;
+    .doa({open_n135,open_n136,open_n137,open_n138,open_n139,open_n140,open_n141,open_n142,inst_doa_i0_015,inst_doa_i0_014,inst_doa_i0_013,inst_doa_i0_012,inst_doa_i0_011,inst_doa_i0_010,inst_doa_i0_009,inst_doa_i0_008}));
+  // address_offset=4096;data_offset=0;depth=4096;width=8;num_section=1;width_per_section=8;section_size=16;working_depth=4096;working_width=8;working_numbyte=1;mode_ecc=0;address_step=1;bytes_in_per_section=1;
   EG_PHY_BRAM32K #(
     .CLKBMUX("0"),
     .CSBMUX("0"),
@@ -644,11 +674,10 @@ module font_ram  // font_ram.v(14)
     .INIT_7E(256'h40404040404040407F00007F404040404040404040404040404040407F0000FF),
     .INIT_7F(256'hC040404040404040404040400000000000000000C04040C00000000000000000),
     .MODE("SP16K"),
-    .OCEAMUX("0"),
+    .OCEAMUX("1"),
     .OCEBMUX("0"),
-    .REGMODE_A("NOREG"),
+    .REGMODE_A("OUTREG"),
     .REGMODE_B("NOREG"),
-    .RSTAMUX("0"),
     .RSTBMUX("0"),
     .SRMODE("SYNC"),
     .WEBMUX("0"),
@@ -661,10 +690,11 @@ module font_ram  // font_ram.v(14)
     .byteb(1'b0),
     .clka(clka),
     .csa(\and_addra[12]_Naddra_o ),
-    .dia({open_n165,open_n166,open_n167,open_n168,open_n169,open_n170,open_n171,open_n172,dia[7:0]}),
+    .dia({open_n163,open_n164,open_n165,open_n166,open_n167,open_n168,open_n169,open_n170,dia[7:0]}),
+    .rsta(rsta),
     .wea(wea),
-    .doa({open_n194,open_n195,open_n196,open_n197,open_n198,open_n199,open_n200,open_n201,inst_doa_i1_007,inst_doa_i1_006,inst_doa_i1_005,inst_doa_i1_004,inst_doa_i1_003,inst_doa_i1_002,inst_doa_i1_001,inst_doa_i1_000}));
-  // address_offset=4096;data_offset=8;depth=4096;width=8;num_section=1;width_per_section=8;section_size=16;working_depth=4096;working_width=8;mode_ecc=0;address_step=1;bytes_in_per_section=1;
+    .doa({open_n191,open_n192,open_n193,open_n194,open_n195,open_n196,open_n197,open_n198,inst_doa_i1_007,inst_doa_i1_006,inst_doa_i1_005,inst_doa_i1_004,inst_doa_i1_003,inst_doa_i1_002,inst_doa_i1_001,inst_doa_i1_000}));
+  // address_offset=4096;data_offset=8;depth=4096;width=8;num_section=1;width_per_section=8;section_size=16;working_depth=4096;working_width=8;working_numbyte=1;mode_ecc=0;address_step=1;bytes_in_per_section=1;
   EG_PHY_BRAM32K #(
     .CLKBMUX("0"),
     .CSBMUX("0"),
@@ -799,11 +829,10 @@ module font_ram  // font_ram.v(14)
     .INIT_7E(256'h0202020202020202020202020202020202020202020202020202020202020203),
     .INIT_7F(256'hFF0000FE02020202020202020000000000000000FF0000FF0000000000000000),
     .MODE("SP16K"),
-    .OCEAMUX("0"),
+    .OCEAMUX("1"),
     .OCEBMUX("0"),
-    .REGMODE_A("NOREG"),
+    .REGMODE_A("OUTREG"),
     .REGMODE_B("NOREG"),
-    .RSTAMUX("0"),
     .RSTBMUX("0"),
     .SRMODE("SYNC"),
     .WEBMUX("0"),
@@ -816,10 +845,11 @@ module font_ram  // font_ram.v(14)
     .byteb(1'b0),
     .clka(clka),
     .csa(\and_addra[12]_Naddra_o ),
-    .dia({open_n222,open_n223,open_n224,open_n225,open_n226,open_n227,open_n228,open_n229,dia[15:8]}),
+    .dia({open_n219,open_n220,open_n221,open_n222,open_n223,open_n224,open_n225,open_n226,dia[15:8]}),
+    .rsta(rsta),
     .wea(wea),
-    .doa({open_n251,open_n252,open_n253,open_n254,open_n255,open_n256,open_n257,open_n258,inst_doa_i1_015,inst_doa_i1_014,inst_doa_i1_013,inst_doa_i1_012,inst_doa_i1_011,inst_doa_i1_010,inst_doa_i1_009,inst_doa_i1_008}));
-  // address_offset=8192;data_offset=0;depth=4096;width=8;num_section=1;width_per_section=8;section_size=16;working_depth=4096;working_width=8;mode_ecc=0;address_step=1;bytes_in_per_section=1;
+    .doa({open_n247,open_n248,open_n249,open_n250,open_n251,open_n252,open_n253,open_n254,inst_doa_i1_015,inst_doa_i1_014,inst_doa_i1_013,inst_doa_i1_012,inst_doa_i1_011,inst_doa_i1_010,inst_doa_i1_009,inst_doa_i1_008}));
+  // address_offset=8192;data_offset=0;depth=4096;width=8;num_section=1;width_per_section=8;section_size=16;working_depth=4096;working_width=8;working_numbyte=1;mode_ecc=0;address_step=1;bytes_in_per_section=1;
   EG_PHY_BRAM32K #(
     .CLKBMUX("0"),
     .CSBMUX("0"),
@@ -954,11 +984,10 @@ module font_ram  // font_ram.v(14)
     .INIT_7E(256'h1C1838F0E080000000000000000000000000000000000000E0F83C0C07070303),
     .INIT_7F(256'h00000000000000000000000000000000F0F83C0C070703030000000000000C0C),
     .MODE("SP16K"),
-    .OCEAMUX("0"),
+    .OCEAMUX("1"),
     .OCEBMUX("0"),
-    .REGMODE_A("NOREG"),
+    .REGMODE_A("OUTREG"),
     .REGMODE_B("NOREG"),
-    .RSTAMUX("0"),
     .RSTBMUX("0"),
     .SRMODE("SYNC"),
     .WEBMUX("0"),
@@ -971,10 +1000,11 @@ module font_ram  // font_ram.v(14)
     .byteb(1'b0),
     .clka(clka),
     .csa(\and_Naddra[12]_addra_o ),
-    .dia({open_n279,open_n280,open_n281,open_n282,open_n283,open_n284,open_n285,open_n286,dia[7:0]}),
+    .dia({open_n275,open_n276,open_n277,open_n278,open_n279,open_n280,open_n281,open_n282,dia[7:0]}),
+    .rsta(rsta),
     .wea(wea),
-    .doa({open_n308,open_n309,open_n310,open_n311,open_n312,open_n313,open_n314,open_n315,inst_doa_i2_007,inst_doa_i2_006,inst_doa_i2_005,inst_doa_i2_004,inst_doa_i2_003,inst_doa_i2_002,inst_doa_i2_001,inst_doa_i2_000}));
-  // address_offset=8192;data_offset=8;depth=4096;width=8;num_section=1;width_per_section=8;section_size=16;working_depth=4096;working_width=8;mode_ecc=0;address_step=1;bytes_in_per_section=1;
+    .doa({open_n303,open_n304,open_n305,open_n306,open_n307,open_n308,open_n309,open_n310,inst_doa_i2_007,inst_doa_i2_006,inst_doa_i2_005,inst_doa_i2_004,inst_doa_i2_003,inst_doa_i2_002,inst_doa_i2_001,inst_doa_i2_000}));
+  // address_offset=8192;data_offset=8;depth=4096;width=8;num_section=1;width_per_section=8;section_size=16;working_depth=4096;working_width=8;working_numbyte=1;mode_ecc=0;address_step=1;bytes_in_per_section=1;
   EG_PHY_BRAM32K #(
     .CLKBMUX("0"),
     .CSBMUX("0"),
@@ -1109,11 +1139,10 @@ module font_ram  // font_ram.v(14)
     .INIT_7E(256'h000000003F7FE0C080800000000000000000C0C0E060703C1F07000000000000),
     .INIT_7F(256'h80800000000000000000000000000000FFFF0000000000000000000000000000),
     .MODE("SP16K"),
-    .OCEAMUX("0"),
+    .OCEAMUX("1"),
     .OCEBMUX("0"),
-    .REGMODE_A("NOREG"),
+    .REGMODE_A("OUTREG"),
     .REGMODE_B("NOREG"),
-    .RSTAMUX("0"),
     .RSTBMUX("0"),
     .SRMODE("SYNC"),
     .WEBMUX("0"),
@@ -1126,10 +1155,11 @@ module font_ram  // font_ram.v(14)
     .byteb(1'b0),
     .clka(clka),
     .csa(\and_Naddra[12]_addra_o ),
-    .dia({open_n336,open_n337,open_n338,open_n339,open_n340,open_n341,open_n342,open_n343,dia[15:8]}),
+    .dia({open_n331,open_n332,open_n333,open_n334,open_n335,open_n336,open_n337,open_n338,dia[15:8]}),
+    .rsta(rsta),
     .wea(wea),
-    .doa({open_n365,open_n366,open_n367,open_n368,open_n369,open_n370,open_n371,open_n372,inst_doa_i2_015,inst_doa_i2_014,inst_doa_i2_013,inst_doa_i2_012,inst_doa_i2_011,inst_doa_i2_010,inst_doa_i2_009,inst_doa_i2_008}));
-  // address_offset=12288;data_offset=0;depth=4096;width=8;num_section=1;width_per_section=8;section_size=16;working_depth=4096;working_width=8;mode_ecc=0;address_step=1;bytes_in_per_section=1;
+    .doa({open_n359,open_n360,open_n361,open_n362,open_n363,open_n364,open_n365,open_n366,inst_doa_i2_015,inst_doa_i2_014,inst_doa_i2_013,inst_doa_i2_012,inst_doa_i2_011,inst_doa_i2_010,inst_doa_i2_009,inst_doa_i2_008}));
+  // address_offset=12288;data_offset=0;depth=4096;width=8;num_section=1;width_per_section=8;section_size=16;working_depth=4096;working_width=8;working_numbyte=1;mode_ecc=0;address_step=1;bytes_in_per_section=1;
   EG_PHY_BRAM32K #(
     .CLKBMUX("0"),
     .CSBMUX("0"),
@@ -1264,11 +1294,10 @@ module font_ram  // font_ram.v(14)
     .INIT_7E(256'h0000000000000000FCFCFCFC000000000000000000000000000000000000FCFC),
     .INIT_7F(256'hFCFCFCFC0000000000000000000000000000FCFCFCFCFCFC0000000000000000),
     .MODE("SP16K"),
-    .OCEAMUX("0"),
+    .OCEAMUX("1"),
     .OCEBMUX("0"),
-    .REGMODE_A("NOREG"),
+    .REGMODE_A("OUTREG"),
     .REGMODE_B("NOREG"),
-    .RSTAMUX("0"),
     .RSTBMUX("0"),
     .SRMODE("SYNC"),
     .WEBMUX("0"),
@@ -1281,10 +1310,11 @@ module font_ram  // font_ram.v(14)
     .byteb(1'b0),
     .clka(clka),
     .csa(\and_addra[12]_addra[_o ),
-    .dia({open_n393,open_n394,open_n395,open_n396,open_n397,open_n398,open_n399,open_n400,dia[7:0]}),
+    .dia({open_n387,open_n388,open_n389,open_n390,open_n391,open_n392,open_n393,open_n394,dia[7:0]}),
+    .rsta(rsta),
     .wea(wea),
-    .doa({open_n422,open_n423,open_n424,open_n425,open_n426,open_n427,open_n428,open_n429,inst_doa_i3_007,inst_doa_i3_006,inst_doa_i3_005,inst_doa_i3_004,inst_doa_i3_003,inst_doa_i3_002,inst_doa_i3_001,inst_doa_i3_000}));
-  // address_offset=12288;data_offset=8;depth=4096;width=8;num_section=1;width_per_section=8;section_size=16;working_depth=4096;working_width=8;mode_ecc=0;address_step=1;bytes_in_per_section=1;
+    .doa({open_n415,open_n416,open_n417,open_n418,open_n419,open_n420,open_n421,open_n422,inst_doa_i3_007,inst_doa_i3_006,inst_doa_i3_005,inst_doa_i3_004,inst_doa_i3_003,inst_doa_i3_002,inst_doa_i3_001,inst_doa_i3_000}));
+  // address_offset=12288;data_offset=8;depth=4096;width=8;num_section=1;width_per_section=8;section_size=16;working_depth=4096;working_width=8;working_numbyte=1;mode_ecc=0;address_step=1;bytes_in_per_section=1;
   EG_PHY_BRAM32K #(
     .CLKBMUX("0"),
     .CSBMUX("0"),
@@ -1419,11 +1449,10 @@ module font_ram  // font_ram.v(14)
     .INIT_7E(256'h0000000000000000FFFFFFFF000000000000000000000000000000000000FFFF),
     .INIT_7F(256'hFFFFFFFF0000000000000000000000000000FFFFFFFFFFFF0000000000000000),
     .MODE("SP16K"),
-    .OCEAMUX("0"),
+    .OCEAMUX("1"),
     .OCEBMUX("0"),
-    .REGMODE_A("NOREG"),
+    .REGMODE_A("OUTREG"),
     .REGMODE_B("NOREG"),
-    .RSTAMUX("0"),
     .RSTBMUX("0"),
     .SRMODE("SYNC"),
     .WEBMUX("0"),
@@ -1436,10 +1465,11 @@ module font_ram  // font_ram.v(14)
     .byteb(1'b0),
     .clka(clka),
     .csa(\and_addra[12]_addra[_o ),
-    .dia({open_n450,open_n451,open_n452,open_n453,open_n454,open_n455,open_n456,open_n457,dia[15:8]}),
+    .dia({open_n443,open_n444,open_n445,open_n446,open_n447,open_n448,open_n449,open_n450,dia[15:8]}),
+    .rsta(rsta),
     .wea(wea),
-    .doa({open_n479,open_n480,open_n481,open_n482,open_n483,open_n484,open_n485,open_n486,inst_doa_i3_015,inst_doa_i3_014,inst_doa_i3_013,inst_doa_i3_012,inst_doa_i3_011,inst_doa_i3_010,inst_doa_i3_009,inst_doa_i3_008}));
-  // address_offset=16384;data_offset=0;depth=4096;width=8;num_section=1;width_per_section=8;section_size=16;working_depth=4096;working_width=8;mode_ecc=0;address_step=1;bytes_in_per_section=1;
+    .doa({open_n471,open_n472,open_n473,open_n474,open_n475,open_n476,open_n477,open_n478,inst_doa_i3_015,inst_doa_i3_014,inst_doa_i3_013,inst_doa_i3_012,inst_doa_i3_011,inst_doa_i3_010,inst_doa_i3_009,inst_doa_i3_008}));
+  // address_offset=16384;data_offset=0;depth=4096;width=8;num_section=1;width_per_section=8;section_size=16;working_depth=4096;working_width=8;working_numbyte=1;mode_ecc=0;address_step=1;bytes_in_per_section=1;
   EG_PHY_BRAM32K #(
     .CLKBMUX("0"),
     .CSBMUX("0"),
@@ -1574,11 +1604,10 @@ module font_ram  // font_ram.v(14)
     .INIT_7E(256'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000000FFFFFFFF),
     .INIT_7F(256'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF),
     .MODE("SP16K"),
-    .OCEAMUX("0"),
+    .OCEAMUX("1"),
     .OCEBMUX("0"),
-    .REGMODE_A("NOREG"),
+    .REGMODE_A("OUTREG"),
     .REGMODE_B("NOREG"),
-    .RSTAMUX("0"),
     .RSTBMUX("0"),
     .SRMODE("SYNC"),
     .WEBMUX("0"),
@@ -1591,10 +1620,11 @@ module font_ram  // font_ram.v(14)
     .byteb(1'b0),
     .clka(clka),
     .csa(\and_Naddra[12]_Naddr_o_al_n16 ),
-    .dia({open_n507,open_n508,open_n509,open_n510,open_n511,open_n512,open_n513,open_n514,dia[7:0]}),
+    .dia({open_n499,open_n500,open_n501,open_n502,open_n503,open_n504,open_n505,open_n506,dia[7:0]}),
+    .rsta(rsta),
     .wea(wea),
-    .doa({open_n536,open_n537,open_n538,open_n539,open_n540,open_n541,open_n542,open_n543,inst_doa_i4_007,inst_doa_i4_006,inst_doa_i4_005,inst_doa_i4_004,inst_doa_i4_003,inst_doa_i4_002,inst_doa_i4_001,inst_doa_i4_000}));
-  // address_offset=16384;data_offset=8;depth=4096;width=8;num_section=1;width_per_section=8;section_size=16;working_depth=4096;working_width=8;mode_ecc=0;address_step=1;bytes_in_per_section=1;
+    .doa({open_n527,open_n528,open_n529,open_n530,open_n531,open_n532,open_n533,open_n534,inst_doa_i4_007,inst_doa_i4_006,inst_doa_i4_005,inst_doa_i4_004,inst_doa_i4_003,inst_doa_i4_002,inst_doa_i4_001,inst_doa_i4_000}));
+  // address_offset=16384;data_offset=8;depth=4096;width=8;num_section=1;width_per_section=8;section_size=16;working_depth=4096;working_width=8;working_numbyte=1;mode_ecc=0;address_step=1;bytes_in_per_section=1;
   EG_PHY_BRAM32K #(
     .CLKBMUX("0"),
     .CSBMUX("0"),
@@ -1729,11 +1759,10 @@ module font_ram  // font_ram.v(14)
     .INIT_7E(256'hFFFF000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF),
     .INIT_7F(256'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF),
     .MODE("SP16K"),
-    .OCEAMUX("0"),
+    .OCEAMUX("1"),
     .OCEBMUX("0"),
-    .REGMODE_A("NOREG"),
+    .REGMODE_A("OUTREG"),
     .REGMODE_B("NOREG"),
-    .RSTAMUX("0"),
     .RSTBMUX("0"),
     .SRMODE("SYNC"),
     .WEBMUX("0"),
@@ -1746,328 +1775,329 @@ module font_ram  // font_ram.v(14)
     .byteb(1'b0),
     .clka(clka),
     .csa(\and_Naddra[12]_Naddr_o_al_n16 ),
-    .dia({open_n564,open_n565,open_n566,open_n567,open_n568,open_n569,open_n570,open_n571,dia[15:8]}),
+    .dia({open_n555,open_n556,open_n557,open_n558,open_n559,open_n560,open_n561,open_n562,dia[15:8]}),
+    .rsta(rsta),
     .wea(wea),
-    .doa({open_n593,open_n594,open_n595,open_n596,open_n597,open_n598,open_n599,open_n600,inst_doa_i4_015,inst_doa_i4_014,inst_doa_i4_013,inst_doa_i4_012,inst_doa_i4_011,inst_doa_i4_010,inst_doa_i4_009,inst_doa_i4_008}));
+    .doa({open_n583,open_n584,open_n585,open_n586,open_n587,open_n588,open_n589,open_n590,inst_doa_i4_015,inst_doa_i4_014,inst_doa_i4_013,inst_doa_i4_012,inst_doa_i4_011,inst_doa_i4_010,inst_doa_i4_009,inst_doa_i4_008}));
   AL_MUX \inst_doa_mux_b0/al_mux_b0_0_0  (
     .i0(inst_doa_i0_000),
     .i1(inst_doa_i1_000),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b0/B0_0 ));
   AL_MUX \inst_doa_mux_b0/al_mux_b0_0_1  (
     .i0(inst_doa_i2_000),
     .i1(inst_doa_i3_000),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b0/B0_1 ));
   AL_MUX \inst_doa_mux_b0/al_mux_b0_1_0  (
     .i0(\inst_doa_mux_b0/B0_0 ),
     .i1(\inst_doa_mux_b0/B0_1 ),
-    .sel(addra_piped[1]),
+    .sel(addra_piped_piped[1]),
     .o(\inst_doa_mux_b0/B1_0 ));
   AL_MUX \inst_doa_mux_b0/al_mux_b0_2_0  (
     .i0(\inst_doa_mux_b0/B1_0 ),
     .i1(inst_doa_i4_000),
-    .sel(addra_piped[2]),
+    .sel(addra_piped_piped[2]),
     .o(doa[0]));
   AL_MUX \inst_doa_mux_b1/al_mux_b0_0_0  (
     .i0(inst_doa_i0_001),
     .i1(inst_doa_i1_001),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b1/B0_0 ));
   AL_MUX \inst_doa_mux_b1/al_mux_b0_0_1  (
     .i0(inst_doa_i2_001),
     .i1(inst_doa_i3_001),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b1/B0_1 ));
   AL_MUX \inst_doa_mux_b1/al_mux_b0_1_0  (
     .i0(\inst_doa_mux_b1/B0_0 ),
     .i1(\inst_doa_mux_b1/B0_1 ),
-    .sel(addra_piped[1]),
+    .sel(addra_piped_piped[1]),
     .o(\inst_doa_mux_b1/B1_0 ));
   AL_MUX \inst_doa_mux_b1/al_mux_b0_2_0  (
     .i0(\inst_doa_mux_b1/B1_0 ),
     .i1(inst_doa_i4_001),
-    .sel(addra_piped[2]),
+    .sel(addra_piped_piped[2]),
     .o(doa[1]));
   AL_MUX \inst_doa_mux_b10/al_mux_b0_0_0  (
     .i0(inst_doa_i0_010),
     .i1(inst_doa_i1_010),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b10/B0_0 ));
   AL_MUX \inst_doa_mux_b10/al_mux_b0_0_1  (
     .i0(inst_doa_i2_010),
     .i1(inst_doa_i3_010),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b10/B0_1 ));
   AL_MUX \inst_doa_mux_b10/al_mux_b0_1_0  (
     .i0(\inst_doa_mux_b10/B0_0 ),
     .i1(\inst_doa_mux_b10/B0_1 ),
-    .sel(addra_piped[1]),
+    .sel(addra_piped_piped[1]),
     .o(\inst_doa_mux_b10/B1_0 ));
   AL_MUX \inst_doa_mux_b10/al_mux_b0_2_0  (
     .i0(\inst_doa_mux_b10/B1_0 ),
     .i1(inst_doa_i4_010),
-    .sel(addra_piped[2]),
+    .sel(addra_piped_piped[2]),
     .o(doa[10]));
   AL_MUX \inst_doa_mux_b11/al_mux_b0_0_0  (
     .i0(inst_doa_i0_011),
     .i1(inst_doa_i1_011),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b11/B0_0 ));
   AL_MUX \inst_doa_mux_b11/al_mux_b0_0_1  (
     .i0(inst_doa_i2_011),
     .i1(inst_doa_i3_011),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b11/B0_1 ));
   AL_MUX \inst_doa_mux_b11/al_mux_b0_1_0  (
     .i0(\inst_doa_mux_b11/B0_0 ),
     .i1(\inst_doa_mux_b11/B0_1 ),
-    .sel(addra_piped[1]),
+    .sel(addra_piped_piped[1]),
     .o(\inst_doa_mux_b11/B1_0 ));
   AL_MUX \inst_doa_mux_b11/al_mux_b0_2_0  (
     .i0(\inst_doa_mux_b11/B1_0 ),
     .i1(inst_doa_i4_011),
-    .sel(addra_piped[2]),
+    .sel(addra_piped_piped[2]),
     .o(doa[11]));
   AL_MUX \inst_doa_mux_b12/al_mux_b0_0_0  (
     .i0(inst_doa_i0_012),
     .i1(inst_doa_i1_012),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b12/B0_0 ));
   AL_MUX \inst_doa_mux_b12/al_mux_b0_0_1  (
     .i0(inst_doa_i2_012),
     .i1(inst_doa_i3_012),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b12/B0_1 ));
   AL_MUX \inst_doa_mux_b12/al_mux_b0_1_0  (
     .i0(\inst_doa_mux_b12/B0_0 ),
     .i1(\inst_doa_mux_b12/B0_1 ),
-    .sel(addra_piped[1]),
+    .sel(addra_piped_piped[1]),
     .o(\inst_doa_mux_b12/B1_0 ));
   AL_MUX \inst_doa_mux_b12/al_mux_b0_2_0  (
     .i0(\inst_doa_mux_b12/B1_0 ),
     .i1(inst_doa_i4_012),
-    .sel(addra_piped[2]),
+    .sel(addra_piped_piped[2]),
     .o(doa[12]));
   AL_MUX \inst_doa_mux_b13/al_mux_b0_0_0  (
     .i0(inst_doa_i0_013),
     .i1(inst_doa_i1_013),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b13/B0_0 ));
   AL_MUX \inst_doa_mux_b13/al_mux_b0_0_1  (
     .i0(inst_doa_i2_013),
     .i1(inst_doa_i3_013),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b13/B0_1 ));
   AL_MUX \inst_doa_mux_b13/al_mux_b0_1_0  (
     .i0(\inst_doa_mux_b13/B0_0 ),
     .i1(\inst_doa_mux_b13/B0_1 ),
-    .sel(addra_piped[1]),
+    .sel(addra_piped_piped[1]),
     .o(\inst_doa_mux_b13/B1_0 ));
   AL_MUX \inst_doa_mux_b13/al_mux_b0_2_0  (
     .i0(\inst_doa_mux_b13/B1_0 ),
     .i1(inst_doa_i4_013),
-    .sel(addra_piped[2]),
+    .sel(addra_piped_piped[2]),
     .o(doa[13]));
   AL_MUX \inst_doa_mux_b14/al_mux_b0_0_0  (
     .i0(inst_doa_i0_014),
     .i1(inst_doa_i1_014),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b14/B0_0 ));
   AL_MUX \inst_doa_mux_b14/al_mux_b0_0_1  (
     .i0(inst_doa_i2_014),
     .i1(inst_doa_i3_014),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b14/B0_1 ));
   AL_MUX \inst_doa_mux_b14/al_mux_b0_1_0  (
     .i0(\inst_doa_mux_b14/B0_0 ),
     .i1(\inst_doa_mux_b14/B0_1 ),
-    .sel(addra_piped[1]),
+    .sel(addra_piped_piped[1]),
     .o(\inst_doa_mux_b14/B1_0 ));
   AL_MUX \inst_doa_mux_b14/al_mux_b0_2_0  (
     .i0(\inst_doa_mux_b14/B1_0 ),
     .i1(inst_doa_i4_014),
-    .sel(addra_piped[2]),
+    .sel(addra_piped_piped[2]),
     .o(doa[14]));
   AL_MUX \inst_doa_mux_b15/al_mux_b0_0_0  (
     .i0(inst_doa_i0_015),
     .i1(inst_doa_i1_015),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b15/B0_0 ));
   AL_MUX \inst_doa_mux_b15/al_mux_b0_0_1  (
     .i0(inst_doa_i2_015),
     .i1(inst_doa_i3_015),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b15/B0_1 ));
   AL_MUX \inst_doa_mux_b15/al_mux_b0_1_0  (
     .i0(\inst_doa_mux_b15/B0_0 ),
     .i1(\inst_doa_mux_b15/B0_1 ),
-    .sel(addra_piped[1]),
+    .sel(addra_piped_piped[1]),
     .o(\inst_doa_mux_b15/B1_0 ));
   AL_MUX \inst_doa_mux_b15/al_mux_b0_2_0  (
     .i0(\inst_doa_mux_b15/B1_0 ),
     .i1(inst_doa_i4_015),
-    .sel(addra_piped[2]),
+    .sel(addra_piped_piped[2]),
     .o(doa[15]));
   AL_MUX \inst_doa_mux_b2/al_mux_b0_0_0  (
     .i0(inst_doa_i0_002),
     .i1(inst_doa_i1_002),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b2/B0_0 ));
   AL_MUX \inst_doa_mux_b2/al_mux_b0_0_1  (
     .i0(inst_doa_i2_002),
     .i1(inst_doa_i3_002),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b2/B0_1 ));
   AL_MUX \inst_doa_mux_b2/al_mux_b0_1_0  (
     .i0(\inst_doa_mux_b2/B0_0 ),
     .i1(\inst_doa_mux_b2/B0_1 ),
-    .sel(addra_piped[1]),
+    .sel(addra_piped_piped[1]),
     .o(\inst_doa_mux_b2/B1_0 ));
   AL_MUX \inst_doa_mux_b2/al_mux_b0_2_0  (
     .i0(\inst_doa_mux_b2/B1_0 ),
     .i1(inst_doa_i4_002),
-    .sel(addra_piped[2]),
+    .sel(addra_piped_piped[2]),
     .o(doa[2]));
   AL_MUX \inst_doa_mux_b3/al_mux_b0_0_0  (
     .i0(inst_doa_i0_003),
     .i1(inst_doa_i1_003),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b3/B0_0 ));
   AL_MUX \inst_doa_mux_b3/al_mux_b0_0_1  (
     .i0(inst_doa_i2_003),
     .i1(inst_doa_i3_003),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b3/B0_1 ));
   AL_MUX \inst_doa_mux_b3/al_mux_b0_1_0  (
     .i0(\inst_doa_mux_b3/B0_0 ),
     .i1(\inst_doa_mux_b3/B0_1 ),
-    .sel(addra_piped[1]),
+    .sel(addra_piped_piped[1]),
     .o(\inst_doa_mux_b3/B1_0 ));
   AL_MUX \inst_doa_mux_b3/al_mux_b0_2_0  (
     .i0(\inst_doa_mux_b3/B1_0 ),
     .i1(inst_doa_i4_003),
-    .sel(addra_piped[2]),
+    .sel(addra_piped_piped[2]),
     .o(doa[3]));
   AL_MUX \inst_doa_mux_b4/al_mux_b0_0_0  (
     .i0(inst_doa_i0_004),
     .i1(inst_doa_i1_004),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b4/B0_0 ));
   AL_MUX \inst_doa_mux_b4/al_mux_b0_0_1  (
     .i0(inst_doa_i2_004),
     .i1(inst_doa_i3_004),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b4/B0_1 ));
   AL_MUX \inst_doa_mux_b4/al_mux_b0_1_0  (
     .i0(\inst_doa_mux_b4/B0_0 ),
     .i1(\inst_doa_mux_b4/B0_1 ),
-    .sel(addra_piped[1]),
+    .sel(addra_piped_piped[1]),
     .o(\inst_doa_mux_b4/B1_0 ));
   AL_MUX \inst_doa_mux_b4/al_mux_b0_2_0  (
     .i0(\inst_doa_mux_b4/B1_0 ),
     .i1(inst_doa_i4_004),
-    .sel(addra_piped[2]),
+    .sel(addra_piped_piped[2]),
     .o(doa[4]));
   AL_MUX \inst_doa_mux_b5/al_mux_b0_0_0  (
     .i0(inst_doa_i0_005),
     .i1(inst_doa_i1_005),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b5/B0_0 ));
   AL_MUX \inst_doa_mux_b5/al_mux_b0_0_1  (
     .i0(inst_doa_i2_005),
     .i1(inst_doa_i3_005),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b5/B0_1 ));
   AL_MUX \inst_doa_mux_b5/al_mux_b0_1_0  (
     .i0(\inst_doa_mux_b5/B0_0 ),
     .i1(\inst_doa_mux_b5/B0_1 ),
-    .sel(addra_piped[1]),
+    .sel(addra_piped_piped[1]),
     .o(\inst_doa_mux_b5/B1_0 ));
   AL_MUX \inst_doa_mux_b5/al_mux_b0_2_0  (
     .i0(\inst_doa_mux_b5/B1_0 ),
     .i1(inst_doa_i4_005),
-    .sel(addra_piped[2]),
+    .sel(addra_piped_piped[2]),
     .o(doa[5]));
   AL_MUX \inst_doa_mux_b6/al_mux_b0_0_0  (
     .i0(inst_doa_i0_006),
     .i1(inst_doa_i1_006),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b6/B0_0 ));
   AL_MUX \inst_doa_mux_b6/al_mux_b0_0_1  (
     .i0(inst_doa_i2_006),
     .i1(inst_doa_i3_006),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b6/B0_1 ));
   AL_MUX \inst_doa_mux_b6/al_mux_b0_1_0  (
     .i0(\inst_doa_mux_b6/B0_0 ),
     .i1(\inst_doa_mux_b6/B0_1 ),
-    .sel(addra_piped[1]),
+    .sel(addra_piped_piped[1]),
     .o(\inst_doa_mux_b6/B1_0 ));
   AL_MUX \inst_doa_mux_b6/al_mux_b0_2_0  (
     .i0(\inst_doa_mux_b6/B1_0 ),
     .i1(inst_doa_i4_006),
-    .sel(addra_piped[2]),
+    .sel(addra_piped_piped[2]),
     .o(doa[6]));
   AL_MUX \inst_doa_mux_b7/al_mux_b0_0_0  (
     .i0(inst_doa_i0_007),
     .i1(inst_doa_i1_007),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b7/B0_0 ));
   AL_MUX \inst_doa_mux_b7/al_mux_b0_0_1  (
     .i0(inst_doa_i2_007),
     .i1(inst_doa_i3_007),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b7/B0_1 ));
   AL_MUX \inst_doa_mux_b7/al_mux_b0_1_0  (
     .i0(\inst_doa_mux_b7/B0_0 ),
     .i1(\inst_doa_mux_b7/B0_1 ),
-    .sel(addra_piped[1]),
+    .sel(addra_piped_piped[1]),
     .o(\inst_doa_mux_b7/B1_0 ));
   AL_MUX \inst_doa_mux_b7/al_mux_b0_2_0  (
     .i0(\inst_doa_mux_b7/B1_0 ),
     .i1(inst_doa_i4_007),
-    .sel(addra_piped[2]),
+    .sel(addra_piped_piped[2]),
     .o(doa[7]));
   AL_MUX \inst_doa_mux_b8/al_mux_b0_0_0  (
     .i0(inst_doa_i0_008),
     .i1(inst_doa_i1_008),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b8/B0_0 ));
   AL_MUX \inst_doa_mux_b8/al_mux_b0_0_1  (
     .i0(inst_doa_i2_008),
     .i1(inst_doa_i3_008),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b8/B0_1 ));
   AL_MUX \inst_doa_mux_b8/al_mux_b0_1_0  (
     .i0(\inst_doa_mux_b8/B0_0 ),
     .i1(\inst_doa_mux_b8/B0_1 ),
-    .sel(addra_piped[1]),
+    .sel(addra_piped_piped[1]),
     .o(\inst_doa_mux_b8/B1_0 ));
   AL_MUX \inst_doa_mux_b8/al_mux_b0_2_0  (
     .i0(\inst_doa_mux_b8/B1_0 ),
     .i1(inst_doa_i4_008),
-    .sel(addra_piped[2]),
+    .sel(addra_piped_piped[2]),
     .o(doa[8]));
   AL_MUX \inst_doa_mux_b9/al_mux_b0_0_0  (
     .i0(inst_doa_i0_009),
     .i1(inst_doa_i1_009),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b9/B0_0 ));
   AL_MUX \inst_doa_mux_b9/al_mux_b0_0_1  (
     .i0(inst_doa_i2_009),
     .i1(inst_doa_i3_009),
-    .sel(addra_piped[0]),
+    .sel(addra_piped_piped[0]),
     .o(\inst_doa_mux_b9/B0_1 ));
   AL_MUX \inst_doa_mux_b9/al_mux_b0_1_0  (
     .i0(\inst_doa_mux_b9/B0_0 ),
     .i1(\inst_doa_mux_b9/B0_1 ),
-    .sel(addra_piped[1]),
+    .sel(addra_piped_piped[1]),
     .o(\inst_doa_mux_b9/B1_0 ));
   AL_MUX \inst_doa_mux_b9/al_mux_b0_2_0  (
     .i0(\inst_doa_mux_b9/B1_0 ),
     .i1(inst_doa_i4_009),
-    .sel(addra_piped[2]),
+    .sel(addra_piped_piped[2]),
     .o(doa[9]));
   not wea_inv (wea_neg, wea);
 
