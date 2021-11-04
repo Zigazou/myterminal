@@ -159,7 +159,7 @@ always @(posedge clk)
 // =============================================================================
 // Frame count
 // =============================================================================
-reg [4:0] frame_count = 'd0;
+reg [6:0] frame_count = 'd0;
 always @(posedge clk)
 	if (reset) begin
 		frame_count <= 'd0;
@@ -367,6 +367,7 @@ vp_pipeline vp_pipeline (
 	.charattr (charattr),
 	.char_row_in (char_row),
 	.ypos (ypos[3:0]),
+	.frame_count (frame_count),
 	.enabled (vp_enable),
 
 	// Intermediate inputs/outputs

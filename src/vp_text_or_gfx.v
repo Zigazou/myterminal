@@ -9,31 +9,32 @@ module vp_text_or_gfx #(
 
 	// Inputs
 	input wire [31:0] charattr,
-	input wire [4:0] char_row_in,
-	input wire [3:0] ypos,
-	input wire enabled,
+	input wire [4:0]  char_row_in,
+	input wire [3:0]  ypos,
+	input wire [6:0]  frame_count,
+	input wire        enabled,
 
 	// Common output
-	output reg [4:0] char_row_out,
-	output reg [3:0] foreground,
-	output reg [3:0] background,
+	output reg [4:0]  char_row_out,
+	output reg [3:0]  foreground,
+	output reg [3:0]  background,
 
 	// Text output
 	output reg [14:0] txt_font_address,
-	output reg txt_horz_size,
-	output reg txt_horz_part,
+	output reg        txt_horz_size,
+	output reg        txt_horz_part,
 	output reg [15:0] txt_pattern,
 	output reg [15:0] txt_border,
-	output reg [1:0] txt_func,
-	output reg txt_blink,
-	output reg txt_invert,
-	output reg txt_underline,
-	output reg txt_enable,
+	output reg [1:0]  txt_func,
+	output reg        txt_blink,
+	output reg        txt_invert,
+	output reg        txt_underline,
+	output reg        txt_enable,
 
 	// Graphic output
 	output reg [19:0] gfx_bits,
-	output reg gfx_mosaic,
-	output reg gfx_enable
+	output reg        gfx_mosaic,
+	output reg        gfx_enable
 );
 
 `include "constant.v"
@@ -112,7 +113,12 @@ always @(posedge clk)
 				char_row_in == 'd17 &&
 				charattr_part_vert == charattr_size_vert;
 
-			txt_blink <= charattr_blink;
+			case (charattr_blink)
+				2'b00: txt_blink <= FALSE;
+				2'b01: txt_blink <= frame_count[6];
+				2'b10: txt_blink <= frame_count[5];
+				2'b11: txt_blink <= frame_count[4];
+			endcase
 			txt_invert <= charattr_invert;
 
 			txt_horz_size <= charattr_size_horz;

@@ -19,6 +19,7 @@ module vp_pipeline #(
 	input wire [31:0] charattr,
 	input wire [4:0]  char_row_in,
 	input wire [3:0]  ypos,
+	input wire [6:0]  frame_count,
 	input wire        enabled,
 
 	// Intermediate inputs/outputs
@@ -56,6 +57,7 @@ vp_text_or_gfx vp_text_or_gfx (
 	.charattr (charattr),
 	.char_row_in (char_row_in),
 	.ypos (ypos),
+	.frame_count (frame_count),
 	.enabled (enabled),
 
 	// Common output
