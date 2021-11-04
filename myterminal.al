@@ -302,17 +302,18 @@
     <Property>
         <RtlProperty>
             <gate_sharing>off</gate_sharing>
-            <merge_equal>off</merge_equal>
+            <merge_mux>on</merge_mux>
             <opt_adder_fanout>off</opt_adder_fanout>
-            <opt_arith>off</opt_arith>
             <opt_lessthan>off</opt_lessthan>
-            <opt_ram>low</opt_ram>
             <seq_syn>off</seq_syn>
         </RtlProperty>
         <GateProperty>
+            <opt_area>high</opt_area>
             <opt_timing>high</opt_timing>
+            <pack_effort>high</pack_effort>
         </GateProperty>
         <RouteProperty>
+            <effort>high</effort>
             <opt_timing>high</opt_timing>
         </RouteProperty>
         <BitgenProperty::GeneralOption>
@@ -327,7 +328,7 @@
     <Configurations>
     </Configurations>
     <Project_Settings>
-        <Step_Last_Change>2021-11-04 20:09:07.854</Step_Last_Change>
+        <Step_Last_Change>2021-11-04 21:14:55.186</Step_Last_Change>
         <Current_Step>60</Current_Step>
         <Step_Status>true</Step_Status>
     </Project_Settings>
