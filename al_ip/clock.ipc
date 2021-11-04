@@ -14,7 +14,7 @@
 		<derive_pll_clocks>ENABLE</derive_pll_clocks>
 	</Page1>
 	<Page2>
-		<bandwidth_setting>Medium</bandwidth_setting>
+		<bandwidth_setting>Low</bandwidth_setting>
 	</Page2>
 	<Page3>
 		<setting>frequncy_setting</setting>

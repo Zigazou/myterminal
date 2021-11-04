@@ -4,11 +4,14 @@ module video_controller #(
 	parameter HORZ_VISIBLE      = 1280,
 	parameter HORZ_FRONT_PORCH  = 48,
 	parameter HORZ_SYNC         = 112,
+    parameter HORZ_DEPTH        = 11,
+    parameter HORZ_COL_DEPTH    = 7,
 
 	parameter VERT_BACK_PORCH   = 38,
 	parameter VERT_VISIBLE      = 1024,
 	parameter VERT_FRONT_PORCH  = 1,
 	parameter VERT_SYNC         = 3,
+    parameter VERT_DEPTH        = 11,
 
 	// Character dimensions
 	parameter CHAR_WIDTH        = 'd16,
@@ -33,7 +36,7 @@ module video_controller #(
 	output reg [8:0] rd_burst_length,
 
 	// Font interface
-    output reg [14:0] font_address,
+    output wire [14:0] font_address,
     input wire [CHAR_WIDTH - 1:0] char_row_bitmap,
 
 	// Cursor interface
@@ -131,7 +134,7 @@ always @(posedge clk)
 // =============================================================================
 // Horizontal pixel counter
 // =============================================================================
-reg [$clog2(HORZ_TOTAL):0] xpos = 0;
+reg [HORZ_DEPTH - 1:0] xpos = 0;
 always @(posedge clk)
 	if (reset)
 		xpos <= 'd0;
@@ -142,7 +145,7 @@ always @(posedge clk)
 // =============================================================================
 // Vertical line counter
 // =============================================================================
-reg [$clog2(VERT_TOTAL):0] ypos = 0;
+reg [VERT_DEPTH - 1:0] ypos = 0;
 always @(posedge clk)
 	if (reset)
 		ypos <= 'd0;
@@ -156,12 +159,12 @@ always @(posedge clk)
 // =============================================================================
 // Frame count
 // =============================================================================
-reg [9:0] frame_count = 10'd0;
+reg [4:0] frame_count = 'd0;
 always @(posedge clk)
 	if (reset) begin
-		frame_count <= 10'd0;
+		frame_count <= 'd0;
 	end else if (xpos == 'd0 && ypos == 'd0) begin
-		frame_count <= frame_count + 10'd1;
+		frame_count <= frame_count + 'd1;
 	end
 
 // =============================================================================
@@ -193,8 +196,8 @@ always @(posedge clk)
 wire x_visible = xpos >= HORZ_VISIBLE_START && xpos < HORZ_VISIBLE_END;
 wire y_visible = ypos >= VERT_VISIBLE_START && ypos < VERT_VISIBLE_END;
 
-wire [$clog2(HORZ_TOTAL):0] current_x = x_visible ? xpos - HORZ_VISIBLE_START : 'd0;
-wire [$clog2(HORZ_VISIBLE / 16):0] current_col = current_x[4 + $clog2(HORZ_VISIBLE / 16):4];
+wire [HORZ_DEPTH - 1:0] current_x = x_visible ? xpos - HORZ_VISIBLE_START : 'd0;
+wire [HORZ_COL_DEPTH - 1:0] current_col = current_x[4 + HORZ_COL_DEPTH - 1:4];
 
 wire preload =
 	ypos == VERT_VISIBLE_START - 1 + 0 * 20 ||
@@ -259,20 +262,23 @@ wire preload =
 // Preload characters and attributes for one row
 // =============================================================================
 reg [6:0] wr_index;
+reg [31:0] wr_data;
 reg [6:0] rd_index;
-reg wr_enable;
+reg wr_enable = FALSE;
 
+wire dummy_rst = 'd0;
 wire cea0 = wr_enable && ~pg;
 wire [31:0] dob0;
 charattr_row row0 ( 
 	.clka (clk),
 	.addra (wr_index),
 	.cea (cea0),
-	.dia (rd_data),
+	.dia (wr_data),
 
 	.clkb (clk),
 	.addrb (rd_index),
-	.dob (dob0)
+	.dob (dob0),
+    .rstb (dummy_rst)
 );
 
 wire cea1 = wr_enable && pg;
@@ -281,89 +287,59 @@ charattr_row row1 (
 	.clka (clk),
 	.addra (wr_index),
 	.cea (cea1),
-	.dia (rd_data),
+	.dia (wr_data),
 
 	.clkb (clk),
 	.addrb (rd_index),
-	.dob (dob1)
+	.dob (dob1),
+    .rstb (dummy_rst)
 );
 
-wire [31:0] charattr_source = pg ? dob0 : dob1;
-reg [31:0] charattr;
 always @(posedge clk)
 	if (reset || (xpos == 'd0 && ypos == 'd0)) begin
 		rd_request <= FALSE;
 		rd_address <= first_row;
 		rd_burst_length <= 'd80;
+	end else if (preload) begin
+		rd_request <= xpos == 'd0;
+
+		if (xpos == HORZ_TOTAL - 1) begin
+			if (rd_address + ROW_SIZE >= base_address + PAGE_SIZE)
+				rd_address <= base_address;
+			else
+				rd_address <= rd_address + ROW_SIZE;
+		end
+	end else begin
+		rd_request <= FALSE;
+	end
+
+always @(posedge clk)
+	if (reset || (xpos == 'd0 && ypos == 'd0)) begin
 		wr_index <= 'd0;
 		wr_enable <= FALSE;
 	end else begin
-		if (preload) begin
-			rd_request <= xpos == 'd0;
-
-			if (xpos == HORZ_TOTAL - 1) begin
-				if (rd_address + ROW_SIZE >= base_address + PAGE_SIZE)
-					rd_address <= base_address;
-				else
-					rd_address <= rd_address + ROW_SIZE;
-			end
-		end else
-			rd_request <= FALSE;
-
-		wr_enable <= rd_available;
-		if (xpos == 'd0)
+		if (xpos == 'd0) begin
 			wr_index <= 'h7f;
-		else if (rd_available) begin
+		end else if (rd_available) begin
+            wr_enable <= TRUE;
+			wr_data <= rd_data;
 			wr_index <= wr_index + 'd1;
-		end
+		end else begin
+        	wr_enable <= FALSE;
+        end
 	end
 
 // =============================================================================
 // Pixel generation
 // =============================================================================
-localparam
-/*
-	STEP_START = 'd0,
-	STEP_LOAD_CHARATTR = 'd1,
-	STEP_CHARATTR_READ = 'd2,
-	STEP_GFXMODE_COMPUTE = 'd4,
-	STEP_HORZ_RESIZE = 'd5,
-	STEP_APPLY_PATTERN = 'd6,
-	STEP_DRAW_BITMAP = 'd7,
-	STEP_WRITE_PIXEL = 'd8,
-	STEP_NEXT = 'd9;
-*/
-	STEP_START = 'd0,
-	STEP_LOAD_CHARATTR = 'd0,
-	STEP_CHARATTR_READ = 'd1,
-	STEP_GFXMODE_COMPUTE = 'd2,
-	STEP_HORZ_RESIZE = 'd3,
-	STEP_APPLY_PATTERN = 'd4,
-	STEP_DRAW_BITMAP = 'd5,
-	STEP_WRITE_PIXEL = 'd6,
-	STEP_NEXT = 'd7;
-
-reg [3:0] step;
-
-// Helpers pointing to character attributes
-reg [3:0] fg;
-reg [3:0] bg;
-reg [15:0] pattern;
-reg [1:0] func;
-reg horz_size;
-reg horz_part;
-reg gfxmode;
-reg blink;
-reg underline;
-
 wire cursor_blink = frame_count[4];
 
 // Memory where pixels will be written
-reg wr_pixel_enable;
-reg [63:0] wr_pixel_data;
+wire wr_pixel_enable;
+wire [63:0] wr_pixel_data;
 reg [6:0] wr_pixel_addr;
 wire [3:0] current_pixel_index;
-wire [10:0] addrb = xpos - HORZ_VISIBLE_START + 11'd2;
+wire [10:0] addrb = xpos[10:0] - HORZ_VISIBLE_START[10:0] + 11'd2;
 pixels pixels (
 	.clka (clk),
 	.addra (wr_pixel_addr),
@@ -375,232 +351,57 @@ pixels pixels (
 	.dob (current_pixel_index)
 );
 
-always @(posedge clk)
-	if (gfxmode)
-		blink <= FALSE;
-	else
-	    case (charattr[15:14])
-	        2'b00: blink <= FALSE; // off
-	        2'b01: blink <= frame_count[5]; // slow
-	        2'b10: blink <= frame_count[4]; // norm
-	        2'b11: blink <= frame_count[3]; // fast
-	    endcase
-
-reg [15:0] bitmap;
-reg [15:0] gfx_row_bitmap;
-
-always @(posedge clk)
-	if (reset) begin
-		gfx_row_bitmap <= 'd0;
-	end	else begin
-		if (step == STEP_GFXMODE_COMPUTE) begin
-			if (charattr[13]) begin
-				case (char_row)
-					'd01, 'd02: gfx_row_bitmap <= {
-						1'b0, charattr[23], charattr[23], 1'b0,
-						1'b0, charattr[22], charattr[22], 1'b0,
-						1'b0, charattr[21], charattr[21], 1'b0,
-						1'b0, charattr[20], charattr[20], 1'b0
-					};
-
-					'd05, 'd06: gfx_row_bitmap <= {
-						1'b0, charattr[19], charattr[19], 1'b0,
-						1'b0, charattr[18], charattr[18], 1'b0,
-						1'b0, charattr[17], charattr[17], 1'b0,
-						1'b0, charattr[16], charattr[16], 1'b0
-					};
-
-					'd09, 'd10: gfx_row_bitmap <= {
-						1'b0, charattr[15], charattr[15], 1'b0,
-						1'b0, charattr[14], charattr[14], 1'b0,
-						1'b0, charattr[9], charattr[9], 1'b0,
-						1'b0, charattr[8], charattr[8], 1'b0
-					};
-
-					'd13, 'd14: gfx_row_bitmap <= {
-						1'b0, charattr[7], charattr[7], 1'b0,
-						1'b0, charattr[6], charattr[6], 1'b0,
-						1'b0, charattr[5], charattr[5], 1'b0,
-						1'b0, charattr[4], charattr[4], 1'b0
-					};
-
-					'd00, 'd04, 'd08, 'd12, 'd16, 'd03, 'd07, 'd11, 'd15, 'd19:
-						gfx_row_bitmap <= 16'b0;
-
-					default: gfx_row_bitmap <= {
-						1'b0, charattr[3], charattr[3], 1'b0,
-						1'b0, charattr[2], charattr[2], 1'b0,
-						1'b0, charattr[1], charattr[1], 1'b0,
-						1'b0, charattr[0], charattr[0], 1'b0
-					};
-				endcase
-			end else begin
-				case (char_row)
-					'd00, 'd01, 'd02, 'd03: gfx_row_bitmap <= {
-						charattr[23], charattr[23], charattr[23], charattr[23],
-						charattr[22], charattr[22], charattr[22], charattr[22],
-						charattr[21], charattr[21], charattr[21], charattr[21],
-						charattr[20], charattr[20], charattr[20], charattr[20]
-					};
-
-					'd04, 'd05, 'd06, 'd07: gfx_row_bitmap <= {
-						charattr[19], charattr[19], charattr[19], charattr[19],
-						charattr[18], charattr[18], charattr[18], charattr[18],
-						charattr[17], charattr[17], charattr[17], charattr[17],
-						charattr[16], charattr[16], charattr[16], charattr[16]
-					};
-
-					'd08, 'd09, 'd10, 'd11: gfx_row_bitmap <= {
-						charattr[15], charattr[15], charattr[15], charattr[15],
-						charattr[14], charattr[14], charattr[14], charattr[14],
-						charattr[9], charattr[9], charattr[9], charattr[9],
-						charattr[8], charattr[8], charattr[8], charattr[8]
-					};
-
-					'd12, 'd13, 'd14, 'd15: gfx_row_bitmap <= {
-						charattr[7], charattr[7], charattr[7], charattr[7],
-						charattr[6], charattr[6], charattr[6], charattr[6],
-						charattr[5], charattr[5], charattr[5], charattr[5],
-						charattr[4], charattr[4], charattr[4], charattr[4]
-					};
-
-					default: gfx_row_bitmap <= {
-						charattr[3], charattr[3], charattr[3], charattr[3],
-						charattr[2], charattr[2], charattr[2], charattr[2],
-						charattr[1], charattr[1], charattr[1], charattr[1],
-						charattr[0], charattr[0], charattr[0], charattr[0]
-					};
-				endcase
-			end
-		end
-	end
-
-wire pixel_generate = xpos > 'd3 && ~(rd_index == COLUMNS && step == STEP_NEXT);
 wire pixel_reset = reset
 				|| xpos == HORZ_TOTAL - 1
 				|| ypos < VERT_VISIBLE_START
 				|| ypos >= VERT_VISIBLE_END;
 
+reg [31:0] charattr;
+reg vp_enable;
+vp_pipeline vp_pipeline (
+	// Base signals
+	.clk (clk),
+	.reset (reset),
+
+	// Inputs
+	.charattr (charattr),
+	.char_row_in (char_row),
+	.ypos (ypos[3:0]),
+	.enabled (vp_enable),
+
+	// Intermediate inputs/outputs
+	.txt_font_address (font_address),
+	.txt_char_row_bitmap (char_row_bitmap),
+
+	// Outputs
+	.pixels (wr_pixel_data),
+	.enable (wr_pixel_enable)
+);
 
 always @(posedge clk)
 	if (pixel_reset) begin
-		step <= STEP_START;
-	end else if (pixel_generate) begin
-		if (step == STEP_NEXT) step <= STEP_START;
-		else                   step <= step + 'd1;
-	end
-
-wire enable_gfxmode = charattr[13:10] == 4'b0100 || charattr[13:10] == 4'b1000;
-always @(posedge clk)
-	if (pixel_reset) begin
-		gfxmode <= FALSE;
-	end	else if (pixel_generate && step == STEP_CHARATTR_READ) begin
-		gfxmode <= enable_gfxmode;
-	end else begin
-		gfxmode <= gfxmode;
+		wr_pixel_addr <= 'd0;
+	end	else if (wr_pixel_enable && wr_pixel_addr < 'd79) begin
+		wr_pixel_addr <= wr_pixel_addr + 'd1;
 	end
 
 always @(posedge clk)
 	if (pixel_reset) begin
 		rd_index <= 'd0;
-		wr_pixel_addr <= 'd0;
-	end	else if (pixel_generate) begin
-		case (step)
-			STEP_START: charattr <= charattr_source;
+	end	else if (rd_index < COLUMNS) begin
+		rd_index <= rd_index + 'd1;
+	end
 
-			//STEP_LOAD_CHARATTR: rd_index <= rd_index + 'd1;
-
-			STEP_CHARATTR_READ: begin
-				//rd_index <= rd_index + 'd1;
-
-				if (enable_gfxmode) begin
-					bg <= charattr[31:28];
-					fg <= charattr[27:24];
-					underline <= FALSE;
-					pattern <= generate_pattern(4'b0, 4'b0);
-					func <= 2'b0;
-				end else begin
-					// Apply blink and invert attribute
-					if (charattr[16]) begin
-						fg <= blink ? charattr[27:24] : charattr[31:28];
-						bg <= charattr[27:24];
-					end else begin
-						fg <= blink ? charattr[31:28] : charattr[27:24];
-						bg <= charattr[31:28];
-					end
-
-					// Underline
-					underline <=
-						charattr[17] &&
-						char_row == 'd17 &&
-						charattr[13] == charattr[11];
-
-					pattern <= generate_pattern(charattr[23:20], ypos[3:0]);
-					func <= charattr[19:18];
-				end
-
-				font_address <=
-					/*{ 5'b0, charattr[9:0] } * 15'd20 // This uses one DSP! */
-					{ 1'b0, charattr[9:0], 4'b0 } +
-					{ 3'b0, charattr[9:0], 2'b0 } +
-					{
-						10'b0,
-						vertical_resize(charattr[11], charattr[13], char_row)
-					};
-
-				horz_size <= charattr[10];
-				horz_part <= charattr[12];
-			end
-
-			STEP_HORZ_RESIZE:
-				if (gfxmode)
-					bitmap <= gfx_row_bitmap;
-				else
-					bitmap <= horizontal_resize(
-						horz_size, horz_part, char_row_bitmap
-					);
-
-			STEP_APPLY_PATTERN:
-				bitmap <= apply_pattern(func, bitmap, pattern);
-
-			STEP_DRAW_BITMAP: begin
-				if (underline & !gfxmode) begin
-					wr_pixel_data <= {
-						fg, fg, fg, fg, fg, fg, fg, fg,
-						fg, fg, fg, fg, fg, fg, fg, fg
-					};
-				end else begin
-					wr_pixel_data[ 3: 0] <= bitmap[15] ? fg : bg;
-					wr_pixel_data[ 7: 4] <= bitmap[14] ? fg : bg;
-					wr_pixel_data[11: 8] <= bitmap[13] ? fg : bg;
-					wr_pixel_data[15:12] <= bitmap[12] ? fg : bg;
-					wr_pixel_data[19:16] <= bitmap[11] ? fg : bg;
-					wr_pixel_data[23:20] <= bitmap[10] ? fg : bg;
-					wr_pixel_data[27:24] <= bitmap[ 9] ? fg : bg;
-					wr_pixel_data[31:28] <= bitmap[ 8] ? fg : bg;
-					wr_pixel_data[35:32] <= bitmap[ 7] ? fg : bg;
-					wr_pixel_data[39:36] <= bitmap[ 6] ? fg : bg;
-					wr_pixel_data[43:40] <= bitmap[ 5] ? fg : bg;
-					wr_pixel_data[47:44] <= bitmap[ 4] ? fg : bg;
-					wr_pixel_data[51:48] <= bitmap[ 3] ? fg : bg;
-					wr_pixel_data[55:52] <= bitmap[ 2] ? fg : bg;
-					wr_pixel_data[59:56] <= bitmap[ 1] ? fg : bg;
-					wr_pixel_data[63:60] <= bitmap[ 0] ? fg : bg;
-				end
-
-				rd_index <= rd_index + 'd1;
-			end
-
-			STEP_WRITE_PIXEL: wr_pixel_enable <= TRUE;
-
-			STEP_NEXT: begin
-				wr_pixel_enable <= FALSE;
-				wr_pixel_addr <= wr_pixel_addr + 'd1;
-			end
-		endcase
-	end else begin
-		wr_pixel_enable <= FALSE;
-		wr_pixel_addr <= 'd0;
+always @(posedge clk)
+	if (pixel_reset) begin
+        vp_enable <= FALSE;
+	end	else begin
+		charattr <= pg ? dob0 : dob1;
+		if (xpos == 'd3) begin
+	    	vp_enable <= TRUE;
+		end else if (xpos == COLUMNS + 'd3) begin
+    		vp_enable <= FALSE;
+		end
 	end
 
 // =============================================================================
@@ -611,21 +412,29 @@ reg [31:0] cursor_pixels = 'd0;
 wire [8:0] cursor_address_start =
 	{ 1'b0, mouse_cursor, 5'b0 } + { 2'b0, mouse_cursor, 4'b0 };
 
-wire [$clog2(VERT_TOTAL):0] cursor_start_y =
+wire [VERT_DEPTH - 1:0] cursor_start_y =
 	VERT_VISIBLE_START + mouse_y - cursor_offset_y(mouse_cursor);
 
-wire [$clog2(VERT_TOTAL):0] cursor_end_y =
-	VERT_VISIBLE_START + mouse_y - cursor_offset_y(mouse_cursor) + 'd24;
+wire [VERT_DEPTH - 1:0] cursor_end_y =
+	VERT_VISIBLE_START[VERT_DEPTH - 1:0] +
+    { 1'b0, mouse_y[9:0] } -
+    { 6'b0, cursor_offset_y(mouse_cursor) } +
+    11'd24;
 
 wire mouse_cursor_visible_y = ypos >= cursor_start_y && ypos < cursor_end_y;
 
 wire [4:0] cursor_current_row = ypos - cursor_start_y;
 
-wire [$clog2(HORZ_TOTAL):0] cursor_start_x =
-	HORZ_VISIBLE_START + mouse_x - cursor_offset_x(mouse_cursor);
+wire [HORZ_DEPTH - 1:0] cursor_start_x =
+	HORZ_VISIBLE_START[HORZ_DEPTH - 1:0] +
+    mouse_x[HORZ_DEPTH - 1:0] -
+    { 7'b0, cursor_offset_x(mouse_cursor) };
 
-wire [$clog2(HORZ_TOTAL):0] cursor_end_x =
-	HORZ_VISIBLE_START + mouse_x - cursor_offset_x(mouse_cursor) + 'd16;
+wire [HORZ_DEPTH - 1:0] cursor_end_x =
+	HORZ_VISIBLE_START[HORZ_DEPTH - 1:0] +
+    mouse_x[HORZ_DEPTH - 1:0] -
+    { 7'b0, cursor_offset_x(mouse_cursor) } +
+    11'd16;
 
 wire mouse_cursor_visible_x = xpos >= cursor_start_x && xpos < cursor_end_x;
 

@@ -149,16 +149,14 @@ print "par Frédéric BISSON"
                     const inConsole = document.getElementById("input-console")
                     myTerminal.onInput = (value) => {
                         if (value instanceof MyTerminalMouse) {
-                            if(value.x > 10 && value.x < 20) {
+                            if(value.x >= 70 && value.x <= 77 && value.y == 5 || value.y == 6) {
                                 myTerminal.write(myCode().mouseCursor(1))
+
+                                if (value.modifiers.left) {
+                                    updateGraph(myTerminal)
+                                }
                             } else {
                                 myTerminal.write(myCode().mouseCursor(0))
-                            }
-                            if (value.modifiers.left) {
-                                myTerminal.write(myCode()
-                                    .locate(value.x, value.y)
-                                    .print("\x90")
-                                )
                             }
                         } else {
                             inConsole.value += value

@@ -3,25 +3,25 @@ standard
 
 IO Statistics
 #IO                        20
-  #input                    7
+  #input                    5
   #output                  13
-  #inout                    0
+  #inout                    2
 
 Utilization Statistics
-#lut                     4244   out of  19600   21.65%
-#reg                      994   out of  19600    5.07%
-#le                      4273
-  #lut only              3279   out of   4273   76.74%
-  #reg only                29   out of   4273    0.68%
-  #lut&reg                965   out of   4273   22.58%
+#lut                     4017   out of  19600   20.49%
+#reg                     1469   out of  19600    7.49%
+#le                      4017
+  #lut only              2548   out of   4017   63.43%
+  #reg only                 0   out of   4017    0.00%
+  #lut&reg               1469   out of   4017   36.57%
 #dsp                        0   out of     29    0.00%
-#bram                      17   out of     64   26.56%
-  #bram9k                  17
+#bram                       9   out of     64   14.06%
+  #bram9k                   9
   #fifo9k                   0
 #bram32k                   10   out of     16   62.50%
 #pad                       20   out of    189   10.58%
-  #ireg                     4
-  #oreg                    10
+  #ireg                     0
+  #oreg                     0
   #treg                     0
 #pll                        1   out of      4   25.00%
 
@@ -29,30 +29,30 @@ Utilization Statistics
 Detailed IO Report
 
       Name        Direction    Location    IOStandard    DriveStrength    PullType    PackReg  
-  ps2_0_clock       INPUT        P11        LVCMOS33          N/A          PULLUP      IREG    
-   ps2_0_data       INPUT        L10        LVCMOS33          N/A          PULLUP      IREG    
-  ps2_1_clock       INPUT         R7        LVCMOS33          N/A          PULLUP      IREG    
-   ps2_1_data       INPUT        M10        LVCMOS33          N/A          PULLUP      IREG    
+  ps2_0_clock       INPUT        P11        LVCMOS33          N/A          PULLUP      NONE    
+   ps2_0_data       INPUT        L10        LVCMOS33          N/A          PULLUP      NONE    
      refclk         INPUT        K14        LVCMOS33          N/A          PULLUP      NONE    
     reset_n         INPUT         T2        LVCMOS33          N/A          PULLUP      NONE    
        rx           INPUT        P12        LVCMOS33          N/A          PULLUP      NONE    
       cts          OUTPUT        N12        LVCMOS33           8            NONE       NONE    
-       tx          OUTPUT        N11        LVCMOS33           8            NONE       OREG    
-  vga_blue[2]      OUTPUT        B14        LVCMOS33           8            NONE       OREG    
-  vga_blue[1]      OUTPUT         A3        LVCMOS33           8            NONE       OREG    
-  vga_blue[0]      OUTPUT         C5        LVCMOS33           8            NONE       OREG    
-  vga_green[2]     OUTPUT         C9        LVCMOS33           8            NONE       OREG    
-  vga_green[1]     OUTPUT         B6        LVCMOS33           8            NONE       OREG    
-  vga_green[0]     OUTPUT        B10        LVCMOS33           8            NONE       OREG    
+       tx          OUTPUT        N11        LVCMOS33           8            NONE       NONE    
+  vga_blue[2]      OUTPUT        B14        LVCMOS33           8            NONE       NONE    
+  vga_blue[1]      OUTPUT         A3        LVCMOS33           8            NONE       NONE    
+  vga_blue[0]      OUTPUT         C5        LVCMOS33           8            NONE       NONE    
+  vga_green[2]     OUTPUT         C9        LVCMOS33           8            NONE       NONE    
+  vga_green[1]     OUTPUT         B6        LVCMOS33           8            NONE       NONE    
+  vga_green[0]     OUTPUT        B10        LVCMOS33           8            NONE       NONE    
    vga_hsync       OUTPUT         P5        LVCMOS33           8            NONE       NONE    
-   vga_red[2]      OUTPUT        A14        LVCMOS33           8            NONE       OREG    
-   vga_red[1]      OUTPUT        B15        LVCMOS33           8            NONE       OREG    
-   vga_red[0]      OUTPUT         A4        LVCMOS33           8            NONE       OREG    
+   vga_red[2]      OUTPUT        A14        LVCMOS33           8            NONE       NONE    
+   vga_red[1]      OUTPUT        B15        LVCMOS33           8            NONE       NONE    
+   vga_red[0]      OUTPUT         A4        LVCMOS33           8            NONE       NONE    
    vga_vsync       OUTPUT         N5        LVCMOS33           8            NONE       NONE    
+  ps2_1_clock       INOUT        M10        LVCMOS33           8           PULLUP      NONE    
+   ps2_1_data       INOUT         R7        LVCMOS33           8           PULLUP      NONE    
 
 Report Hierarchy Area:
 +--------------------------------------------------------------------+
 |Instance |Module     |le    |lut    |ripple |seq    |bram   |dsp    |
 +--------------------------------------------------------------------+
-|top      |myterminal |4273  |3856   |388    |1008   |27     |0      |
+|top      |myterminal |4017  |3800   |217    |1469   |19     |0      |
 +--------------------------------------------------------------------+

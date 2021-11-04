@@ -12,13 +12,15 @@ module font #(
 
 wire [CHAR_WIDTH - 1:0] dummy_input = 'd0;
 wire dummy_write_enable = 1'b0;
+wire dummy_reset = 'd0;
 
 font_ram font_ram (
 	.doa (char_row_bitmap),
 	.dia (dummy_input),
 	.addra (font_address),
 	.clka (clk),
-	.wea (dummy_write_enable)
+	.wea (dummy_write_enable),
+    .rsta (dummy_reset)
 );
 
 endmodule
