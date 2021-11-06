@@ -410,19 +410,29 @@ always @(posedge clk)
 // =============================================================================
 reg [31:0] cursor_pixels = 'd0;
 
-wire [8:0] cursor_address_start =
-	{ 1'b0, mouse_cursor, 5'b0 } + { 2'b0, mouse_cursor, 4'b0 };
+reg [8:0] cursor_address_start = 'd0;
+always @(posedge clk)
+	cursor_address_start <=
+		{ 1'b0, mouse_cursor, 5'b0 } + { 2'b0, mouse_cursor, 4'b0 };
 
-wire [VERT_DEPTH - 1:0] cursor_start_y =
-	VERT_VISIBLE_START + mouse_y - cursor_offset_y(mouse_cursor);
+reg [VERT_DEPTH - 1:0] cursor_start_y = 'd0;
+reg [VERT_DEPTH - 1:0] cursor_end_y = 'd0;
+always @(posedge clk)
+	if (xpos =='d0) begin
+		cursor_start_y <=
+			VERT_VISIBLE_START +
+			mouse_y -
+			cursor_offset_y(mouse_cursor);
 
-wire [VERT_DEPTH - 1:0] cursor_end_y =
-	VERT_VISIBLE_START[VERT_DEPTH - 1:0] +
-    { 1'b0, mouse_y[9:0] } -
-    { 6'b0, cursor_offset_y(mouse_cursor) } +
-    11'd24;
+		cursor_end_y <=
+			VERT_VISIBLE_START + 'd24 +
+			mouse_y -
+			cursor_offset_y(mouse_cursor);
+	end
 
-wire mouse_cursor_visible_y = ypos >= cursor_start_y && ypos < cursor_end_y;
+reg mouse_cursor_visible_y = FALSE;
+always @(posedge clk)
+	mouse_cursor_visible_y <= ypos >= cursor_start_y && ypos < cursor_end_y;
 
 wire [4:0] cursor_current_row = ypos - cursor_start_y;
 
@@ -437,7 +447,9 @@ wire [HORZ_DEPTH - 1:0] cursor_end_x =
     { 7'b0, cursor_offset_x(mouse_cursor) } +
     11'd16;
 
-wire mouse_cursor_visible_x = xpos >= cursor_start_x && xpos < cursor_end_x;
+reg mouse_cursor_visible_x = FALSE;
+always @(posedge clk)
+	mouse_cursor_visible_x <= xpos >= cursor_start_x && xpos < cursor_end_x;
 
 always @(posedge clk)
 	if (reset) begin
@@ -445,14 +457,14 @@ always @(posedge clk)
 	end else if (mouse_cursor_visible_y) begin
 		case (xpos)
 			// Read first 8 pixels
-			'd0: cursor_address <=
+			'd1: cursor_address <=
 				cursor_address_start + { 3'b0, cursor_current_row, 1'b0 };
-			'd3: cursor_pixels[31:16] <= cursor_row_bitmap;
+			'd4: cursor_pixels[31:16] <= cursor_row_bitmap;
 
 			// Read last 8 pixels
-			'd4: cursor_address <=
+			'd5: cursor_address <=
 				cursor_address_start + { 3'b0, cursor_current_row, 1'b1 };
-			'd7: cursor_pixels[15:0] <= cursor_row_bitmap;
+			'd8: cursor_pixels[15:0] <= cursor_row_bitmap;
 		endcase
 	end
 
@@ -484,7 +496,11 @@ endfunction
 reg [8:0] current_pixel;
 always @(posedge clk) current_pixel <= palette[current_pixel_index];
 
-wire [3:0] cursor_pixel_offset = xpos - cursor_start_x;
+//wire [3:0] cursor_pixel_offset = xpos - cursor_start_x;
+reg [3:0] cursor_pixel_offset = 'd0;
+always @(posedge clk)
+	cursor_pixel_offset <= xpos - cursor_start_x;
+
 reg [8:0] current_cursor_pixel;
 reg show_mouse_cursor;
 always @(posedge clk)
