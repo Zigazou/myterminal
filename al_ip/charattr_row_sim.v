@@ -1,5 +1,5 @@
 // Verilog netlist created by TD v5.0.38657
-// Tue Nov  2 19:53:39 2021
+// Sun Nov 14 09:19:06 2021
 
 `timescale 1ns / 1ps
 module charattr_row  // charattr_row.v(14)
@@ -10,7 +10,6 @@ module charattr_row  // charattr_row.v(14)
   clka,
   clkb,
   dia,
-  rstb,
   dob
   );
 
@@ -20,7 +19,6 @@ module charattr_row  // charattr_row.v(14)
   input clka;  // charattr_row.v(38)
   input clkb;  // charattr_row.v(39)
   input [31:0] dia;  // charattr_row.v(34)
-  input rstb;  // charattr_row.v(40)
   output [31:0] dob;  // charattr_row.v(31)
 
   parameter ADDR_WIDTH_A = 7;
@@ -30,7 +28,7 @@ module charattr_row  // charattr_row.v(14)
   parameter DATA_WIDTH_A = 32;
   parameter DATA_WIDTH_B = 32;
   parameter REGMODE_A = "NOREG";
-  parameter REGMODE_B = "OUTREG";
+  parameter REGMODE_B = "NOREG";
   parameter WRITEMODE_A = "NORMAL";
   parameter WRITEMODE_B = "NORMAL";
 
@@ -53,12 +51,13 @@ module charattr_row  // charattr_row.v(14)
     .DATA_WIDTH_A("18"),
     .DATA_WIDTH_B("18"),
     .MODE("PDPW8K"),
-    .OCEAMUX("1"),
-    .OCEBMUX("1"),
-    .REGMODE_A("OUTREG"),
-    .REGMODE_B("OUTREG"),
+    .OCEAMUX("0"),
+    .OCEBMUX("0"),
+    .REGMODE_A("NOREG"),
+    .REGMODE_B("NOREG"),
     .RESETMODE("SYNC"),
     .RSTAMUX("0"),
+    .RSTBMUX("0"),
     .WEAMUX("1"),
     .WEBMUX("0"),
     .WRITEMODE_A("NORMAL"),
@@ -71,7 +70,6 @@ module charattr_row  // charattr_row.v(14)
     .csa({cea,open_n49,open_n50}),
     .dia(dia[8:0]),
     .dib(dia[17:9]),
-    .rstb(rstb),
     .doa(dob[8:0]),
     .dob(dob[17:9]));
   // address_offset=0;data_offset=18;depth=88;width=14;num_section=1;width_per_section=14;section_size=32;working_depth=512;working_width=18;working_numbyte=1;mode_ecc=0;address_step=1;bytes_in_per_section=1;
@@ -87,12 +85,13 @@ module charattr_row  // charattr_row.v(14)
     .DATA_WIDTH_A("18"),
     .DATA_WIDTH_B("18"),
     .MODE("PDPW8K"),
-    .OCEAMUX("1"),
-    .OCEBMUX("1"),
-    .REGMODE_A("OUTREG"),
-    .REGMODE_B("OUTREG"),
+    .OCEAMUX("0"),
+    .OCEBMUX("0"),
+    .REGMODE_A("NOREG"),
+    .REGMODE_B("NOREG"),
     .RESETMODE("SYNC"),
     .RSTAMUX("0"),
+    .RSTBMUX("0"),
     .WEAMUX("1"),
     .WEBMUX("0"),
     .WRITEMODE_A("NORMAL"),
@@ -102,12 +101,11 @@ module charattr_row  // charattr_row.v(14)
     .addrb({2'b00,addrb,4'b1111}),
     .clka(clka),
     .clkb(clkb),
-    .csa({cea,open_n61,open_n62}),
+    .csa({cea,open_n62,open_n63}),
     .dia(dia[26:18]),
-    .dib({open_n66,open_n67,open_n68,open_n69,dia[31:27]}),
-    .rstb(rstb),
+    .dib({open_n67,open_n68,open_n69,open_n70,dia[31:27]}),
     .doa(dob[26:18]),
-    .dob({open_n75,open_n76,open_n77,open_n78,dob[31:27]}));
+    .dob({open_n77,open_n78,open_n79,open_n80,dob[31:27]}));
 
 endmodule 
 

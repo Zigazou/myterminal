@@ -1,5 +1,5 @@
 // Verilog netlist created by TD v5.0.38657
-// Wed Oct 20 21:01:01 2021
+// Sun Nov  7 10:42:46 2021
 
 `timescale 1ns / 1ps
 module clock  // clock.v(22)
@@ -61,12 +61,12 @@ module clock  // clock.v(22)
     .GEN_BASIC_CLOCK("DISABLE"),
     .GMC_GAIN(0),
     .GMC_TEST(14),
-    .ICP_CURRENT(9),
+    .ICP_CURRENT(24),
     .IF_ESCLKSTSW("DISABLE"),
     .INTFB_WAKE("DISABLE"),
     .KVCO(2),
     .LPF_CAPACITOR(2),
-    .LPF_RESISTOR(8),
+    .LPF_RESISTOR(4),
     .NORESET("DISABLE"),
     .ODIV_MUXC0("DIV"),
     .ODIV_MUXC1("DIV"),

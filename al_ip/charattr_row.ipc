@@ -10,7 +10,7 @@
         <byte_write>none</byte_write>
     </GeneralConfig>
     <ImplementOption>
-        <imp_type>9k</imp_type>
+        <imp_type>9k_fast</imp_type>
     </ImplementOption>
     <MemoryType>
         <mem_type>PDPW</mem_type>
@@ -26,7 +26,7 @@
         <mode_b>NORMAL</mode_b>
         <depth_b>88</depth_b>
         <width_b>32</width_b>
-        <register_b>RegWithoutOre</register_b>
+        <register_b>None</register_b>
         <enable_b>disable</enable_b>
     </PortBOption>
     <FillMemoryInitValues>

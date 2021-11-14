@@ -44,6 +44,10 @@ localparam
 		CURSOR_VISIBLE     = "C",
 		CURSOR_EMPHASIZE   = "V",
 		CURSOR_HIDDEN      = "c",
+		ORIENTATION_RIGHT  = "r",
+		ORIENTATION_LEFT   = "l",
+		ORIENTATION_DOWN   = "d",
+		ORIENTATION_UP     = "u",
 
 	BELL                   = 'h07, // ^G
 	CTRL_CODE_08           = 'h08, // ^H

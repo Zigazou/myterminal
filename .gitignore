@@ -9,3 +9,4 @@ myterminal_rtl.area
 myterminal_rtl.db
 .myterminal.al.bak
 td_*.log
+.vscode/settings.json

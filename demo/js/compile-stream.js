@@ -183,6 +183,22 @@ const commands = {
         }
     },
 
+    go: function(direction) {
+        direction = direction.trim().toLowerCase();
+
+        if (direction === 'up') {
+            return String.fromCharCode(0x06, 0x75);
+        } else if (direction === 'right') {
+            return String.fromCharCode(0x06, 0x72);
+        } else if (direction === 'down') {
+            return String.fromCharCode(0x06, 0x64);
+        } else if (direction === 'left') {
+            return String.fromCharCode(0x06, 0x6c);
+        } else {
+            throw new Error("Expected up, down, left or right");
+        }
+    },
+
     move: function(direction) {
         direction = direction.trim().toLowerCase();
 
@@ -197,6 +213,16 @@ const commands = {
         } else {
             throw new Error("Expected up, down, left or right");
         }
+    },
+
+    repeat: function(count) {
+        count = interpretNumber(count);
+        if (count > 0 && count < 256 - 32) {
+            return String.fromCharCode(0x12, 0x20 + count);
+        } else {
+            throw new Error("Expected count between 1 and 223");
+        }
+
     },
 
     charpage: function(page) {
@@ -257,7 +283,6 @@ function splitCommand(command) {
             if (currentChar === STRING_ESCAPE) {
                 currentArgument += currentChar;
                 state = ESCAPE;
-                break;
             } else if (currentChar === STRING_START) {
                 elements.push(currentArgument);
                 currentArgument = "";

@@ -48,7 +48,7 @@ Requirements
 ------------
 
 - Tang SiPeed Primer (Anlogic Eagle EG4S20BG256)
-- Tang Dynasty 4.6
+- Tang Dynasty 5.0.5
 - Icarus Verilog
 - Python 3
 - Google Chrome if you wish to use the JavaScript demo files
@@ -119,6 +119,10 @@ Escape codes (from host to terminal)
 |               |                                                             |
 | 06 43         | Show text cursor                                            |
 | 06 63         | Hide text cursor                                            |
+| 06 64         | Set text orientation from top to bottom (no auto-scroll)    |
+| 06 6c         | Set text orientation from right to left                     |
+| 06 72         | Set text orientation from left to right                     |
+| 06 75         | Set text orientation from bottom to top (no auto-scroll)    |
 |               |                                                             |
 | 0B            | Scroll screen up (does not move cursor)                     |
 | 0C            | Scroll screen down (does not move cursor)                   |
@@ -127,6 +131,8 @@ Escape codes (from host to terminal)
 | 0F            | Move cursor down                                            |
 | 10            | Move cursor left                                            |
 | 11            | Move cursor right                                           |
+|               |                                                             |
+| 12 20+n       | Repeat last character n times                               |
 |               |                                                             |
 | 13            | Use character page 0, see [charpage.pdf](font/charpage.pdf) |
 | 14            | Use character page 1, see [charpage.pdf](font/charpage.pdf) |
@@ -146,6 +152,27 @@ Escape codes (from host to terminal)
 | 19 37         | Mouse cursor cell ![](cursor/cursor-cell.png)               |
 | 19 40         | Hide mouse cursor and disable mouse events                  |
 | 19 41         | Show mouse cursor and enable mouse events                   |
+
+Mouse events
+------------
+
+When mouse events are enabled (0x19, 0x41), MyTerminal sends control codes
+whenever the mouse is used by the user (movements, click).
+
+Every mouse events is composed of 4 bytes starting with 0x1e.
+
+    0x1e 0x80+mouse_x 0x80+mouse_y 0x80+modifiers
+
+Modifiers works as follows:
+
+- bit 7: always 1
+- bit 6: meta key is pressed
+- bit 5: alt key is pressed
+- bit 4: ctrl key is pressed
+- bit 3: shift key is pressed
+- bit 2: middle button is pressed
+- bit 1: right button is pressed
+- bit 0: left button is pressed
 
 Notes
 -----

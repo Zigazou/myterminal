@@ -277,8 +277,8 @@ charattr_row row0 (
 
 	.clkb (clk),
 	.addrb (rd_index),
-	.dob (dob0),
-    .rstb (dummy_rst)
+	.dob (dob0)/*,
+    .rstb (dummy_rst)*/
 );
 
 wire cea1 = wr_enable && pg;
@@ -291,8 +291,8 @@ charattr_row row1 (
 
 	.clkb (clk),
 	.addrb (rd_index),
-	.dob (dob1),
-    .rstb (dummy_rst)
+	.dob (dob1)/*,
+    .rstb (dummy_rst)*/
 );
 
 always @(posedge clk)
@@ -382,8 +382,8 @@ vp_pipeline vp_pipeline (
 always @(posedge clk)
 	if (pixel_reset) begin
 		wr_pixel_addr <= 'd0;
-	end	else if (wr_pixel_enable && wr_pixel_addr < 'd79) begin
-		wr_pixel_addr <= wr_pixel_addr + 'd1;
+	end	else begin
+		wr_pixel_addr <= wr_pixel_addr + { 6'b0, wr_pixel_enable };
 	end
 
 always @(posedge clk)
@@ -398,9 +398,9 @@ always @(posedge clk)
         vp_enable <= FALSE;
 	end	else begin
 		charattr <= pg ? dob0 : dob1;
-		if (xpos == 'd3) begin
+		if (xpos == 'd2) begin
 	    	vp_enable <= TRUE;
-		end else if (xpos == COLUMNS + 'd3) begin
+		end else if (xpos == COLUMNS + 'd2) begin
     		vp_enable <= FALSE;
 		end
 	end

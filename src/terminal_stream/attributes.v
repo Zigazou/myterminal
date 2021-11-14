@@ -36,14 +36,18 @@ localparam
 
 // Automaton registers
 reg [5:0] first_row;
-reg [6:0] text_x;
-reg [5:0] text_y;
+reg [6:0] in_x;
+reg [5:0] in_y;
+wire [6:0] text_x;
+wire [5:0] text_y;
 reg cursor_visible;
+reg [2:0] ts_command;
+reg [1:0] orientation;
+wire scroll;
 
 reg [13:0] current_pixels;
 reg [1:0] current_pixels_offset;
 
-//reg [9:0] charpage_base;
 reg [4:0] charpage_base;
 
 reg [3:0] foreground;
@@ -71,14 +75,16 @@ endtask
 
 task reset_position;
 	begin
-		text_x <= 'd0;
-		text_y <= 'd0;
+		ts_command <= TS_CURSOR_SET;
+		in_x <= 'd0;
+		in_y <= 'd0;
 	end
 endtask
 
 task reset_attributes;
 	begin
 		charpage_base <= CHARPAGE_0;
+		last_unicode <= 'h20;
 		bold <= FALSE;
 		blink <= BLINK_NONE;
 		size <= SIZE_NORMAL;
@@ -88,6 +94,7 @@ task reset_attributes;
 		underline <= FALSE;
 		current_pixels <= 20'b0;
 		current_pixels_offset <= 2'b0;
+		orientation <= TS_ORIENTATION_RIGHT;
 	end
 endtask
 

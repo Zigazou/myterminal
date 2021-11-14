@@ -111,18 +111,44 @@
             <h2>Execute a MyTerminal script</h2>
             <textarea cols="80" rows="40" id="script-source"># Hello, World!
 reset
-foreground lightyellow
+foreground white
 background black
-cursor visible
 clearscreen
+
+# Red frame around the screen
+locate 0 0
+charpage 2
+foreground lightred
+go right
+print "6:"
+repeat 77
+go down
+print "&lt;5"
+repeat 48
+go left
+print "9:"
+repeat 77
+go up
+print "35"
+repeat 48
+go right
+
+# MyTerminal
+charpage 0
+foreground lightyellow
+cursor visible
 size double
 locate 30 24
 print "MyTerminal"
+
+# Draw a blue line
 locate 20 26
 size normal
 foreground blue
 charpage 3
 print "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
+
+# Par Frédéric BISSON
 charpage 0
 locate 30 27
 foreground white

@@ -129,6 +129,26 @@ class MyCode {
         return this
     }
 
+    goRight() {
+        this.string += "\x06\x72"
+        return this
+    }
+
+    goLeft() {
+        this.string += "\x06\x6c"
+        return this
+    }
+
+    goUp() {
+        this.string += "\x06\x75"
+        return this
+    }
+
+    goDown() {
+        this.string += "\x06\x64"
+        return this
+    }
+
     characterPage(page) {
         switch(page) {
             case 0: this.string += "\x13"; break
@@ -166,7 +186,7 @@ class MyCode {
         this.characterPage(2)
             .locate(column, row)
             .print(String.fromCharCode(offset + 0x06))
-            .print(String.fromCharCode(offset + 0x0a).repeat(width - 2))
+            .repeat(String.fromCharCode(offset + 0x0a), width - 2)
             .print(String.fromCharCode(offset + 0x0c))
 
         for(let i = 0; i < height - 2; i++) {
@@ -179,7 +199,7 @@ class MyCode {
 
         this.locate(column, row + height - 1)
             .print(String.fromCharCode(offset + 0x03))
-            .print(String.fromCharCode(offset + 0x0a).repeat(width - 2))
+            .repeat(String.fromCharCode(offset + 0x0a), width - 2)
             .print(String.fromCharCode(offset + 0x09))
 
         this.characterPage(0)
@@ -214,7 +234,7 @@ class MyCode {
         for (let y = 0; y < height; y++) {
             this.locate(column, row + y)
             if (filled) {
-                this.print(String.fromCharCode(0xc9).repeat(width))
+                this.repeat(String.fromCharCode(0xc9), width)
             } else {
                 this.clearChars(width)
             }
@@ -228,9 +248,9 @@ class MyCode {
         }
 
         this.locate(column, row - 1)
-            .print(lines[MyCode.NORTH].repeat(width))
+            .repeat(lines[MyCode.NORTH], width)
             .locate(column, row + height)
-            .print(lines[MyCode.SOUTH].repeat(width))
+            .repeat(lines[MyCode.SOUTH], width)
 
         switch(pointerDirection) {
             case MyCode.NORTH:
@@ -328,7 +348,13 @@ class MyCode {
     }
 
     repeat(character, count) {
-        return this.print(character.repeat(count))
+        if (count < 4) {
+            this.string += character.repeat(count)
+        } else  {
+            this.string += character
+            this.string += "\x12" + String.fromCharCode(0x20 + Math.min(count - 1, 223))
+        }
+        return this
     }
 
     print(string) {

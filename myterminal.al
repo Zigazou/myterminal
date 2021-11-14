@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Project Version="1" Path="/home/fred/Documents/dev/FPGA/myterminal-5.0.5">
-    <Project_Created_Time>2021-09-24 19:34:09</Project_Created_Time>
+    <Project_Created_Time>2021-11-05 08:13:46</Project_Created_Time>
     <TD_Version>5.0.38657</TD_Version>
     <UCode>11100101</UCode>
     <Name>myterminal</Name>
@@ -266,6 +266,14 @@
                     <Attr Name="CompileOrder" Val="32"/>
                 </FileInfo>
             </File>
+            <File Path="src/ts_cursor.v">
+                <FileInfo>
+                    <Attr Name="UsedInSyn" Val="true"/>
+                    <Attr Name="UsedInP&R" Val="true"/>
+                    <Attr Name="BelongTo" Val="design_1"/>
+                    <Attr Name="CompileOrder" Val="33"/>
+                </FileInfo>
+            </File>
         </Verilog>
         <ADC_FILE>
             <File Path="src/myterminal.adc">
@@ -328,8 +336,8 @@
     <Configurations>
     </Configurations>
     <Project_Settings>
-        <Step_Last_Change>2021-11-06 08:37:28.486</Step_Last_Change>
-        <Current_Step>60</Current_Step>
+        <Step_Last_Change>2021-11-14 20:35:06.935</Step_Last_Change>
+        <Current_Step>0</Current_Step>
         <Step_Status>true</Step_Status>
     </Project_Settings>
 </Project>

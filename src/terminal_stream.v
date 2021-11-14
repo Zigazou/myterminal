@@ -24,6 +24,7 @@ module terminal_stream (
 );
 
 `include "constant.v"
+`include "ts_cursor.vh"
 `include "terminal_stream/escape_codes.v"
 `include "terminal_stream/attributes.v"
 `include "video_controller/registers.v"
@@ -58,7 +59,10 @@ localparam
 	STAGE_ATTRIBUTE          = 'd13,
 	STAGE_PARAMETER          = 'd14,
 	STAGE_PATTERN            = 'd15,
-	STAGE_MOUSE_CONTROL      = 'd16;
+	STAGE_MOUSE_CONTROL      = 'd16,
+	STAGE_REPEAT             = 'd17,
+	STAGE_CURSOR_COMMAND1    = 'd18,
+	STAGE_CURSOR_COMMAND2    = 'd19;
 
 task goto;
 	input [4:0] next_stage;
@@ -68,6 +72,9 @@ endtask
 // =============================================================================
 // Cursor position
 // =============================================================================
+reg [7:0] last_unicode = 'd0;
+reg [7:0] repeat_count = 'd0;
+
 localparam
 	LIMIT_Y   = 2 ** 6 - 1,
 	FIRST_ROW = 'd0,
@@ -132,32 +139,64 @@ task scroll_up;
 	end
 endtask
 
-task gotoxy;
-	input [6:0] x;
-	input [5:0] y;
-	if (x < COLUMNS) begin
-		text_x <= x;
 
-		if (y < ROWS) begin
-			text_y <= y;
-			ready_n <= TRUE_n;
-			goto(STAGE_IDLE);
-		end else begin
-			text_y <= ROWS - 6'd1;
-			prepare_first_row(first_row + 'd1);
-			ready_n <= FALSE_n;
-			goto(STAGE_CLEAR_WRITE);
-		end
-	end else
-		gotoxy('d0, y + { 5'b0, size[1] } + 6'd1);
-endtask
+ts_cursor #(
+	.COLUMNS (COLUMNS),
+	.ROWS (ROWS)
+) ts_cursor (
+	.clk (clk),
+	.reset (reset),
+	.command (ts_command),
+	.horz_size (size[0]),
+	.vert_size (size[1]),
+	.orientation (orientation),
+	.in_x (in_x),
+	.in_y (in_y),
+	.x (text_x),
+	.y (text_y),
+	.scroll (scroll)
+);
 
 task line_feed;
-	gotoxy('d0, text_y + { 5'b0, size[1] } + 6'd1);
+	begin
+		ts_command <= TS_CURSOR_LINE_FEED;
+		ready_n <= FALSE_n;
+		goto(STAGE_CURSOR_COMMAND1);
+	end
 endtask
 
 task next_char;
-	gotoxy(text_x + { 6'b0, size[0] } + 7'd1, text_y);
+	begin
+		if (repeat_count != 'd0) begin
+			repeat_count <= repeat_count - 'd1;
+		end
+		ts_command <= TS_CURSOR_NEXT_CHAR;
+		ready_n <= FALSE_n;
+		goto(STAGE_CURSOR_COMMAND1);
+	end
+endtask
+
+task stage_cursor_command1;
+	begin
+		ts_command <= TS_CURSOR_NOP;
+		goto(STAGE_CURSOR_COMMAND2);
+	end
+endtask
+
+task stage_cursor_command2;
+	begin
+		if (scroll) begin
+			prepare_first_row(first_row + 'd1);
+			ready_n <= FALSE_n;
+			goto(STAGE_CLEAR_WRITE);
+		end else begin
+			if (repeat_count != 'd0)
+				ready_n <= FALSE_n;
+			else
+				ready_n <= TRUE_n;
+			goto(STAGE_IDLE);
+		end
+	end
 endtask
 
 wire [5:0] first_row_diff = ROWS - first_row;
@@ -174,7 +213,14 @@ endfunction
 // Idle stage
 // =============================================================================
 task stage_idle;
-	if (unicode_available) begin
+	if (repeat_count != 'd0) begin
+		ready_n <= FALSE_n;
+		wr_request <= TRUE;
+		wr_address <= address_from_position(text_x, text_y);
+		wr_data <= generate_cell_part(last_unicode, PART_TOP_LEFT);
+		current_pixels_offset <= 2'd0;
+		goto(STAGE_WRITE_TOP_LEFT);
+	end else if (unicode_available) begin
 		if (unicode[7:5] == 3'b0)
 			case (unicode)
 				CTRL_CODE_00: goto(STAGE_IDLE);
@@ -204,26 +250,30 @@ task stage_idle;
 				end
 
 				CR: begin
-					text_x <= 'd0;
-					goto(STAGE_IDLE);
+					ts_command <= TS_CURSOR_SET;
+					in_x <= 'd0;
+					in_y <= text_y;
+					goto(STAGE_CURSOR_COMMAND1);
 				end
 
 				CTRL_CURSOR_UP: begin
-					text_y <= text_y == 'd0 ? text_y : text_y - 'd1;
-					goto(STAGE_IDLE);
+					ts_command <= TS_CURSOR_UP;
+					goto(STAGE_CURSOR_COMMAND1);
 				end
 				CTRL_CURSOR_DOWN: begin
-					text_y <= text_y == ROWS - 'd1 ? text_y : text_y + 'd1;
-					goto(STAGE_IDLE);
+					ts_command <= TS_CURSOR_DOWN;
+					goto(STAGE_CURSOR_COMMAND1);
 				end
 				CTRL_CURSOR_LEFT: begin
-					text_x <= text_x == 'd0 ? text_x : text_x - 'd1;
-					goto(STAGE_IDLE);
+					ts_command <= TS_CURSOR_LEFT;
+					goto(STAGE_CURSOR_COMMAND1);
 				end
 				CTRL_CURSOR_RIGHT: begin
-					text_x <= text_x == COLUMNS - 'd1 ? text_x : text_x + 'd1;
-					goto(STAGE_IDLE);
+					ts_command <= TS_CURSOR_RIGHT;
+					goto(STAGE_CURSOR_COMMAND1);
 				end
+
+				CTRL_REPEAT: goto(STAGE_REPEAT);
 
 				CTRL_CHARPAGE_0: begin
 					charpage_base <= CHARPAGE_0;
@@ -254,7 +304,6 @@ task stage_idle;
 
 				CTRL_MOUSE_CONTROL: goto(STAGE_MOUSE_CONTROL);
 
-				CTRL_CODE_1A: goto(STAGE_IDLE);
 				CTRL_CODE_1B: goto(STAGE_IDLE);
 				CTRL_CODE_1C: goto(STAGE_IDLE);
 				CTRL_CODE_1D: goto(STAGE_IDLE);
@@ -287,6 +336,7 @@ task stage_idle;
 				wr_request <= TRUE;
 				wr_address <= address_from_position(text_x, text_y);
 				wr_data <= generate_cell_part(unicode, PART_TOP_LEFT);
+				last_unicode <= unicode;
 				current_pixels_offset <= 2'd0;
 				goto(STAGE_WRITE_TOP_LEFT);
 			end
@@ -304,14 +354,14 @@ task stage_write_top_left;
 			SIZE_DOUBLE_WIDTH, SIZE_DOUBLE: begin
 				wr_request <= TRUE;
 				wr_address <= wr_address + CHARATTR_SIZE;
-				wr_data <= generate_cell_part(unicode, PART_TOP_RIGHT);
+				wr_data <= generate_cell_part(last_unicode, PART_TOP_RIGHT);
 				goto(STAGE_WRITE_TOP_RIGHT);
 			end
 
 			SIZE_DOUBLE_HEIGHT: begin
 				wr_request <= TRUE;
 				wr_address <= wr_address + ROW_SIZE;
-				wr_data <= generate_cell_part(unicode, PART_BOTTOM_LEFT);
+				wr_data <= generate_cell_part(last_unicode, PART_BOTTOM_LEFT);
 				goto(STAGE_WRITE_BOTTOM_LEFT);
 			end
 
@@ -332,7 +382,7 @@ task stage_write_top_right;
 			SIZE_DOUBLE: begin
 				wr_request <= TRUE;
 				wr_address <= wr_address + {ROW_SIZE - CHARATTR_SIZE};
-				wr_data <= generate_cell_part(unicode, PART_BOTTOM_LEFT);
+				wr_data <= generate_cell_part(last_unicode, PART_BOTTOM_LEFT);
 				goto(STAGE_WRITE_BOTTOM_LEFT);
 			end
 
@@ -353,7 +403,7 @@ task stage_write_bottom_left;
 			SIZE_DOUBLE: begin
 				wr_request <= TRUE;
 				wr_address <= wr_address + CHARATTR_SIZE;
-				wr_data <= generate_cell_part(unicode, PART_BOTTOM_RIGHT);
+				wr_data <= generate_cell_part(last_unicode, PART_BOTTOM_RIGHT);
 				goto(STAGE_WRITE_BOTTOM_RIGHT);
 			end
 
@@ -516,9 +566,9 @@ endtask
 task stage_cursor1;
 	if (unicode_available) begin
 		if (unicode[6:0] >= "0" && unicode[6:0] < ROWS + "0")
-			text_y <= unicode[6:0] - "0";
+			in_y <= unicode[6:0] - "0";
 		else
-			text_y <= text_y;
+			in_y <= text_y;
 
 		goto(STAGE_CURSOR2);
 	end else
@@ -527,10 +577,11 @@ endtask
 
 task stage_cursor2;
 	if (unicode_available) begin
+		ts_command <= TS_CURSOR_SET;
 		if (unicode[6:0] >= "0")
-			text_x <= unicode[6:0] - "0";
+			in_x <= unicode[6:0] - "0";
 		else
-			text_x <= text_x;
+			in_x <= text_x;
 
 		goto(STAGE_IDLE);
 	end else
@@ -565,6 +616,10 @@ task stage_parameter;
 			CURSOR_VISIBLE: cursor_visible <= TRUE;
 			CURSOR_EMPHASIZE: func <= 'd0;
 			CURSOR_HIDDEN: cursor_visible <= FALSE;
+			ORIENTATION_RIGHT: orientation <= TS_ORIENTATION_RIGHT;
+			ORIENTATION_LEFT: orientation <= TS_ORIENTATION_LEFT;
+			ORIENTATION_DOWN: orientation <= TS_ORIENTATION_DOWN;
+			ORIENTATION_UP: orientation <= TS_ORIENTATION_UP;
 		endcase
 
 		goto(STAGE_IDLE);
@@ -599,6 +654,15 @@ task stage_mouse_control;
 		goto(STAGE_MOUSE_CONTROL);
 endtask
 
+task stage_repeat;
+	if (unicode_available) begin
+		repeat_count <= unicode - 'h20;
+		ready_n <= FALSE_n;
+		goto(STAGE_IDLE);
+	end else
+		goto(STAGE_REPEAT);
+endtask
+
 // =============================================================================
 // Automaton
 // =============================================================================
@@ -613,7 +677,9 @@ always @(posedge clk)
 		set(VIDEO_NOP, 'd0);
 		reset_all();
 		clear_screen();
-	end else
+	end else begin
+		ts_command <= TS_CURSOR_NOP;
+
 		case (stage)
 			STAGE_IDLE: stage_idle();
 
@@ -636,5 +702,9 @@ always @(posedge clk)
 			STAGE_PARAMETER: stage_parameter();
 			STAGE_PATTERN: stage_pattern();
 			STAGE_MOUSE_CONTROL: stage_mouse_control();
+			STAGE_REPEAT: stage_repeat();
+			STAGE_CURSOR_COMMAND1: stage_cursor_command1();
+			STAGE_CURSOR_COMMAND2: stage_cursor_command2();
 		endcase
+	end
 endmodule
