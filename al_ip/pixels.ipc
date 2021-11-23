@@ -17,14 +17,14 @@
     </MemoryType>
     <PortAOption>
         <mode_a>NORMAL</mode_a>
-        <depth_a>80</depth_a>
+        <depth_a>128</depth_a>
         <width_a>64</width_a>
         <register_a>None</register_a>
         <enable_a>enable</enable_a>
     </PortAOption>
     <PortBOption>
         <mode_b>NORMAL</mode_b>
-        <depth_b>1280</depth_b>
+        <depth_b>2048</depth_b>
         <width_b>4</width_b>
         <register_b>None</register_b>
         <enable_b>disable</enable_b>

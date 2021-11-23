@@ -1,7 +1,6 @@
 module vp_gfx_delay (
 	// Base signals
 	input wire clk,
-	input wire reset,
 
 	// Inputs
 	input wire [3:0] foreground,
@@ -18,20 +17,9 @@ module vp_gfx_delay (
 
 `include "constant.v"
 
-reg [24:0] fifo = 25'b0;
-always @(posedge clk)
-	fifo <= { background, foreground, bitmap, enabled };
-
-always @(posedge clk)
-	if (reset) begin
-		enable <= FALSE;
-		gfx_background <= 'd0;
-		gfx_foreground <= 'd0;
-		gfx_bitmap <= 'd0;
-	end else begin
-		enable <= fifo[0];
-		gfx_background <= fifo[24:21];
-		gfx_foreground <= fifo[20:17];
-		gfx_bitmap <= fifo[16:1];
-	end
+reg [49:0] fifo = 50'b0;
+always @(posedge clk) begin
+	fifo <= { background, foreground, bitmap, enabled, fifo[49:25] };
+	{ gfx_background, gfx_foreground, gfx_bitmap, enable } <= fifo;
+end
 endmodule

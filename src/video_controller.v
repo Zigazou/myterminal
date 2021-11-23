@@ -136,25 +136,22 @@ always @(posedge clk)
 // =============================================================================
 reg [HORZ_DEPTH - 1:0] xpos = 0;
 always @(posedge clk)
-	if (reset)
+	if (reset || xpos == HORZ_TOTAL - 1) begin
 		xpos <= 'd0;
-	else
-		if (xpos == HORZ_TOTAL - 1) xpos <= 'd0;
-		else                        xpos <= xpos + 'd1;
+	end else begin
+		xpos <= xpos + 'd1;
+	end
 
 // =============================================================================
 // Vertical line counter
 // =============================================================================
 reg [VERT_DEPTH - 1:0] ypos = 0;
 always @(posedge clk)
-	if (reset)
+	if (reset || (xpos == HORZ_TOTAL - 1 && ypos == VERT_TOTAL - 1))
 		ypos <= 'd0;
-	else
-		if (xpos == HORZ_TOTAL - 1) begin
-			if (ypos == VERT_TOTAL - 1) ypos <= 'd0;
-			else                        ypos <= ypos + 'd1;
-		end else
-			ypos <= ypos;
+	else begin
+		ypos <= ypos + { 20'd0, xpos == HORZ_TOTAL - 1 };
+	end
 
 // =============================================================================
 // Frame count
@@ -163,8 +160,8 @@ reg [6:0] frame_count = 'd0;
 always @(posedge clk)
 	if (reset) begin
 		frame_count <= 'd0;
-	end else if (xpos == 'd0 && ypos == 'd0) begin
-		frame_count <= frame_count + 'd1;
+	end else begin
+		frame_count <= frame_count + { 6'd0, xpos == 'd0 && ypos == 'd0 };
 	end
 
 // =============================================================================
@@ -180,7 +177,7 @@ always @(posedge clk)
 	if (reset || ypos < VERT_VISIBLE_START - 1 || ypos > VERT_VISIBLE_END - 1) begin
 		char_row <= 'd0;
 		current_row <= 0;
-	end else if (xpos == HORZ_TOTAL - 1) begin
+	end else if (xpos == HORZ_TOTAL - 2) begin
 		if (ypos == VERT_VISIBLE_START - 1) begin
 			char_row <= 'd0;
 			current_row <= 0;
@@ -199,74 +196,17 @@ wire y_visible = ypos >= VERT_VISIBLE_START && ypos < VERT_VISIBLE_END;
 wire [HORZ_DEPTH - 1:0] current_x = x_visible ? xpos - HORZ_VISIBLE_START : 'd0;
 wire [HORZ_COL_DEPTH - 1:0] current_col = current_x[4 + HORZ_COL_DEPTH - 1:4];
 
-wire preload =
-	ypos == VERT_VISIBLE_START - 1 + 0 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 1 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 2 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 3 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 4 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 5 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 6 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 7 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 8 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 9 * 20 ||
-
-	ypos == VERT_VISIBLE_START - 1 + 10 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 11 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 12 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 13 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 14 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 15 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 16 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 17 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 18 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 19 * 20 ||
-
-	ypos == VERT_VISIBLE_START - 1 + 20 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 21 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 22 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 23 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 24 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 25 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 26 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 27 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 28 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 29 * 20 ||
-
-	ypos == VERT_VISIBLE_START - 1 + 30 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 31 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 32 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 33 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 34 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 35 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 36 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 37 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 38 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 39 * 20 ||
-
-	ypos == VERT_VISIBLE_START - 1 + 40 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 41 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 42 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 43 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 44 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 45 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 46 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 47 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 48 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 49 * 20 ||
-
-	ypos == VERT_VISIBLE_START - 1 + 50 * 20 ||
-	ypos == VERT_VISIBLE_START - 1 + 51 * 20;
+wire preload = ypos == VERT_VISIBLE_START - 1 || (y_visible && char_row == 'd0);
 
 // =============================================================================
 // Preload characters and attributes for one row
 // =============================================================================
 reg [6:0] wr_index;
 reg [31:0] wr_data;
+
 reg [6:0] rd_index;
 reg wr_enable = FALSE;
 
-wire dummy_rst = 'd0;
 wire cea0 = wr_enable && ~pg;
 wire [31:0] dob0;
 charattr_row row0 ( 
@@ -277,8 +217,7 @@ charattr_row row0 (
 
 	.clkb (clk),
 	.addrb (rd_index),
-	.dob (dob0)/*,
-    .rstb (dummy_rst)*/
+	.dob (dob0)
 );
 
 wire cea1 = wr_enable && pg;
@@ -291,43 +230,36 @@ charattr_row row1 (
 
 	.clkb (clk),
 	.addrb (rd_index),
-	.dob (dob1)/*,
-    .rstb (dummy_rst)*/
+	.dob (dob1)
 );
 
-always @(posedge clk)
-	if (reset || (xpos == 'd0 && ypos == 'd0)) begin
-		rd_request <= FALSE;
-		rd_address <= first_row;
-		rd_burst_length <= 'd80;
-	end else if (preload) begin
-		rd_request <= xpos == 'd0;
+// Burst read of one row
+always @(posedge clk) begin
+	rd_request <= preload && xpos == 'd0;
 
+	if (reset || (xpos == 'd0 && ypos == 'd0)) begin
+		rd_address <= first_row;
+		rd_burst_length <= 'd88;
+	end else if (preload) begin
 		if (xpos == HORZ_TOTAL - 1) begin
 			if (rd_address + ROW_SIZE >= base_address + PAGE_SIZE)
 				rd_address <= base_address;
 			else
 				rd_address <= rd_address + ROW_SIZE;
 		end
-	end else begin
-		rd_request <= FALSE;
 	end
+end
 
-always @(posedge clk)
-	if (reset || (xpos == 'd0 && ypos == 'd0)) begin
-		wr_index <= 'd0;
-		wr_enable <= FALSE;
+// Write each row cell in the preloaded row
+always @(posedge clk) begin
+	wr_enable <= rd_available;
+	wr_data <= rd_data;
+	if (xpos == 'd0) begin
+		wr_index <= 'h7f;
 	end else begin
-		if (xpos == 'd0) begin
-			wr_index <= 'h7f;
-		end else if (rd_available) begin
-            wr_enable <= TRUE;
-			wr_data <= rd_data;
-			wr_index <= wr_index + 'd1;
-		end else begin
-        	wr_enable <= FALSE;
-        end
+		wr_index <= wr_index + { 6'd0, rd_available };
 	end
+end
 
 // =============================================================================
 // Pixel generation
@@ -339,7 +271,10 @@ wire wr_pixel_enable;
 wire [63:0] wr_pixel_data;
 reg [6:0] wr_pixel_addr;
 wire [3:0] current_pixel_index;
-wire [10:0] addrb = xpos[10:0] - HORZ_VISIBLE_START[10:0] + 11'd2;
+
+reg [10:0] addrb;
+always @(posedge clk) addrb <= xpos[10:0] - (HORZ_VISIBLE_START[10:0] - 11'd3);
+
 pixels pixels (
 	.clka (clk),
 	.addra (wr_pixel_addr),
@@ -361,7 +296,6 @@ reg vp_enable;
 vp_pipeline vp_pipeline (
 	// Base signals
 	.clk (clk),
-	.reset (reset),
 
 	// Inputs
 	.charattr (charattr),
@@ -386,31 +320,24 @@ always @(posedge clk)
 		wr_pixel_addr <= wr_pixel_addr + { 6'b0, wr_pixel_enable };
 	end
 
-always @(posedge clk)
-	if (pixel_reset) begin
-		rd_index <= 'd0;
-	end	else if (rd_index < COLUMNS) begin
-		rd_index <= rd_index + 'd1;
-	end
+always @(posedge clk) begin
+	rd_index <= xpos[6:0];
+	charattr <= pg ? dob0 : dob1;
+end
 
 always @(posedge clk)
 	if (pixel_reset) begin
-        vp_enable <= FALSE;
-	end	else begin
-		charattr <= pg ? dob0 : dob1;
-		if (xpos == 'd2) begin
-	    	vp_enable <= TRUE;
-		end else if (xpos == COLUMNS + 'd2) begin
-    		vp_enable <= FALSE;
-		end
-	end
+		vp_enable <= FALSE;
+	end	else case (xpos)
+		'd3: vp_enable <= TRUE;
+		(COLUMNS + 'd4): vp_enable <= FALSE;
+	endcase
 
 // =============================================================================
 // Mouse cursor drawing
 // =============================================================================
 reg [31:0] cursor_pixels = 'd0;
-
-reg [8:0] cursor_address_start = 'd0;
+reg [8:0] cursor_address_start;
 always @(posedge clk)
 	cursor_address_start <=
 		{ 1'b0, mouse_cursor, 5'b0 } + { 2'b0, mouse_cursor, 4'b0 };
@@ -447,7 +374,7 @@ wire [HORZ_DEPTH - 1:0] cursor_end_x =
     { 7'b0, cursor_offset_x(mouse_cursor) } +
     11'd16;
 
-reg mouse_cursor_visible_x = FALSE;
+reg mouse_cursor_visible_x;
 always @(posedge clk)
 	mouse_cursor_visible_x <= xpos >= cursor_start_x && xpos < cursor_end_x;
 
@@ -496,10 +423,8 @@ endfunction
 reg [8:0] current_pixel;
 always @(posedge clk) current_pixel <= palette[current_pixel_index];
 
-//wire [3:0] cursor_pixel_offset = xpos - cursor_start_x;
-reg [3:0] cursor_pixel_offset = 'd0;
-always @(posedge clk)
-	cursor_pixel_offset <= xpos - cursor_start_x;
+reg [3:0] cursor_pixel_offset;
+always @(posedge clk) cursor_pixel_offset <= xpos - cursor_start_x;
 
 reg [8:0] current_cursor_pixel;
 reg show_mouse_cursor;

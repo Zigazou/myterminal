@@ -11,7 +11,7 @@ function demoColors(myTerminal) {
         .print("List of colors\n")
         .background(2)
         .characterPage(3)
-        .print("P".repeat(80))
+        .repeat("P", 80)
         .characterPage(0)
     )
 
@@ -30,11 +30,11 @@ function demoColors(myTerminal) {
         myTerminal.write(myCode()
             .locate(1, y)
             .applyPattern(11, MyCode.FUNCTION_AND)
-            .print(String.fromCharCode(0xdf).repeat(10))
+            .repeat(String.fromCharCode(0xdf), 10)
             .stopPattern()
-            .print(String.fromCharCode(0xdf).repeat(19))
+            .repeat(String.fromCharCode(0xdf), 19)
             .applyPattern(11, MyCode.FUNCTION_AND)
-            .print(String.fromCharCode(0xdf).repeat(10))
+            .repeat(String.fromCharCode(0xdf), 10)
             .stopPattern()
         )
 

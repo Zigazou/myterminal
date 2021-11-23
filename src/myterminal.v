@@ -111,8 +111,8 @@ terminal_stream terminal_stream (
 	.clk (clk),
 	.reset (~reset_n),
 	.ready_n (cts),
-	.unicode (unicode),
-	.unicode_available (unicode_available),
+	.unicode_w (unicode),
+	.unicode_available_w (unicode_available),
 	.wr_address (wr_address),
 	.wr_request (wr_request),
 	.wr_data (wr_data),
@@ -238,18 +238,6 @@ ps2_keyboard_ascii ps2_keyboard_ascii (
 
 wire ps2_1_byte_available;
 wire [7:0] ps2_1_byte;
-/*
-ps2_receiver ps2_1_receiver (
-	.clk (clk),
-	.reset (~reset_n),
-	
-	.ps2_data (ps2_1_data),
-	.ps2_clock (ps2_1_clock),
-
-	.rx_done_tick (ps2_1_byte_available),
-	.rx_data (ps2_1_byte)
-);
-*/
 
 wire left_button;
 wire right_button;
@@ -279,9 +267,6 @@ ps2_mouse_interface #(
 	.data_ready (data_ready),
 	.read (read),
 	.error_no_ack(error_no_ack)
-
-	//.rx_done_tick (ps2_1_byte_available),
-	//.rx_data (ps2_1_byte)
 );
 
 wire mouse_button_left;
@@ -315,35 +300,6 @@ ps2_mouse_state2 ps2_mouse_state (
 	.register_index (register_index_1),
 	.register_value (register_value_1)
 );
-
-/*
-wire mouse_button_left;
-wire mouse_button_right;
-wire mouse_button_middle;
-wire [6:0] mouse_x_text;
-wire [5:0] mouse_y_text;
-wire [10:0] mouse_x_screen;
-wire [9:0] mouse_y_screen;
-ps2_mouse_state ps2_mouse_state (
-	.clk (clk),
-	.reset (~reset_n),
-
-	.scan_code_ready (ps2_1_byte_available),
-	.scan_code_in (ps2_1_byte),
-
-	.mouse_state_ready (mouse_state_ready),
-	.button_left (mouse_button_left),
-	.button_middle (mouse_button_middle),
-	.button_right (mouse_button_right),
-	.x_text (mouse_x_text),
-	.y_text (mouse_y_text),
-	.x_screen (mouse_x_screen),
-	.y_screen (mouse_y_screen),
-
-	.register_index (register_index_1),
-	.register_value (register_value_1)
-);
-*/
 
 wire [31:0] mouse_sequence_out;
 wire [2:0] mouse_sequence_out_count;

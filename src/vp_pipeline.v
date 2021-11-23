@@ -1,6 +1,7 @@
 `include "vp_text_or_gfx.v"
 `include "vp_text_delay.v"
-`include "vp_text_resize_pattern.v"
+`include "vp_text_resize.v"
+`include "vp_text_pattern.v"
 `include "vp_gfx_bitmap.v"
 `include "vp_gfx_delay.v"
 `include "vp_merge_bitmaps.v"
@@ -13,7 +14,6 @@ module vp_pipeline #(
 ) (
 	// Base signals
 	input wire clk,
-	input wire reset,
 
 	// Inputs
 	input wire [31:0] charattr,
@@ -30,9 +30,6 @@ module vp_pipeline #(
 	output wire [63:0] pixels,
 	output wire        enable
 );
-
-wire [14:0] vptog_txt_font_address;
-assign txt_font_address = vptog_txt_font_address;
 
 wire [4:0]  vptog_char_row_out;
 wire [3:0]  vptog_foreground;
@@ -51,7 +48,6 @@ wire        vptog_gfx_mosaic;
 wire        vptog_gfx_enable;
 vp_text_or_gfx vp_text_or_gfx (
 	.clk (clk),
-	.reset (reset),
 
 	// Inputs
 	.charattr (charattr),
@@ -66,7 +62,7 @@ vp_text_or_gfx vp_text_or_gfx (
 	.background (vptog_background),
 
 	// Text output
-	.txt_font_address (vptog_txt_font_address),
+	.txt_font_address (txt_font_address),
 	.txt_horz_size (vptog_txt_horz_size),
 	.txt_horz_part (vptog_txt_horz_part),
 	.txt_pattern (vptog_txt_pattern),
@@ -96,7 +92,6 @@ wire [15:0] vpgb_gfx_bitmap;
 wire        vpgb_enable;
 vp_gfx_bitmap vp_gfx_bitmap (
 	.clk (clk),
-	.reset (reset),
 
 	// Inputs
 	.foreground (vptog_foreground),
@@ -119,7 +114,6 @@ wire [15:0] vpgd_gfx_bitmap;
 wire        vpgd_enable;
 vp_gfx_delay vp_gfx_delay (
 	.clk (clk),
-	.reset (reset),
 
 	// Inputs
 	.foreground (vpgb_gfx_foreground),
@@ -150,7 +144,6 @@ wire        vptd_underline;
 wire        vptd_enable;
 vp_text_delay vp_text_delay (
 	.clk (clk),
-	.reset (reset),
 
 	// Inputs
 	.foreground (vptog_foreground),
@@ -179,13 +172,17 @@ vp_text_delay vp_text_delay (
 	.txt_enable (vptd_enable)
 );
 
-wire [3:0]  vptrp_txt_foreground;
-wire [3:0]  vptrp_txt_background;
-wire [15:0] vptrp_txt_bitmap;
-wire        vptrp_enable;
-vp_text_resize_pattern vp_text_resize_pattern (
+wire [3:0]  vptr_txt_foreground;
+wire [3:0]  vptr_txt_background;
+wire [15:0] vptr_txt_char_row_bitmap;
+wire [15:0] vptr_txt_pattern;
+wire [15:0] vptr_txt_border;
+wire [1:0]  vptr_txt_func;
+wire        vptr_txt_blink;
+wire        vptr_txt_invert;
+wire        vptr_enable;
+vp_text_resize vp_text_resize (
 	.clk (clk),
-	.reset (reset),
 
 	// Inputs
 	.foreground (vptd_foreground),
@@ -202,10 +199,40 @@ vp_text_resize_pattern vp_text_resize_pattern (
 	.enabled (vptd_enable),
 
 	// Outputs
-	.txt_foreground (vptrp_txt_foreground),
-	.txt_background (vptrp_txt_background),
-	.txt_bitmap (vptrp_txt_bitmap),
-	.enable (vptrp_enable)
+	.txt_foreground (vptr_txt_foreground),
+	.txt_background (vptr_txt_background),
+	.txt_char_row_bitmap (vptr_txt_char_row_bitmap),
+	.txt_pattern (vptr_txt_pattern),
+	.txt_border (vptr_txt_border),
+	.txt_func (vptr_txt_func),
+	.txt_blink (vptr_txt_blink),
+	.txt_invert (vptr_txt_invert),
+	.enable (vptr_enable)
+);
+
+wire [3:0]  vptp_txt_foreground;
+wire [3:0]  vptp_txt_background;
+wire [15:0] vptp_txt_bitmap;
+wire        vptp_enable;
+vp_text_pattern vp_text_pattern (
+	.clk (clk),
+
+	// Inputs
+	.foreground (vptr_txt_foreground),
+	.background (vptr_txt_background),
+	.char_row_bitmap (vptr_txt_char_row_bitmap),
+	.pattern (vptr_txt_pattern),
+	.border (vptr_txt_border),
+	.func (vptr_txt_func),
+	.blink (vptr_txt_blink),
+	.invert (vptr_txt_invert),
+	.enabled (vptr_enable),
+
+	// Outputs
+	.txt_foreground (vptp_txt_foreground),
+	.txt_background (vptp_txt_background),
+	.txt_bitmap (vptp_txt_bitmap),
+	.enable (vptp_enable)
 );
 
 // -----------------------------------------------------------------------------
@@ -217,13 +244,12 @@ wire [15:0] vpmb_bitmap;
 wire        vpmb_enable;
 vp_merge_bitmaps vp_merge_bitmaps (
 	.clk (clk),
-	.reset (reset),
 
 	// Text inputs
-	.txt_foreground (vptrp_txt_foreground),
-	.txt_background (vptrp_txt_background),
-	.txt_bitmap (vptrp_txt_bitmap),
-	.txt_enabled (vptrp_enable),
+	.txt_foreground (vptp_txt_foreground),
+	.txt_background (vptp_txt_background),
+	.txt_bitmap (vptp_txt_bitmap),
+	.txt_enabled (vptp_enable),
 
 	// Graphic inputs
 	.gfx_foreground (vpgd_gfx_foreground),
@@ -240,7 +266,6 @@ vp_merge_bitmaps vp_merge_bitmaps (
 
 vp_bitmap_to_pixels vp_bitmap_to_pixels (
 	.clk (clk),
-	.reset (reset),
 
 	// Inputs
 	.foreground (vpmb_foreground),

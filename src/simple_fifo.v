@@ -40,7 +40,5 @@ always @(posedge clk)
 		out_data <= fifo[fifo_out_index];
 		out_data_available <= TRUE;
 		fifo_out_index <= fifo_out_index + 'd1;
-	end else
-		out_data_available <= FALSE;
-
+	end
 endmodule

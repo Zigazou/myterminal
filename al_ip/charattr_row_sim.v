@@ -1,5 +1,5 @@
 // Verilog netlist created by TD v5.0.38657
-// Sun Nov 14 09:19:06 2021
+// Thu Nov 18 08:27:14 2021
 
 `timescale 1ns / 1ps
 module charattr_row  // charattr_row.v(14)
@@ -23,8 +23,8 @@ module charattr_row  // charattr_row.v(14)
 
   parameter ADDR_WIDTH_A = 7;
   parameter ADDR_WIDTH_B = 7;
-  parameter DATA_DEPTH_A = 88;
-  parameter DATA_DEPTH_B = 88;
+  parameter DATA_DEPTH_A = 128;
+  parameter DATA_DEPTH_B = 128;
   parameter DATA_WIDTH_A = 32;
   parameter DATA_WIDTH_B = 32;
   parameter REGMODE_A = "NOREG";
@@ -38,7 +38,7 @@ module charattr_row  // charattr_row.v(14)
     .JTAG_PERSISTN("DISABLE"),
     .PROGRAMN_PERSISTN("DISABLE"))
     config_inst ();
-  // address_offset=0;data_offset=0;depth=88;width=18;num_section=1;width_per_section=18;section_size=32;working_depth=512;working_width=18;working_numbyte=1;mode_ecc=0;address_step=1;bytes_in_per_section=1;
+  // address_offset=0;data_offset=0;depth=128;width=18;num_section=1;width_per_section=18;section_size=32;working_depth=512;working_width=18;working_numbyte=1;mode_ecc=0;address_step=1;bytes_in_per_section=1;
   EG_PHY_BRAM #(
     .CEAMUX("1"),
     .CEBMUX("1"),
@@ -62,7 +62,7 @@ module charattr_row  // charattr_row.v(14)
     .WEBMUX("0"),
     .WRITEMODE_A("NORMAL"),
     .WRITEMODE_B("NORMAL"))
-    inst_88x32_sub_000000_000 (
+    inst_128x32_sub_000000_000 (
     .addra({2'b00,addra,4'b1111}),
     .addrb({2'b00,addrb,4'b1111}),
     .clka(clka),
@@ -72,7 +72,7 @@ module charattr_row  // charattr_row.v(14)
     .dib(dia[17:9]),
     .doa(dob[8:0]),
     .dob(dob[17:9]));
-  // address_offset=0;data_offset=18;depth=88;width=14;num_section=1;width_per_section=14;section_size=32;working_depth=512;working_width=18;working_numbyte=1;mode_ecc=0;address_step=1;bytes_in_per_section=1;
+  // address_offset=0;data_offset=18;depth=128;width=14;num_section=1;width_per_section=14;section_size=32;working_depth=512;working_width=18;working_numbyte=1;mode_ecc=0;address_step=1;bytes_in_per_section=1;
   EG_PHY_BRAM #(
     .CEAMUX("1"),
     .CEBMUX("1"),
@@ -96,7 +96,7 @@ module charattr_row  // charattr_row.v(14)
     .WEBMUX("0"),
     .WRITEMODE_A("NORMAL"),
     .WRITEMODE_B("NORMAL"))
-    inst_88x32_sub_000000_018 (
+    inst_128x32_sub_000000_018 (
     .addra({2'b00,addra,4'b1111}),
     .addrb({2'b00,addrb,4'b1111}),
     .clka(clka),

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Project Version="1" Path="/home/fred/Documents/dev/FPGA/myterminal-5.0.5">
-    <Project_Created_Time>2021-11-05 08:13:46</Project_Created_Time>
+    <Project_Created_Time></Project_Created_Time>
     <TD_Version>5.0.38657</TD_Version>
-    <UCode>11100101</UCode>
+    <UCode>10000100</UCode>
     <Name>myterminal</Name>
     <HardWare>
         <Family>EG4</Family>
@@ -218,7 +218,7 @@
                     <Attr Name="CompileOrder" Val="26"/>
                 </FileInfo>
             </File>
-            <File Path="src/vp_text_resize_pattern.v">
+            <File Path="src/vp_merge_bitmaps.v">
                 <FileInfo>
                     <Attr Name="UsedInSyn" Val="true"/>
                     <Attr Name="UsedInP&R" Val="true"/>
@@ -226,7 +226,7 @@
                     <Attr Name="CompileOrder" Val="27"/>
                 </FileInfo>
             </File>
-            <File Path="src/vp_merge_bitmaps.v">
+            <File Path="src/vp_gfx_delay.v">
                 <FileInfo>
                     <Attr Name="UsedInSyn" Val="true"/>
                     <Attr Name="UsedInP&R" Val="true"/>
@@ -234,7 +234,7 @@
                     <Attr Name="CompileOrder" Val="28"/>
                 </FileInfo>
             </File>
-            <File Path="src/vp_gfx_delay.v">
+            <File Path="src/vp_gfx_bitmap.v">
                 <FileInfo>
                     <Attr Name="UsedInSyn" Val="true"/>
                     <Attr Name="UsedInP&R" Val="true"/>
@@ -242,7 +242,7 @@
                     <Attr Name="CompileOrder" Val="29"/>
                 </FileInfo>
             </File>
-            <File Path="src/vp_gfx_bitmap.v">
+            <File Path="src/vp_bitmap_to_pixels.v">
                 <FileInfo>
                     <Attr Name="UsedInSyn" Val="true"/>
                     <Attr Name="UsedInP&R" Val="true"/>
@@ -250,7 +250,7 @@
                     <Attr Name="CompileOrder" Val="30"/>
                 </FileInfo>
             </File>
-            <File Path="src/vp_bitmap_to_pixels.v">
+            <File Path="src/video_controller.v">
                 <FileInfo>
                     <Attr Name="UsedInSyn" Val="true"/>
                     <Attr Name="UsedInP&R" Val="true"/>
@@ -258,7 +258,7 @@
                     <Attr Name="CompileOrder" Val="31"/>
                 </FileInfo>
             </File>
-            <File Path="src/video_controller.v">
+            <File Path="src/ts_cursor.v">
                 <FileInfo>
                     <Attr Name="UsedInSyn" Val="true"/>
                     <Attr Name="UsedInP&R" Val="true"/>
@@ -266,7 +266,7 @@
                     <Attr Name="CompileOrder" Val="32"/>
                 </FileInfo>
             </File>
-            <File Path="src/ts_cursor.v">
+            <File Path="src/vp_text_resize.v">
                 <FileInfo>
                     <Attr Name="UsedInSyn" Val="true"/>
                     <Attr Name="UsedInP&R" Val="true"/>
@@ -274,7 +274,33 @@
                     <Attr Name="CompileOrder" Val="33"/>
                 </FileInfo>
             </File>
+            <File Path="src/vp_text_pattern.v">
+                <FileInfo>
+                    <Attr Name="UsedInSyn" Val="true"/>
+                    <Attr Name="UsedInP&R" Val="true"/>
+                    <Attr Name="BelongTo" Val="design_1"/>
+                    <Attr Name="CompileOrder" Val="34"/>
+                </FileInfo>
+            </File>
+            <File Path="src/constant.v">
+                <FileInfo>
+                    <Attr Name="UsedInSyn" Val="true"/>
+                    <Attr Name="UsedInP&R" Val="true"/>
+                    <Attr Name="BelongTo" Val="design_1"/>
+                    <Attr Name="CompileOrder" Val="35"/>
+                </FileInfo>
+            </File>
         </Verilog>
+        <Header>
+            <File Path="src/ts_cursor.vh">
+                <FileInfo>
+                    <Attr Name="UsedInSyn" Val="true"/>
+                    <Attr Name="UsedInP&R" Val="true"/>
+                    <Attr Name="BelongTo" Val="design_1"/>
+                    <Attr Name="CompileOrder" Val="36"/>
+                </FileInfo>
+            </File>
+        </Header>
         <ADC_FILE>
             <File Path="src/myterminal.adc">
                 <FileInfo>
@@ -309,19 +335,26 @@
     </TOP_MODULE>
     <Property>
         <RtlProperty>
-            <gate_sharing>off</gate_sharing>
+            <fix_undriven>auto</fix_undriven>
+            <keep_hierarchy>manual</keep_hierarchy>
+            <max_fanout>999</max_fanout>
             <merge_mux>on</merge_mux>
-            <opt_adder_fanout>off</opt_adder_fanout>
-            <opt_lessthan>off</opt_lessthan>
+            <min_ce_fanout>8</min_ce_fanout>
+            <opt_mux>on</opt_mux>
             <seq_syn>off</seq_syn>
         </RtlProperty>
         <GateProperty>
             <opt_area>high</opt_area>
-            <opt_timing>high</opt_timing>
             <pack_effort>high</pack_effort>
+            <pack_seq_in_io>off</pack_seq_in_io>
         </GateProperty>
+        <PlaceProperty>
+            <effort>high</effort>
+            <opt_timing>high</opt_timing>
+        </PlaceProperty>
         <RouteProperty>
             <effort>high</effort>
+            <fix_hold>on</fix_hold>
             <opt_timing>high</opt_timing>
         </RouteProperty>
         <BitgenProperty::GeneralOption>
@@ -336,8 +369,8 @@
     <Configurations>
     </Configurations>
     <Project_Settings>
-        <Step_Last_Change>2021-11-14 20:35:06.935</Step_Last_Change>
-        <Current_Step>0</Current_Step>
+        <Step_Last_Change>2021-11-23 21:27:01.693</Step_Last_Change>
+        <Current_Step>60</Current_Step>
         <Step_Status>true</Step_Status>
     </Project_Settings>
 </Project>

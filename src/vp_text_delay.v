@@ -1,7 +1,6 @@
 module vp_text_delay (
 	// Base signals
 	input wire clk,
-	input wire reset,
 
 	// Inputs
 	input wire [3:0] foreground,
@@ -32,8 +31,8 @@ module vp_text_delay (
 
 `include "constant.v"
 
-reg [47:0] fifo = 48'b0;
-always @(posedge clk)
+reg [47:0] fifo;
+always @(posedge clk) begin
 	fifo <= {
 		background,
 		foreground,
@@ -48,30 +47,16 @@ always @(posedge clk)
 		enabled
 	};
 
-always @(posedge clk)
-	if (reset) begin
-		txt_enable <= FALSE;
-		txt_foreground <= 'd0;
-		txt_background <= 'd0;
-		txt_horz_size <= 'd0;
-		txt_horz_part <= 'd0;
-		txt_pattern <= 'd0;
-		txt_border <= 'd0;
-		txt_func <= 'd0;
-		txt_blink <= FALSE;
-		txt_invert <= FALSE;
-		txt_underline <= FALSE;
-	end else begin
-		txt_enable <= fifo[0];
-		txt_background <= fifo[47:44];
-		txt_foreground <= fifo[43:40];
-		txt_horz_size <= fifo[39];
-		txt_horz_part <= fifo[38];
-		txt_pattern <= fifo[37:22];
-		txt_border <= fifo[21:6];
-		txt_func <= fifo[5:4];
-		txt_blink <= fifo[3];
-		txt_invert <= fifo[2];
-		txt_underline <= fifo[1];
-	end
+	{ txt_background,
+	txt_foreground, 
+	txt_horz_size,
+	txt_horz_part,
+	txt_pattern,
+	txt_border,
+	txt_func,
+	txt_blink,
+	txt_invert,
+	txt_underline,
+	txt_enable } <= fifo;
+end
 endmodule

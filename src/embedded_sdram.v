@@ -414,24 +414,22 @@ reg [8:0] rd_burst_stop;
 task stage_read;
 	begin
 		// Commands sequence
-		if (counter == READ_OPEN_ROW) begin
-			rd_burst_stop <= rd_burst_length + READ_OPEN_COL;
-			command_bank_activate(read_bank, read_row);
-		end else if (counter == READ_OPEN_COL)
-			command_read(read_bank, read_col);
-		else if (counter == rd_burst_stop)
-			command_burst_stop();
-		else if (counter == rd_burst_stop + 'd1)
-			command_bank_precharge(read_bank);
-		else
-			command_nop();
+		case (counter)
+			READ_OPEN_ROW: begin
+				rd_burst_stop <= rd_burst_length + READ_OPEN_COL;
+				command_bank_activate(read_bank, read_row);
+			end
+			READ_OPEN_COL: command_read(read_bank, read_col);
+			rd_burst_stop: command_burst_stop();
+			rd_burst_stop + 'd1: command_bank_precharge(read_bank);
+			default: command_nop();
+		endcase
+		rd_data <= dq;
 
 		// Data output
-		if (counter >= READ_DATA_START && counter <= rd_burst_length + READ_DATA_START) begin
-			rd_available <= TRUE;
-			rd_data <= dq;
-		end else
-			rd_available <= FALSE;
+		rd_available <=
+			counter >= READ_DATA_START &&
+			counter <= rd_burst_length + READ_DATA_START;
 
 		goto_when(STAGE_IDLE, rd_burst_stop + CAS_LATENCY + tRP);
 	end

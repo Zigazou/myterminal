@@ -4,8 +4,8 @@ module terminal_stream (
 	output reg ready_n,
 
 	// Stream input
-	input wire [7:0] unicode,
-	input wire unicode_available,
+	input wire [7:0] unicode_w,
+	input wire unicode_available_w,
 
 	// SDRAM output
 	output reg [22:0] wr_address,
@@ -37,6 +37,16 @@ task set;
 		register_value <= value;
 	end
 endtask
+
+// Needed for timing constraints
+reg [15:0] unicode_s;
+reg [1:0] unicode_available_s;
+wire [7:0] unicode = unicode_s[7:0];
+wire unicode_available = unicode_available_s[0];
+always @(posedge clk) if (ready_n == TRUE_n) begin
+	unicode_s <= { unicode_w, unicode_s[15:8] };
+	unicode_available_s <= { unicode_available_w, unicode_available_s[1] };
+end
 
 // =============================================================================
 // Stage management
@@ -99,7 +109,7 @@ task prepare_first_row;
 		end
 
 		wr_address <= real_row_address(first_row);
-		wr_address_end <= real_row_address(first_row) + ROW_SIZE - 'd4;
+		wr_address_end <= real_row_address(first_row) + (ROW_SIZE - 'd4);
 	end
 endtask
 
@@ -109,12 +119,12 @@ task scroll_down;
 			first_row <= FIRST_ROW;
 			set(VIDEO_SET_FIRST_ROW, real_row_address(FIRST_ROW));
 			wr_address <= real_row_address(FIRST_ROW);
-			wr_address_end <= real_row_address(FIRST_ROW) + ROW_SIZE - 'd4;
+			wr_address_end <= real_row_address(FIRST_ROW) + (ROW_SIZE - 'd4);
 		end else begin
 			first_row <= first_row + 'd1;
 			set(VIDEO_SET_FIRST_ROW, real_row_address(first_row + 'd1));
 			wr_address <= real_row_address(first_row);
-			wr_address_end <= real_row_address(first_row) + ROW_SIZE - 'd4;
+			wr_address_end <= real_row_address(first_row) + (ROW_SIZE - 'd4);
 		end
 
 		goto(STAGE_CLEAR_WRITE);
@@ -127,18 +137,17 @@ task scroll_up;
 			first_row <= LAST_ROW;
 			set(VIDEO_SET_FIRST_ROW, real_row_address(LAST_ROW));
 			wr_address <= real_row_address(LAST_ROW);
-			wr_address_end <= real_row_address(LAST_ROW) + ROW_SIZE - 'd4;
+			wr_address_end <= real_row_address(LAST_ROW) + (ROW_SIZE - 'd4);
 		end else begin
 			first_row <= first_row - 6'd1;
 			set(VIDEO_SET_FIRST_ROW, real_row_address(first_row - 6'd1));
 			wr_address <= real_row_address(first_row - 6'd1);
-			wr_address_end <= real_row_address(first_row - 6'd1) + ROW_SIZE - 'd4;
+			wr_address_end <= real_row_address(first_row - 6'd1) + (ROW_SIZE - 'd4);
 		end
 
 		goto(STAGE_CLEAR_WRITE);
 	end
 endtask
-
 
 ts_cursor #(
 	.COLUMNS (COLUMNS),
@@ -167,9 +176,7 @@ endtask
 
 task next_char;
 	begin
-		if (repeat_count != 'd0) begin
-			repeat_count <= repeat_count - 'd1;
-		end
+		repeat_count <= repeat_count - { 7'b0, repeat_count != 'd0 };
 		ts_command <= TS_CURSOR_NEXT_CHAR;
 		ready_n <= FALSE_n;
 		goto(STAGE_CURSOR_COMMAND1);
@@ -190,10 +197,7 @@ task stage_cursor_command2;
 			ready_n <= FALSE_n;
 			goto(STAGE_CLEAR_WRITE);
 		end else begin
-			if (repeat_count != 'd0)
-				ready_n <= FALSE_n;
-			else
-				ready_n <= TRUE_n;
+			ready_n <= (repeat_count != 'd0);
 			goto(STAGE_IDLE);
 		end
 	end
@@ -212,16 +216,19 @@ endfunction
 // =============================================================================
 // Idle stage
 // =============================================================================
+wire [22:0] current_address = address_from_position(text_x, text_y);
 task stage_idle;
-	if (repeat_count != 'd0) begin
-		ready_n <= FALSE_n;
-		wr_request <= TRUE;
-		wr_address <= address_from_position(text_x, text_y);
-		wr_data <= generate_cell_part(last_unicode, PART_TOP_LEFT);
-		current_pixels_offset <= 2'd0;
-		goto(STAGE_WRITE_TOP_LEFT);
-	end else if (unicode_available) begin
-		if (unicode[7:5] == 3'b0)
+	begin
+		if (repeat_count != 'd0) begin
+			ready_n <= FALSE_n;
+			wr_request <= TRUE;
+			wr_address <= current_address; //address_from_position(text_x, text_y);
+			wr_data <= generate_cell_part(last_unicode, PART_TOP_LEFT);
+			current_pixels_offset <= 2'd0;
+			goto(STAGE_WRITE_TOP_LEFT);
+		end
+
+		if (repeat_count == 'd0 && unicode_available) begin
 			case (unicode)
 				CTRL_CODE_00: goto(STAGE_IDLE);
 				CTRL_CLEAR: goto(STAGE_CLEAR);
@@ -275,76 +282,67 @@ task stage_idle;
 
 				CTRL_REPEAT: goto(STAGE_REPEAT);
 
-				CTRL_CHARPAGE_0: begin
-					charpage_base <= CHARPAGE_0;
-					goto(STAGE_IDLE);
-				end
-				CTRL_CHARPAGE_1: begin
-					charpage_base <= CHARPAGE_1;
-					goto(STAGE_IDLE);
-				end
-				CTRL_CHARPAGE_2: begin
-					charpage_base <= CHARPAGE_2;
-					goto(STAGE_IDLE);
-				end
-				CTRL_CHARPAGE_3: begin
-					charpage_base <= CHARPAGE_3;
-					goto(STAGE_IDLE);
-				end
-				CTRL_CHARPAGE_4: begin
-					charpage_base <= CHARPAGE_4;
-					goto(STAGE_IDLE);
-				end
+				CTRL_CHARPAGE_0: charpage_base <= CHARPAGE_0;
+				CTRL_CHARPAGE_1: charpage_base <= CHARPAGE_1;
+				CTRL_CHARPAGE_2: charpage_base <= CHARPAGE_2;
+				CTRL_CHARPAGE_3: charpage_base <= CHARPAGE_3;
+				CTRL_CHARPAGE_4: charpage_base <= CHARPAGE_4;
 
 				CTRL_CHARPAGE_GFX: begin
 					current_pixels_offset <= 2'd0;
 					charpage_base <= CHARPAGE_GFX;
-					goto(STAGE_IDLE);
 				end
 
 				CTRL_MOUSE_CONTROL: goto(STAGE_MOUSE_CONTROL);
 
-				CTRL_CODE_1B: goto(STAGE_IDLE);
-				CTRL_CODE_1C: goto(STAGE_IDLE);
-				CTRL_CODE_1D: goto(STAGE_IDLE);
-				CTRL_CODE_1E: goto(STAGE_IDLE);
+				CTRL_CODE_1B, CTRL_CODE_1C, CTRL_CODE_1D, CTRL_CODE_1E,
 				CTRL_CODE_1F: goto(STAGE_IDLE);
-			endcase
-		else begin
-			if (charpage_base == CHARPAGE_GFX) begin
-				if (current_pixels_offset == 2'd0) begin
-					ready_n <= TRUE_n;
-					current_pixels[13:7] <= unicode[6:0];
-					current_pixels_offset <= 2'd1;
-					goto(STAGE_IDLE);
-				end else if (current_pixels_offset == 2'd1) begin
-					ready_n <= TRUE_n;
-					current_pixels[6:0] <= unicode[6:0];
-					current_pixels_offset <= 2'd2;
-					goto(STAGE_IDLE);
-				end else begin
-					ready_n <= FALSE_n;
-					size <= SIZE_NORMAL;
-					wr_request <= TRUE;
-					wr_address <= address_from_position(text_x, text_y);
-					wr_data <= generate_cell_gfx({ current_pixels, unicode[5:0] }, unicode[6]);
-					current_pixels_offset <= 2'd0;
-					goto(STAGE_WRITE_TOP_LEFT);
+
+				default: begin
+					if (charpage_base == CHARPAGE_GFX) begin
+						case (current_pixels_offset)
+							2'd0: begin
+								ready_n <= TRUE_n;
+								current_pixels[13:7] <= unicode[6:0];
+								current_pixels_offset <= 2'd1;
+								goto(STAGE_IDLE);
+							end
+							
+							2'd1: begin
+								ready_n <= TRUE_n;
+								current_pixels[6:0] <= unicode[6:0];
+								current_pixels_offset <= 2'd2;
+								goto(STAGE_IDLE);
+							end
+							
+							default: begin
+								ready_n <= FALSE_n;
+								size <= SIZE_NORMAL;
+								wr_request <= TRUE;
+								wr_address <= current_address; //address_from_position(text_x, text_y);
+								wr_data <= generate_cell_gfx({ current_pixels, unicode[5:0] }, unicode[6]);
+								current_pixels_offset <= 2'd0;
+								goto(STAGE_WRITE_TOP_LEFT);
+							end
+						endcase
+					end else begin
+						ready_n <= FALSE_n;
+						wr_request <= TRUE;
+						wr_address <= current_address; //address_from_position(text_x, text_y);
+						wr_data <= generate_cell_part(unicode, PART_TOP_LEFT);
+						last_unicode <= unicode;
+						current_pixels_offset <= 2'd0;
+						goto(STAGE_WRITE_TOP_LEFT);
+					end
 				end
-			end else begin
-				ready_n <= FALSE_n;
-				wr_request <= TRUE;
-				wr_address <= address_from_position(text_x, text_y);
-				wr_data <= generate_cell_part(unicode, PART_TOP_LEFT);
-				last_unicode <= unicode;
-				current_pixels_offset <= 2'd0;
-				goto(STAGE_WRITE_TOP_LEFT);
-			end
+			endcase
 		end
-	end else begin
-		ready_n <= TRUE_n;
-		goto(STAGE_IDLE);
-		set(VIDEO_CURSOR_POSITION, {9'b0, cursor_visible, text_y, text_x});
+		
+		if (repeat_count == 'd0 && ~unicode_available) begin
+			ready_n <= TRUE_n;
+			goto(STAGE_IDLE);
+			set(VIDEO_CURSOR_POSITION, {9'b0, cursor_visible, text_y, text_x});
+		end
 	end
 endtask
 
@@ -370,10 +368,8 @@ task stage_write_top_left;
 				next_char();
 			end
 		endcase
-	else begin
+	else
 		wr_request <= FALSE;
-		goto(STAGE_WRITE_TOP_LEFT);
-	end
 endtask
 
 task stage_write_top_right;
@@ -391,10 +387,8 @@ task stage_write_top_right;
 				next_char();
 			end
 		endcase
-	else begin
+	else
 		wr_request <= FALSE;
-		goto(STAGE_WRITE_TOP_RIGHT);
-	end
 endtask
 
 task stage_write_bottom_left;
@@ -412,19 +406,14 @@ task stage_write_bottom_left;
 				next_char();
 			end
 		endcase
-	else begin
+	else
 		wr_request <= FALSE;
-		goto(STAGE_WRITE_BOTTOM_LEFT);
-	end
 endtask
 
 task stage_write_bottom_right;
 	begin
 		wr_request <= FALSE;
-		if (wr_done)
-			next_char();
-		else
-			goto(STAGE_WRITE_BOTTOM_RIGHT);
+		if (wr_done) next_char();
 	end
 endtask
 
@@ -456,15 +445,19 @@ task clear_next;
 	begin
 		wr_request <= FALSE;
 		if (wr_done) begin
-			if (wr_address == wr_address_end) begin
-				goto(STAGE_IDLE);
-			end else if (wr_address == { 8'b0, 6'd51, 7'd80, 2'b00 }) begin
-				wr_address <= 'd0;
-				goto(STAGE_CLEAR_WRITE);
-			end else begin
-				wr_address <= wr_address + 'd4;
-				goto(STAGE_CLEAR_WRITE);
-			end
+			case (wr_address)
+				wr_address_end: goto(STAGE_IDLE);
+
+				{ 8'b0, 6'd51, 7'd80, 2'b00 }:  begin
+					wr_address <= 'd0;
+					goto(STAGE_CLEAR_WRITE);
+				end
+
+				default: begin
+					wr_address <= wr_address + 'd4;
+					goto(STAGE_CLEAR_WRITE);
+				end
+			endcase
 		end
 	end
 endtask
@@ -548,8 +541,7 @@ task stage_clear;
 				end
 			end
 		endcase
-	end else
-		goto(STAGE_CLEAR);
+	end
 endtask
 
 task stage_color;
@@ -559,8 +551,7 @@ task stage_color;
 		else
 			foreground <= unicode[3:0];
 		goto(STAGE_IDLE);
-	end else
-		goto(STAGE_COLOR);
+	end
 endtask
 
 task stage_cursor1;
@@ -571,8 +562,7 @@ task stage_cursor1;
 			in_y <= text_y;
 
 		goto(STAGE_CURSOR2);
-	end else
-		goto(STAGE_CURSOR1);
+	end
 endtask
 
 task stage_cursor2;
@@ -584,8 +574,7 @@ task stage_cursor2;
 			in_x <= text_x;
 
 		goto(STAGE_IDLE);
-	end else
-		goto(STAGE_CURSOR2);
+	end
 endtask
 
 task stage_attribute;
@@ -606,8 +595,7 @@ task stage_attribute;
 			SET_SIZE_DOUBLE: size <= SIZE_DOUBLE;
 		endcase
 		goto(STAGE_IDLE);
-	end else
-		goto(STAGE_ATTRIBUTE);
+	end
 endtask
 
 task stage_parameter;
@@ -623,24 +611,18 @@ task stage_parameter;
 		endcase
 
 		goto(STAGE_IDLE);
-	end else
-		goto(STAGE_PARAMETER);
+	end
 endtask
-
 
 task stage_pattern;
 	if (unicode_available) begin
 		if (unicode[6]) begin
 			func <= unicode[1:0];
 			pattern <= unicode[5:2];
-		end else begin
-			func <= func;
-			pattern <= pattern;
 		end
 
 		goto(STAGE_IDLE);
-	end else
-		goto(STAGE_PATTERN);
+	end
 endtask
 
 task stage_mouse_control;
@@ -650,8 +632,7 @@ task stage_mouse_control;
 			4'd4: mouse_control <= unicode[1:0];
 		endcase
 		goto(STAGE_IDLE);
-	end else
-		goto(STAGE_MOUSE_CONTROL);
+	end
 endtask
 
 task stage_repeat;
@@ -659,8 +640,7 @@ task stage_repeat;
 		repeat_count <= unicode - 'h20;
 		ready_n <= FALSE_n;
 		goto(STAGE_IDLE);
-	end else
-		goto(STAGE_REPEAT);
+	end
 endtask
 
 // =============================================================================

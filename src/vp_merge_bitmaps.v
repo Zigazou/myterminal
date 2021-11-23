@@ -1,7 +1,6 @@
 module vp_merge_bitmaps (
 	// Base signals
 	input wire clk,
-	input wire reset,
 
 	// Text inputs
 	input wire [3:0] txt_foreground,
@@ -24,27 +23,11 @@ module vp_merge_bitmaps (
 
 `include "constant.v"
 
-always @(posedge clk)
-	if (reset) begin
-		enable <= FALSE;
-		foreground <= 'd0;
-		background <= 'd0;
-		bitmap <= 'd0;
-	end else begin
-		case ({ txt_enabled, gfx_enabled })
-			2'b00: enable <= FALSE;
-			2'b01: begin
-				foreground <= gfx_foreground;
-				background <= gfx_background;
-				bitmap <= gfx_bitmap;
-				enable <= TRUE;
-			end
-			2'b10, 2'b11: begin
-				foreground <= txt_foreground;
-				background <= txt_background;
-				bitmap <= txt_bitmap;
-				enable <= TRUE;
-			end
-		endcase
-	end
+always @(posedge clk) begin
+	enable <= txt_enabled | gfx_enabled;
+
+	foreground <= gfx_enabled ? gfx_foreground : txt_foreground;
+	background <= gfx_enabled ? gfx_background : txt_background;
+	bitmap <= gfx_enabled ? gfx_bitmap : txt_bitmap;
+end
 endmodule
