@@ -50,7 +50,7 @@ localparam
 		ORIENTATION_UP     = "u",
 
 	BELL                   = 'h07, // ^G
-	CTRL_CODE_08           = 'h08, // ^H
+	CTRL_SELECT_ATTRIBUTES = 'h08, // ^H
 	TAB                    = 'h09, // ^I
 	LF                     = 'h0a, // ^J
 	CTRL_SCROLL_UP         = 'h0b, // ^K
@@ -68,7 +68,7 @@ localparam
 	CTRL_CHARPAGE_4        = 'h17, // ^W
 	CTRL_CHARPAGE_GFX      = 'h18, // ^X
 	CTRL_MOUSE_CONTROL     = 'h19, // ^Y
-	CTRL_CODE_1A           = 'h1a, // ^Z
+	CTRL_APPLY_ATTRIBUTES  = 'h1a, // ^Z
 	CTRL_CODE_1B           = 'h1b, // ^[
 	CTRL_CODE_1C           = 'h1c, // ^\
 	CTRL_CODE_1D           = 'h1d, // ^]

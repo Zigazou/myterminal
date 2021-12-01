@@ -8,12 +8,12 @@ IO Statistics
   #inout                    2
 
 Utilization Statistics
-#lut                     3474   out of  19600   17.72%
-#reg                     1522   out of  19600    7.77%
-#le                      3474
-  #lut only              1952   out of   3474   56.19%
-  #reg only                 0   out of   3474    0.00%
-  #lut&reg               1522   out of   3474   43.81%
+#lut                     3704   out of  19600   18.90%
+#reg                     1629   out of  19600    8.31%
+#le                      3704
+  #lut only              2075   out of   3704   56.02%
+  #reg only                 0   out of   3704    0.00%
+  #lut&reg               1629   out of   3704   43.98%
 #dsp                        0   out of     29    0.00%
 #bram                      14   out of     64   21.88%
   #bram9k                  14
@@ -54,5 +54,5 @@ Report Hierarchy Area:
 +--------------------------------------------------------------------+
 |Instance |Module     |le    |lut    |ripple |seq    |bram   |dsp    |
 +--------------------------------------------------------------------+
-|top      |myterminal |3474  |3242   |232    |1522   |24     |0      |
+|top      |myterminal |3704  |3468   |236    |1629   |24     |0      |
 +--------------------------------------------------------------------+

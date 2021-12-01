@@ -68,7 +68,7 @@ wire [7:0] unicode;
 wire unicode_available;
 simple_fifo #(
 	.DATA_WIDTH (8),
-	.FIFO_SIZE (16)
+	.FIFO_SIZE (32)
 ) simple_fifo (
 	.clk (clk),
 	.reset (~reset_n),
@@ -107,12 +107,23 @@ wire wr_request;
 wire wr_done;
 wire [8:0] wr_burst_length;
 wire [1:0] mouse_control;
+
+wire rd_request_b;
+wire [22:0] rd_address_b;
+wire [31:0] rd_data_b;
+wire rd_available_b;
+wire [8:0] rd_burst_length_b;
 terminal_stream terminal_stream (
 	.clk (clk),
 	.reset (~reset_n),
 	.ready_n (cts),
 	.unicode_w (unicode),
 	.unicode_available_w (unicode_available),
+	.rd_request(rd_request_b),
+	.rd_address(rd_address_b),
+	.rd_data(rd_data_b),
+	.rd_available(rd_available_b),
+	.rd_burst_length(rd_burst_length_b),
 	.wr_address (wr_address),
 	.wr_request (wr_request),
 	.wr_data (wr_data),
@@ -141,6 +152,13 @@ ram #(
 	.rd_available (rd_available),
 	.rd_data (rd_data),
 	.rd_burst_length (rd_burst_length),
+
+	// Read signals B
+	.rd_request_b (rd_request_b),
+	.rd_address_b (rd_address_b),
+	.rd_available_b (rd_available_b),
+	.rd_data_b (rd_data_b),
+	.rd_burst_length_b (rd_burst_length_b),
 
 	// Write signals
 	.wr_request (wr_request),

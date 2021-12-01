@@ -7,6 +7,13 @@ module terminal_stream (
 	input wire [7:0] unicode_w,
 	input wire unicode_available_w,
 
+	// SDRAM input
+	output reg rd_request,
+	output reg [22:0] rd_address,
+	input wire [31:0] rd_data,
+	input wire rd_available,
+	output reg [8:0] rd_burst_length,
+
 	// SDRAM output
 	output reg [22:0] wr_address,
 	output reg wr_request,
@@ -39,13 +46,13 @@ task set;
 endtask
 
 // Needed for timing constraints
-reg [15:0] unicode_s;
-reg [1:0] unicode_available_s;
+reg [23:0] unicode_s;
+reg [2:0] unicode_available_s;
 wire [7:0] unicode = unicode_s[7:0];
 wire unicode_available = unicode_available_s[0];
 always @(posedge clk) if (ready_n == TRUE_n) begin
-	unicode_s <= { unicode_w, unicode_s[15:8] };
-	unicode_available_s <= { unicode_available_w, unicode_available_s[1] };
+	unicode_s <= { unicode_w, unicode_s[23:8] };
+	unicode_available_s <= { unicode_available_w, unicode_available_s[2:1] };
 end
 
 // =============================================================================
@@ -72,7 +79,11 @@ localparam
 	STAGE_MOUSE_CONTROL      = 'd16,
 	STAGE_REPEAT             = 'd17,
 	STAGE_CURSOR_COMMAND1    = 'd18,
-	STAGE_CURSOR_COMMAND2    = 'd19;
+	STAGE_CURSOR_COMMAND2    = 'd19,
+	STAGE_SELECT_ATTRIBUTES  = 'd20,
+	STAGE_APPLY_ATTRIBUTES   = 'd21,
+	STAGE_READ_CELL          = 'd22,
+	STAGE_WRITE_CELL         = 'd23;
 
 task goto;
 	input [4:0] next_stage;
@@ -84,6 +95,7 @@ endtask
 // =============================================================================
 reg [7:0] last_unicode = 'd0;
 reg [7:0] repeat_count = 'd0;
+reg [7:0] apply_count = 'd0;
 
 localparam
 	LIMIT_Y   = 2 ** 6 - 1,
@@ -149,6 +161,7 @@ task scroll_up;
 	end
 endtask
 
+reg ignore_size = FALSE;
 ts_cursor #(
 	.COLUMNS (COLUMNS),
 	.ROWS (ROWS)
@@ -158,6 +171,7 @@ ts_cursor #(
 	.command (ts_command),
 	.horz_size (size[0]),
 	.vert_size (size[1]),
+	.ignore_size (ignore_size),
 	.orientation (orientation),
 	.in_x (in_x),
 	.in_y (in_y),
@@ -168,6 +182,7 @@ ts_cursor #(
 
 task line_feed;
 	begin
+		ignore_size <= FALSE;
 		ts_command <= TS_CURSOR_LINE_FEED;
 		ready_n <= FALSE_n;
 		goto(STAGE_CURSOR_COMMAND1);
@@ -176,7 +191,18 @@ endtask
 
 task next_char;
 	begin
+		ignore_size <= FALSE;
 		repeat_count <= repeat_count - { 7'b0, repeat_count != 'd0 };
+		ts_command <= TS_CURSOR_NEXT_CHAR;
+		ready_n <= FALSE_n;
+		goto(STAGE_CURSOR_COMMAND1);
+	end
+endtask
+
+task next_cell;
+	begin
+		ignore_size <= TRUE;
+		apply_count <= apply_count - { 7'b0, apply_count != 'd0 };
 		ts_command <= TS_CURSOR_NEXT_CHAR;
 		ready_n <= FALSE_n;
 		goto(STAGE_CURSOR_COMMAND1);
@@ -217,18 +243,27 @@ endfunction
 // Idle stage
 // =============================================================================
 wire [22:0] current_address = address_from_position(text_x, text_y);
+wire no_repeat = repeat_count == 'd0 && apply_count == 'd0;
 task stage_idle;
 	begin
+		if (apply_count != 'd0) begin
+			ready_n <= FALSE_n;
+			rd_request <= TRUE;
+			rd_address <= current_address;
+			rd_burst_length <= 'd1;
+			goto(STAGE_READ_CELL);
+		end
+
 		if (repeat_count != 'd0) begin
 			ready_n <= FALSE_n;
 			wr_request <= TRUE;
-			wr_address <= current_address; //address_from_position(text_x, text_y);
+			wr_address <= current_address;
 			wr_data <= generate_cell_part(last_unicode, PART_TOP_LEFT);
 			current_pixels_offset <= 2'd0;
 			goto(STAGE_WRITE_TOP_LEFT);
 		end
 
-		if (repeat_count == 'd0 && unicode_available) begin
+		if (no_repeat && unicode_available) begin
 			case (unicode)
 				CTRL_CODE_00: goto(STAGE_IDLE);
 				CTRL_CLEAR: goto(STAGE_CLEAR);
@@ -238,7 +273,7 @@ task stage_idle;
 				CTRL_ATTRIBUTE: goto(STAGE_ATTRIBUTE);
 				CTRL_PARAMETER: goto(STAGE_PARAMETER);
 				BELL: goto(STAGE_IDLE);
-				CTRL_CODE_08: goto(STAGE_IDLE);
+				CTRL_SELECT_ATTRIBUTES: goto(STAGE_SELECT_ATTRIBUTES);
 				TAB: goto(STAGE_IDLE);
 
 				LF: begin
@@ -295,6 +330,8 @@ task stage_idle;
 
 				CTRL_MOUSE_CONTROL: goto(STAGE_MOUSE_CONTROL);
 
+				CTRL_APPLY_ATTRIBUTES: goto(STAGE_APPLY_ATTRIBUTES);
+
 				CTRL_CODE_1B, CTRL_CODE_1C, CTRL_CODE_1D, CTRL_CODE_1E,
 				CTRL_CODE_1F: goto(STAGE_IDLE);
 
@@ -319,7 +356,7 @@ task stage_idle;
 								ready_n <= FALSE_n;
 								size <= SIZE_NORMAL;
 								wr_request <= TRUE;
-								wr_address <= current_address; //address_from_position(text_x, text_y);
+								wr_address <= current_address;
 								wr_data <= generate_cell_gfx({ current_pixels, unicode[5:0] }, unicode[6]);
 								current_pixels_offset <= 2'd0;
 								goto(STAGE_WRITE_TOP_LEFT);
@@ -328,7 +365,7 @@ task stage_idle;
 					end else begin
 						ready_n <= FALSE_n;
 						wr_request <= TRUE;
-						wr_address <= current_address; //address_from_position(text_x, text_y);
+						wr_address <= current_address;
 						wr_data <= generate_cell_part(unicode, PART_TOP_LEFT);
 						last_unicode <= unicode;
 						current_pixels_offset <= 2'd0;
@@ -338,7 +375,7 @@ task stage_idle;
 			endcase
 		end
 		
-		if (repeat_count == 'd0 && ~unicode_available) begin
+		if (no_repeat && ~unicode_available) begin
 			ready_n <= TRUE_n;
 			goto(STAGE_IDLE);
 			set(VIDEO_CURSOR_POSITION, {9'b0, cursor_visible, text_y, text_x});
@@ -501,6 +538,59 @@ task clear_screen_next;
 endtask
 
 // =============================================================================
+// Apply attributes to existing cells
+// =============================================================================
+reg apply_background = FALSE;
+reg apply_foreground = FALSE;
+reg apply_function = FALSE;
+reg apply_underline = FALSE;
+reg apply_invert = FALSE;
+reg apply_pattern = FALSE;
+reg apply_blink = FALSE;
+wire [31:0] apply_mask = {
+	apply_background, apply_background, apply_background, apply_background,
+	apply_foreground, apply_foreground, apply_foreground, apply_foreground,
+	apply_pattern, apply_pattern, apply_pattern, apply_pattern,
+	apply_function, apply_function,
+	apply_underline,
+	apply_invert,
+	apply_blink, apply_blink,
+	14'b0
+};
+
+task stage_apply_attributes;
+	if (unicode_available) begin
+		apply_count <= unicode - 'h20;
+		ready_n <= FALSE_n;
+		goto(STAGE_IDLE);
+	end
+endtask
+
+task stage_read_cell();
+	begin
+		ready_n <= FALSE_n;
+		rd_request <= FALSE;
+
+		if (rd_available) begin
+			wr_request <= TRUE;
+			wr_address <= current_address;
+			wr_data <=
+				(rd_data & ~apply_mask)
+				| (generate_cell_part('d0, PART_TOP_LEFT) & apply_mask);
+			goto(STAGE_WRITE_CELL);
+		end
+	end
+endtask
+
+task stage_write_cell();
+	begin
+		ready_n <= FALSE_n;
+		wr_request <= FALSE;
+		if (wr_done) next_cell();
+	end
+endtask
+
+// =============================================================================
 // Control sequences
 // =============================================================================
 task stage_clear;
@@ -598,6 +688,21 @@ task stage_attribute;
 	end
 endtask
 
+task stage_select_attributes;
+	if (unicode_available) begin
+		{
+			apply_background,
+			apply_foreground,
+			apply_pattern,
+			apply_function,
+			apply_underline,
+			apply_invert,
+			apply_blink
+		} <= unicode[6:0];
+		goto(STAGE_IDLE);
+	end
+endtask
+
 task stage_parameter;
 	if (unicode_available) begin
 		case (unicode[6:0])
@@ -654,6 +759,10 @@ always @(posedge clk)
 		wr_mask <= 4'b1111;
 		ready_n <= FALSE_n;
 		wr_burst_length <= 'd1;
+		rd_address <= 'd0;
+		rd_request <= FALSE;
+		rd_burst_length <= 'd1;
+		apply_count <= 'd0;
 		set(VIDEO_NOP, 'd0);
 		reset_all();
 		clear_screen();
@@ -685,6 +794,12 @@ always @(posedge clk)
 			STAGE_REPEAT: stage_repeat();
 			STAGE_CURSOR_COMMAND1: stage_cursor_command1();
 			STAGE_CURSOR_COMMAND2: stage_cursor_command2();
+
+			STAGE_SELECT_ATTRIBUTES: stage_select_attributes();
+			STAGE_APPLY_ATTRIBUTES: stage_apply_attributes();
+			STAGE_READ_CELL: stage_read_cell();
+			STAGE_WRITE_CELL: stage_write_cell();
+			default: stage_idle();
 		endcase
 	end
 endmodule

@@ -124,6 +124,8 @@ Escape codes (from host to terminal)
 | 06 72         | Set text orientation from left to right                     |
 | 06 75         | Set text orientation from bottom to top (no auto-scroll)    |
 |               |                                                             |
+| 08 20+a       | Select attributes to apply when using 1A sequence code (*)  |
+|               |                                                             |
 | 0B            | Scroll screen up (does not move cursor)                     |
 | 0C            | Scroll screen down (does not move cursor)                   |
 |               |                                                             |
@@ -152,6 +154,16 @@ Escape codes (from host to terminal)
 | 19 37         | Mouse cursor cell ![](cursor/cursor-cell.png)               |
 | 19 40         | Hide mouse cursor and disable mouse events                  |
 | 19 41         | Show mouse cursor and enable mouse events                   |
+|               |                                                             |
+| 1A 20+n       | Apply currently selected attributes to the n next characters|
+
+(*) `a` works as follows:
+
+- bit 4: apply current background color
+- bit 3: apply current foreground color
+- bit 2: apply current pattern
+- bit 1: apply current function
+- bit 0: apply current blinking setting
 
 Mouse events
 ------------

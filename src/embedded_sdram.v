@@ -2,11 +2,11 @@ module ram #(
 	parameter CLK_FREQUENCY_HZ = 132_000_000,
 	parameter CAS_LATENCY      = 3,
 
-	parameter tRC_NS  = 63, // Row cycle time (bank=)
-	parameter tRCD_NS = 21, // RAS to CAS delay (bank=)
-	parameter tRP_NS  = 21, // Precharge to refresh/row activate delay (banks≠)
-	parameter tRRD_NS = 14, // Row activate to row activate delay (banks≠)
-	parameter tRAS_NS = 42, // Row activate to precharge time (bank=)
+	parameter tRC_NS  = 55, // Row cycle time (bank=)
+	parameter tRCD_NS = 11, // RAS to CAS delay (bank=)
+	parameter tRP_NS  = 18, // Precharge to refresh/row activate delay (banks≠)
+	parameter tRRD_NS = 17, // Row activate to row activate delay (banks≠)
+	parameter tRAS_NS = 39, // Row activate to precharge time (bank=)
 	parameter tWR_NS  = 2   // Write recovery time
 ) (
 	input wire clk,
@@ -18,6 +18,13 @@ module ram #(
 	output reg rd_available,
 	output reg [31:0] rd_data,
 	input wire [8:0] rd_burst_length,
+
+	// Read signals
+	input wire rd_request_b,
+	input wire [22:0] rd_address_b,
+	output reg rd_available_b,
+	output reg [31:0] rd_data_b,
+	input wire [8:0] rd_burst_length_b,
 
 	// Write signals
 	input wire wr_request,
@@ -86,7 +93,11 @@ reg [3:0] dqm;
 wire [31:0] dq;
 reg [31:0] dq_r;
 reg dq_wr;
-assign dq = dq_wr ? dq_r : 32'hZZZZ_ZZZZ;
+assign dq = dq_wr ? dq_r : {32{1'bZ}};
+
+// Needed for timing
+reg [31:0] data_in;
+always @(posedge clk) data_in <= dq;
 
 EG_PHY_SDRAM_2M_32 sdram (
 	.clk (clk),
@@ -271,7 +282,8 @@ localparam
 	STAGE_IDLE    = 1,
 	STAGE_REFRESH = 2,
 	STAGE_READ    = 3,
-	STAGE_WRITE   = 4;
+	STAGE_WRITE   = 4,
+	STAGE_READ_B  = 5;
 
 reg [3:0] stage = STAGE_INIT;
 reg [COUNTER_WIDTH:0] counter = 'd0;
@@ -342,16 +354,23 @@ task stage_init;
 endtask
 
 reg rd_request_pending;
+reg rd_request_pending_b;
 reg wr_request_pending;
 always @(posedge clk)
 	if (rst_n == TRUE_n) begin
 		rd_request_pending <= FALSE;
+		rd_request_pending_b <= FALSE;
 		wr_request_pending <= FALSE;
 	end else begin
 		if (rd_request)
 			rd_request_pending <= TRUE;
 		else if (stage == STAGE_READ)
 			rd_request_pending <= FALSE;
+
+		if (rd_request_b)
+			rd_request_pending_b <= TRUE;
+		else if (stage == STAGE_READ_B)
+			rd_request_pending_b <= FALSE;
 
 		if (wr_request)
 			wr_request_pending <= TRUE;
@@ -371,6 +390,8 @@ task stage_idle;
 			goto(STAGE_REFRESH);
 		end else if (rd_request_pending) begin
 			goto(STAGE_READ);
+		end else if (rd_request_pending_b) begin
+			goto(STAGE_READ_B);
 		end else if (wr_request_pending) begin
 			goto(STAGE_WRITE);
 		end else begin
@@ -405,7 +426,7 @@ endtask
 localparam
 	READ_OPEN_ROW       = 0,
 	READ_OPEN_COL       = tRCD,
-	READ_DATA_START     = tRCD + CAS_LATENCY;
+	READ_DATA_START     = READ_OPEN_COL + CAS_LATENCY + 'd2;
 
 wire [1:0] read_bank = get_bank(rd_address);
 wire [7:0] read_col = get_column(rd_address);
@@ -421,17 +442,48 @@ task stage_read;
 			end
 			READ_OPEN_COL: command_read(read_bank, read_col);
 			rd_burst_stop: command_burst_stop();
-			rd_burst_stop + 'd1: command_bank_precharge(read_bank);
+			rd_burst_stop + 'd2: command_bank_precharge(read_bank);
 			default: command_nop();
 		endcase
-		rd_data <= dq;
+		rd_data <= data_in;
 
 		// Data output
 		rd_available <=
 			counter >= READ_DATA_START &&
-			counter <= rd_burst_length + READ_DATA_START;
+			counter < rd_burst_length + READ_DATA_START;
 
 		goto_when(STAGE_IDLE, rd_burst_stop + CAS_LATENCY + tRP);
+	end
+endtask
+
+localparam
+	READ_OPEN_ROW_B       = 0,
+	READ_OPEN_COL_B       = tRCD,
+	READ_BURST_STOP_B     = READ_OPEN_COL_B + 'd1,
+	READ_PRECHARGE_B      = READ_OPEN_COL_B + 'd2,
+	READ_DATA_START_B     = READ_OPEN_COL_B + CAS_LATENCY + 'd2;
+
+wire [1:0] read_bank_b = get_bank(rd_address_b);
+wire [7:0] read_col_b = get_column(rd_address_b);
+wire [10:0] read_row_b = get_row(rd_address_b);
+task stage_read_b;
+	begin
+		// Commands sequence
+		case (counter)
+			READ_OPEN_ROW_B: command_bank_activate(read_bank_b, read_row_b);
+			READ_OPEN_COL_B: command_read(read_bank_b, read_col_b);
+			READ_BURST_STOP_B: command_burst_stop();
+			READ_PRECHARGE_B: command_bank_precharge(read_bank_b);
+			default: command_nop();
+		endcase
+
+		if (counter == READ_DATA_START_B) begin
+			rd_data_b <= data_in;
+			rd_available_b <= TRUE;
+		end else
+			rd_available_b <= FALSE;
+
+		goto_when(STAGE_IDLE, READ_BURST_STOP_B + CAS_LATENCY + tRP);
 	end
 endtask
 
@@ -491,6 +543,7 @@ always @(posedge clk)
 			STAGE_REFRESH: stage_refresh();
 			STAGE_READ: stage_read();
 			STAGE_WRITE: stage_write();
+			STAGE_READ_B: stage_read_b();
 		endcase
 	end
 

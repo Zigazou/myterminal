@@ -225,6 +225,29 @@ const commands = {
 
     },
 
+    mask: function(back, fore, pattern, func, underline, invert, blink) {
+        return String.fromCharCode(
+            0x08,
+            128 +
+            (interpretBoolean(back) ? 64 : 0) +
+            (interpretBoolean(fore) ? 32 : 0) +
+            (interpretBoolean(pattern) ? 16 : 0) +
+            (interpretBoolean(func) ? 8 : 0) +
+            (interpretBoolean(underline) ? 4 : 0) +
+            (interpretBoolean(invert) ? 2 : 0) +
+            (interpretBoolean(blink) ? 1 : 0)
+        );
+    },
+
+    apply: function(count) {
+        count = interpretNumber(count);
+        if (count > 0 && count < 256 - 32) {
+            return String.fromCharCode(0x1a, 0x20 + count);
+        } else {
+            throw new Error("Expected count between 1 and 223");
+        }
+    },
+
     charpage: function(page) {
         page = interpretNumber(page);
 

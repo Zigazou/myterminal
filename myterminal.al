@@ -2,7 +2,7 @@
 <Project Version="1" Path="/home/fred/Documents/dev/FPGA/myterminal-5.0.5">
     <Project_Created_Time></Project_Created_Time>
     <TD_Version>5.0.38657</TD_Version>
-    <UCode>10000100</UCode>
+    <UCode>11111110</UCode>
     <Name>myterminal</Name>
     <HardWare>
         <Family>EG4</Family>
@@ -369,7 +369,7 @@
     <Configurations>
     </Configurations>
     <Project_Settings>
-        <Step_Last_Change>2021-11-23 21:27:01.693</Step_Last_Change>
+        <Step_Last_Change>2021-12-01 23:52:32.586</Step_Last_Change>
         <Current_Step>60</Current_Step>
         <Step_Status>true</Step_Status>
     </Project_Settings>

@@ -8,6 +8,7 @@ module ts_cursor #(
 	input wire [2:0] command,
 	input wire horz_size,
 	input wire vert_size,
+	input wire ignore_size,
 	input wire [1:0] orientation,
 	input wire [6:0] in_x,
 	input wire [5:0] in_y,
@@ -35,7 +36,7 @@ localparam
 	DOUBLE_WIDTH  = 2'b10,
 	DOUBLE_SIZE   = 2'b11;
 
-wire [1:0] text_size = { horz_size, vert_size };
+wire [1:0] text_size = { horz_size & ~ignore_size, vert_size & ~ignore_size};
 
 // =============================================================================
 // Cursor goes to the right automatically

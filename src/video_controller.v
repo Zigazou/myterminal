@@ -255,7 +255,7 @@ always @(posedge clk) begin
 	wr_enable <= rd_available;
 	wr_data <= rd_data;
 	if (xpos == 'd0) begin
-		wr_index <= 'h7f;
+		wr_index <= 'h00;
 	end else begin
 		wr_index <= wr_index + { 6'd0, rd_available };
 	end
