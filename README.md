@@ -159,10 +159,12 @@ Escape codes (from host to terminal)
 
 (*) `a` works as follows:
 
-- bit 4: apply current background color
-- bit 3: apply current foreground color
-- bit 2: apply current pattern
-- bit 1: apply current function
+- bit 6: apply current background color
+- bit 5: apply current foreground color
+- bit 4: apply current pattern
+- bit 3: apply current function
+- bit 2: apply current underline
+- bit 1: apply current video inverse
 - bit 0: apply current blinking setting
 
 Mouse events
