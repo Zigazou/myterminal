@@ -146,13 +146,21 @@ locate 20 26
 size normal
 foreground blue
 charpage 3
-print "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
+print "T"
+repeat 39
 
 # Par Frédéric BISSON
 charpage 0
 locate 30 27
 foreground white
 print "par Frédéric BISSON"
+
+# Reverse the author line
+locate 30 27
+reverse on
+mask true true false false false true false
+apply 19
+reverse off
 </textarea>
             <button id="run-script" class="need-connection" disabled>
                 Run script
@@ -247,7 +255,10 @@ print "par Frédéric BISSON"
                             const compiled = compileStream(
                                 document.getElementById("script-source").value
                             );
-
+                            console.group("Compiled stream");
+                            console.log("Length=", compiled.length);
+                            console.log(hexdump(compiled));
+                            console.groupEnd();
                             const code = new MyCode();
                             code.print(compiled);
                             myTerminal.write(code);

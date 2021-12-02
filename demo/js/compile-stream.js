@@ -1,3 +1,4 @@
+/* exported compileStream, hexdump */
 colorsCodes = {
     'black': 0,
     'red': 1,
@@ -351,4 +352,24 @@ function compileStream(sourceCode) {
     });
 
     return stream;
+}
+
+/* Adapted from https://gist.github.com/igorgatis/d294fe714a4f523ac3a3 */
+function hexdump(buffer, blockSize) {
+    blockSize = blockSize || 16;
+    const lines = [];
+    const hex = "0123456789ABCDEF";
+    for (let b = 0; b < buffer.length; b += blockSize) {
+        let block = buffer.slice(b, Math.min(b + blockSize, buffer.length));
+        let addr = ("0000" + b.toString(16)).slice(-4);
+        let codes = block.split('').map(function (ch) {
+            let code = ch.charCodeAt(0);
+            return " " + hex[(0xF0 & code) >> 4] + hex[0x0F & code];
+        }).join("");
+        codes += "   ".repeat(blockSize - block.length);
+        let chars = block.replace(/[\x00-\x1F\x20]/g, '.');
+        chars +=  " ".repeat(blockSize - block.length);
+        lines.push(addr + " " + codes + "  " + chars);
+    }
+    return lines.join("\n");
 }
