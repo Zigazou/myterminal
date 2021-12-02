@@ -46,13 +46,13 @@ task set;
 endtask
 
 // Needed for timing constraints
-reg [23:0] unicode_s;
-reg [2:0] unicode_available_s;
+reg [15:0] unicode_s;
+reg [1:0] unicode_available_s;
 wire [7:0] unicode = unicode_s[7:0];
 wire unicode_available = unicode_available_s[0];
 always @(posedge clk) if (ready_n == TRUE_n) begin
-	unicode_s <= { unicode_w, unicode_s[23:8] };
-	unicode_available_s <= { unicode_available_w, unicode_available_s[2:1] };
+	unicode_s <= { unicode_w, unicode_s[15:8] };
+	unicode_available_s <= { unicode_available_w, unicode_available_s[1] };
 end
 
 // =============================================================================
@@ -223,7 +223,7 @@ task stage_cursor_command2;
 			ready_n <= FALSE_n;
 			goto(STAGE_CLEAR_WRITE);
 		end else begin
-			ready_n <= (repeat_count != 'd0);
+			ready_n <= (repeat_count != 'd0 || apply_count != 'd0);
 			goto(STAGE_IDLE);
 		end
 	end
