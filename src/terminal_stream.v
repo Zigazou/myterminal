@@ -378,7 +378,10 @@ task stage_idle;
 		if (no_repeat && ~unicode_available) begin
 			ready_n <= TRUE_n;
 			goto(STAGE_IDLE);
-			set(VIDEO_CURSOR_POSITION, {9'b0, cursor_visible, text_y, text_x});
+			set(
+				VIDEO_CURSOR_POSITION,
+				{7'b0, size, cursor_visible, text_y, text_x}
+			);
 		end
 	end
 endtask

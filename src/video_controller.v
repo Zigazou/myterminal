@@ -64,10 +64,19 @@ module video_controller #(
 // =============================================================================
 // Registers
 // =============================================================================
+// Required for timing constraints
+reg [3:0] register_index_s;
+reg [22:0] register_value_s;
+always @(posedge clk) begin
+	register_index_s <= register_index;
+	register_value_s <= register_value;
+end
+
 reg [22:0] base_address;
 reg [22:0] first_row;
 reg [5:0] cursor_row;
 reg [6:0] cursor_col;
+reg [1:0] cursor_size;
 reg cursor_visible;
 reg [10:0] mouse_x;
 reg [9:0] mouse_y;
@@ -78,27 +87,29 @@ always @(posedge clk)
 		first_row <= 'd0;
 		cursor_row <= 'd0;
 		cursor_col <= 'd0;
+		cursor_size <= 'd0;
 		cursor_visible <= TRUE;
 		mouse_cursor <= CURSOR_DEFAULT;
 		mouse_x <= 'd0;
 		mouse_y <= 'd0;
 	end else
-		case (register_index)
-			VIDEO_SET_BASE_ADDRESS: base_address <= register_value;
+		case (register_index_s)
+			VIDEO_SET_BASE_ADDRESS: base_address <= register_value_s;
 
-			VIDEO_SET_FIRST_ROW: first_row <= register_value;
+			VIDEO_SET_FIRST_ROW: first_row <= register_value_s;
 
 			VIDEO_CURSOR_POSITION: begin
-				cursor_visible <= register_value[13];
-				cursor_row <= register_value[12:7];
-				cursor_col <= register_value[6:0];
+				cursor_size <= register_value_s[15:14];
+				cursor_visible <= register_value_s[13];
+				cursor_row <= register_value_s[12:7];
+				cursor_col <= register_value_s[6:0];
 			end
 
-			VIDEO_MOUSE_CURSOR: mouse_cursor <= register_value[2:0];
+			VIDEO_MOUSE_CURSOR: mouse_cursor <= register_value_s[2:0];
 
 			VIDEO_MOUSE_POSITION: begin
-				mouse_x <= register_value[10:0];
-				mouse_y <= register_value[20:11];
+				mouse_x <= register_value_s[10:0];
+				mouse_y <= register_value_s[20:11];
 			end
 		endcase
 
@@ -462,8 +473,10 @@ always @(posedge clk)
 wire show_cursor =
 	cursor_visible &&
 	cursor_blink &&
-	current_col == cursor_col
-	&& current_row == cursor_row;
+	((current_col == cursor_col)
+		|| (current_col == cursor_col + cursor_size[0]))
+	&& ((current_row == cursor_row)
+		|| (current_row == cursor_row + cursor_size[1]));
 
 wire emit_pixel = y_visible && x_visible && ~reset;
 

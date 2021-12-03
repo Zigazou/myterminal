@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Project Version="1" Path="/home/fred/Documents/dev/FPGA/myterminal-5.0.5">
-    <Project_Created_Time></Project_Created_Time>
+    <Project_Created_Time>2021-12-01 18:41:14</Project_Created_Time>
     <TD_Version>5.0.38657</TD_Version>
     <UCode>11111110</UCode>
     <Name>myterminal</Name>
@@ -369,7 +369,7 @@
     <Configurations>
     </Configurations>
     <Project_Settings>
-        <Step_Last_Change>2021-12-02 06:48:00.438</Step_Last_Change>
+        <Step_Last_Change>2021-12-03 18:38:31.431</Step_Last_Change>
         <Current_Step>60</Current_Step>
         <Step_Status>true</Step_Status>
     </Project_Settings>
