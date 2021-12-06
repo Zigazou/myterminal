@@ -167,6 +167,27 @@ Escape codes (from host to terminal)
 - bit 1: apply current video inverse
 - bit 0: apply current blinking setting
 
+Patterns
+--------
+
+| Pattern index | Pattern image          |
+| ------------- |------------------------|
+| 0             | ![](doc/pattern00.png) |
+| 1             | ![](doc/pattern01.png) |
+| 2             | ![](doc/pattern02.png) |
+| 3             | ![](doc/pattern03.png) |
+| 4             | ![](doc/pattern04.png) |
+| 5             | ![](doc/pattern05.png) |
+| 6             | ![](doc/pattern06.png) |
+| 7             | ![](doc/pattern07.png) |
+| 8             | ![](doc/pattern08.png) |
+| 9             | ![](doc/pattern09.png) |
+| 10            | ![](doc/pattern10.png) |
+| 11            | ![](doc/pattern11.png) |
+| 12            | ![](doc/pattern12.png) |
+| 13            | ![](doc/pattern13.png) |
+| 14            | ![](doc/pattern14.png) |
+
 Mouse events
 ------------
 

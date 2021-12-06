@@ -1,0 +1,383 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>MyTerminal editor</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            html {
+                background-color: rgb(194, 239, 253);
+            }
+
+            body {
+                font-family: sans-serif;
+                max-width: 40em;
+                height: auto;
+                margin: 2em auto;
+                border: 0.1em solid gray;
+                padding: 1em;
+                background-color: white;
+                box-shadow: 0.5em 0.5em 0.25em 0 rgba(110, 210, 243,0.75);
+                border-radius: 0.5em;
+            }
+
+            @media screen and (min-width: 82em) {
+                h1 { margin-top: 0; }
+
+                body {
+                    max-width: 82em;
+                    columns: 2;
+                    column-gap: 2em;
+                    column-rule: solid gray;
+                }
+
+                .dont-break { break-inside: avoid; }
+            }
+
+            button {
+                padding: 0.5em 1em;
+                border-radius: 0.25em;
+            }
+
+            .todo {
+                font-size: 125%;
+                background-color: brown;
+                color: white;
+            }
+
+            textarea {
+                box-sizing: border-box;
+                max-width: 100%;
+                padding: 0.5em;
+                background-color: whitesmoke;
+                border-radius: 0.5em;
+            }
+
+            .pattern-list {
+                list-style-type: none;
+                display: flex;
+                flex-wrap: wrap;
+                break-inside: avoid;
+            }
+
+            .pattern {
+                border: 0.5em solid transparent;
+                border-radius: 0.5em;
+                padding: 0.25em;
+                text-align: center;
+            }
+
+            .pattern .shortcut { display: block; }
+            .pattern.selected { border: 0.5em solid rgb(76, 166, 194); }
+
+            .charpages {
+                position: relative;
+                width: 28em;
+                height: 40em;
+            }
+
+            .charpage {
+                display: none;
+                position: absolute;
+                width: 28em;
+                height: 40em;
+            }
+
+            .charpage.selected { display: block; }
+            #selected-char {
+                --selected-char-x: 0;
+                --selected-char-y: 0;
+                position: absolute;
+                left: calc(2em * var(--selected-char-x));
+                top: calc(2.5em * var(--selected-char-y));
+            }
+
+            #selected-char::before {
+                position: absolute;
+                display: block;
+                content: "";
+                top: -0.4em;
+                left: -0.4em;
+                width: 2em;
+                height: 2.5em;
+                border: 0.4em solid rgb(76, 166, 194);
+            }
+
+            .mask-bit { line-height: 1.5em; }
+
+            input[type="checkbox"] {
+                position: relative;
+                top: .25em;
+                width: 1.5em;
+                height: 1.5em;
+            }
+
+            .color-list {
+                display: flex;
+                flex-wrap: wrap;
+                list-style-type: none;
+                break-inside: avoid;
+            }
+
+            .color {
+                width: 5em;
+                height: 5em;
+                padding: 0.2em;
+                overflow: hidden;
+                text-align: center;
+                overflow-wrap: break-word;
+                border: 0.5em solid white;
+                border-radius: 0.5em;
+            }
+
+            .color.selected { border: 0.5em solid rgb(76, 166, 194); }
+
+            .dark { color: white; }
+
+            #foreground-0 { background-color: #000000; }
+            #foreground-1 { background-color: #800000; }
+            #foreground-2 { background-color: #008000; }
+            #foreground-3 { background-color: #808000; }
+            #foreground-4 { background-color: #000080; }
+            #foreground-5 { background-color: #800080; }
+            #foreground-6 { background-color: #008080; }
+            #foreground-7 { background-color: #909090; }
+            #foreground-8 { background-color: #808080; }
+            #foreground-9 { background-color: #ff0000; }
+            #foreground-10 { background-color: #00ff00; }
+            #foreground-11 { background-color: #ffff00; }
+            #foreground-12 { background-color: #0000ff; }
+            #foreground-13 { background-color: #ff00ff; }
+            #foreground-14 { background-color: #00ffff; }
+            #foreground-15 { background-color: #ffffff; }
+
+            #background-0 { background-color: #000000; }
+            #background-1 { background-color: #800000; }
+            #background-2 { background-color: #008000; }
+            #background-3 { background-color: #808000; }
+            #background-4 { background-color: #000080; }
+            #background-5 { background-color: #800080; }
+            #background-6 { background-color: #008080; }
+            #background-7 { background-color: #909090; }
+            #background-8 { background-color: #808080; }
+            #background-9 { background-color: #ff0000; }
+            #background-10 { background-color: #00ff00; }
+            #background-11 { background-color: #ffff00; }
+            #background-12 { background-color: #0000ff; }
+            #background-13 { background-color: #ff00ff; }
+            #background-14 { background-color: #00ffff; }
+            #background-15 { background-color: #ffffff; }
+        </style>
+    </head>
+    <body>
+        <h1>MyTerminal editor</h1>
+        <p>
+            At the time of writing, this JavaScript program work on the
+            Firefox web browser (even nightly versions). See
+            <a href="https://github.com/mozilla/standards-positions/issues/336">
+                Request for position on Serial API
+            </a>
+        </p>
+
+        <h2>First: connect to MyTerminal</h2>
+        <p>
+            The other buttons won't be enabled unless a connection to MyTerminal
+            has been established.
+        </p>
+        <button id="connect" class="todo">Connect to MyTerminal</button>
+
+        <h2>Foreground colors</h2>
+
+        <ul class="color-list">
+            <li class="color dark" id="foreground-0">shift+F5</li>
+            <li class="color dark" id="foreground-1">shift+F6</li>
+            <li class="color dark" id="foreground-2">shift+F7</li>
+            <li class="color dark" id="foreground-3">shift+F8</li>
+            <li class="color dark" id="foreground-4">shift+F9</li>
+            <li class="color dark" id="foreground-5">shift+F10</li>
+            <li class="color dark" id="foreground-6">shift+F11</li>
+            <li class="color dark" id="foreground-7">shift+F12</li>
+            <li class="color dark" id="foreground-8">F5</li>
+            <li class="color" id="foreground-9">F6</li>
+            <li class="color" id="foreground-10">F7</li>
+            <li class="color" id="foreground-11">F8</li>
+            <li class="color dark" id="foreground-12">F9</li>
+            <li class="color" id="foreground-13">F10</li>
+            <li class="color" id="foreground-14">F11</li>
+            <li class="color selected" id="foreground-15">F12</li>
+        </ul>
+
+        <h2>Foreground colors</h2>
+
+        <ul class="color-list">
+            <li class="color dark selected" id="background-0">ctrl+shift+F5</li>
+            <li class="color dark" id="background-1">ctrl+shift+F6</li>
+            <li class="color dark" id="background-2">ctrl+shift+F7</li>
+            <li class="color dark" id="background-3">ctrl+shift+F8</li>
+            <li class="color dark" id="background-4">ctrl+shift+F9</li>
+            <li class="color dark" id="background-5">ctrl+shift+F10</li>
+            <li class="color dark" id="background-6">ctrl+shift+F11</li>
+            <li class="color dark" id="background-7">ctrl+shift+F12</li>
+            <li class="color dark" id="background-8">ctrl+F5</li>
+            <li class="color" id="background-9">ctrl+F6</li>
+            <li class="color" id="background-10">ctrl+F7</li>
+            <li class="color" id="background-11">ctrl+F8</li>
+            <li class="color dark" id="background-12">ctrl+F9</li>
+            <li class="color" id="background-13">ctrl+F10</li>
+            <li class="color" id="background-14">ctrl+F11</li>
+            <li class="color" id="background-15">ctrl+F12</li>
+        </ul>
+
+        <h2>Patterns</h2>
+
+        <ul class="pattern-list">
+            <li class="pattern selected" id="pattern00">
+                <img src="../../doc/pattern00.png">
+                <span class="shortcut">meta+F1</span>
+            </li>
+            <li class="pattern" id="pattern01">
+                <img src="../../doc/pattern01.png">
+                <span class="shortcut">meta+F2</span>
+            </li>
+            <li class="pattern" id="pattern02">
+                <img src="../../doc/pattern02.png">
+                <span class="shortcut">meta+F3</span>
+            </li>
+            <li class="pattern" id="pattern03">
+                <img src="../../doc/pattern03.png">
+                <span class="shortcut">meta+F4</span>
+            </li>
+            <li class="pattern" id="pattern04">
+                <img src="../../doc/pattern04.png">
+                <span class="shortcut">meta+F5</span>
+            </li>
+            <li class="pattern" id="pattern05">
+                <img src="../../doc/pattern05.png">
+                <span class="shortcut">meta+F6</span>
+            </li>
+            <li class="pattern" id="pattern06">
+                <img src="../../doc/pattern06.png">
+                <span class="shortcut">meta+F7</span>
+            </li>
+            <li class="pattern" id="pattern07">
+                <img src="../../doc/pattern07.png">
+                <span class="shortcut">meta+F8</span>
+            </li>
+            <li class="pattern" id="pattern08">
+                <img src="../../doc/pattern08.png">
+                <span class="shortcut">meta+F9</span>
+            </li>
+            <li class="pattern" id="pattern09">
+                <img src="../../doc/pattern09.png">
+                <span class="shortcut">meta+F10</span>
+            </li>
+            <li class="pattern" id="pattern10">
+                <img src="../../doc/pattern10.png">
+                <span class="shortcut">meta+F11</span>
+            </li>
+            <li class="pattern" id="pattern11">
+                <img src="../../doc/pattern11.png">
+                <span class="shortcut">meta+F12</span>
+            </li>
+            <li class="pattern" id="pattern12">
+                <img src="../../doc/pattern12.png">
+                <span class="shortcut">meta+print screen</span>
+            </li>
+            <li class="pattern" id="pattern13">
+                <img src="../../doc/pattern13.png">
+                <span class="shortcut">meta+scroll lock</span>
+            </li>
+            <li class="pattern" id="pattern14">
+                <img src="../../doc/pattern14.png">
+                <span class="shortcut">meta+pause</span>
+            </li>
+        </ul>
+
+        <h2>Attributes mask</h2>
+
+        <div class="mask-bit">
+            <input type="checkbox" id="mask-background">
+            <label for="mask-background">Background (ALT+F1)</label>
+        </div>
+
+        <div class="mask-bit">
+            <input type="checkbox" id="mask-foreground">
+            <label for="mask-foreground">Foreground (ALT+F2)</label>
+        </div>
+
+        <div class="mask-bit">
+            <input type="checkbox" id="mask-pattern">
+            <label for="mask-pattern">Pattern (ALT+F3)</label>
+        </div>
+
+        <div class="mask-bit">
+            <input type="checkbox" id="mask-function">
+            <label for="mask-function">Function (ALT+F4)</label>
+        </div>
+
+        <div class="mask-bit">
+            <input type="checkbox" id="mask-underline">
+            <label for="mask-underline">Underline (ALT+F5)</label>
+        </div>
+
+        <div class="mask-bit">
+            <input type="checkbox" id="mask-invert">
+            <label for="mask-invert">Video inverse (ALT+F6)</label>
+        </div>
+
+        <div class="mask-bit">
+            <input type="checkbox" id="mask-blink">
+            <label for="mask-blink">Blink (ALT+F7)</label>
+        </div>
+
+        <h2>Characters</h2>
+
+        <p></p>
+        <ul>
+            <li><strong>ESC</strong>&thinsp;: character page 0</li>
+            <li><strong>CTRL+F1</strong>&thinsp;: character page 1</li>
+            <li><strong>CTRL+F2</strong>&thinsp;: character page 2</li>
+            <li><strong>CTRL+F3</strong>&thinsp;: character page 3</li>
+            <li><strong>CTRL+F4</strong>&thinsp;: character page 4</li>
+        </ul>
+
+        <div class="charpages">
+            <div class="charpage selected" id="charpage0">
+                <img src="charpage0.png">
+            </div>
+
+            <div class="charpage" id="charpage1">
+                <img src="charpage1.png">
+            </div>
+
+            <div class="charpage" id="charpage2">
+                <img src="charpage2.png">
+            </div>
+
+            <div class="charpage" id="charpage3">
+                <img src="charpage3.png">
+            </div>
+
+            <div class="charpage" id="charpage4">
+                <img src="charpage4.png">
+            </div>
+
+            <div id="selected-char"></div>
+        </div>
+
+        <script src="myterminal.js"></script>
+        <script src="myterminal-memory.js"></script>
+        <script src="myterminal-editor.js"></script>
+        <script>
+            document.getElementById('connect').addEventListener('click', () => {
+                const myTerminal = new MyTerminal()
+                myTerminal.connect().then(() => {
+                    const editor = new MyTerminalEditor()
+
+                    editor.connect(myTerminal)
+                }).catch((error) => {
+                    alert("Unable to connect to serial port: " + error)
+                })
+            })
+        </script>
+    </body>
+</html>

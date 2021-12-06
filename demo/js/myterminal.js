@@ -129,6 +129,26 @@ class MyCode {
         return this
     }
 
+    moveUp() {
+        this.string += "\x0e"
+        return this
+    }
+
+    moveDown() {
+        this.string += "\x0f"
+        return this
+    }
+
+    moveLeft() {
+        this.string += "\x10"
+        return this
+    }
+
+    moveRight() {
+        this.string += "\x11"
+        return this
+    }
+
     goRight() {
         this.string += "\x06\x72"
         return this
@@ -347,6 +367,11 @@ class MyCode {
         return this
     }
 
+    mask(mask) {
+        this.string += "\x08" + String.fromCharCode(0x80 | mask)
+        return this
+    }
+
     repeat(character, count) {
         if (count < 4) {
             this.string += character.repeat(count)
@@ -354,6 +379,11 @@ class MyCode {
             this.string += character
             this.string += "\x12" + String.fromCharCode(0x20 + Math.min(count - 1, 223))
         }
+        return this
+    }
+
+    repeatAttributes(count) {
+        this.string += "\x1a" + String.fromCharCode(0x20 + Math.min(count, 223))
         return this
     }
 

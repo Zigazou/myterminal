@@ -100,7 +100,7 @@ function [15:0] generate_pattern;
 				3'd0: generate_pattern = 16'b10001000_10001000;
 				3'd1: generate_pattern = 16'b00010000_00010000;
 				3'd2: generate_pattern = 16'b00100000_00100000;
-				3'd3: generate_pattern = 16'b01000010_01000000;
+				3'd3: generate_pattern = 16'b01000000_01000000;
 				3'd4: generate_pattern = 16'b10001000_10001000;
 				3'd5: generate_pattern = 16'b00000100_00000100;
 				3'd6: generate_pattern = 16'b00000010_00000010;
