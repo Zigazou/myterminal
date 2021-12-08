@@ -399,16 +399,17 @@ class MyTerminalEditor {
     }
 
     print(value) {
+        const ord = value.char.charCodeAt(0)
         switch (this.size) {
             case MyTerminalCell.SIZE_NORMAL:
-                const cell = this.generateCell(value.char)
+                const cell = this.generateCell(ord)
                 this.memory.setCell(this.x, this.y, cell)
                 this.x++
                 break
 
             case MyTerminalCell.SIZE_DOUBLE_WIDTH:
-                const cell_left = this.generateCell(value.char)
-                const cell_right = this.generateCell(value.char)
+                const cell_left = this.generateCell(ord)
+                const cell_right = this.generateCell(ord)
                 cell_right.part = MyTerminalCell.PART_TOP_RIGHT
                 this.memory.setCell(this.x, this.y, cell_left)
                 this.memory.setCell(this.x + 1, this.y, cell_right)
@@ -416,8 +417,8 @@ class MyTerminalEditor {
                 break
 
             case MyTerminalCell.SIZE_DOUBLE_HEIGHT:
-                const cell_top = this.generateCell(value.char)
-                const cell_bottom = this.generateCell(value.char)
+                const cell_top = this.generateCell(ord)
+                const cell_bottom = this.generateCell(ord)
                 cell_bottom.part = MyTerminalCell.PART_BOTTOM_LEFT
                 this.memory.setCell(this.x, this.y, cell_top)
                 this.memory.setCell(this.x, this.y + 1, cell_bottom)
@@ -425,10 +426,10 @@ class MyTerminalEditor {
                 break
 
             case MyTerminalCell.SIZE_DOUBLE:
-                const cell_top_left = this.generateCell(value.char)
-                const cell_top_right = this.generateCell(value.char)
-                const cell_bottom_left = this.generateCell(value.char)
-                const cell_bottom_right = this.generateCell(value.char)
+                const cell_top_left = this.generateCell(ord)
+                const cell_top_right = this.generateCell(ord)
+                const cell_bottom_left = this.generateCell(ord)
+                const cell_bottom_right = this.generateCell(ord)
                 cell_top_right.part = MyTerminalCell.PART_TOP_RIGTH
                 cell_bottom_left.part = MyTerminalCell.PART_BOTTOM_LEFT
                 cell_bottom_right.part = MyTerminalCell.PART_BOTTOM_RIGHT
@@ -441,5 +442,9 @@ class MyTerminalEditor {
         }
 
         this.write(myCode().print(value))
+    }
+
+    export() {
+        return this.memory.export()
     }
 }

@@ -182,6 +182,14 @@
     <button id="connect" class="todo">Connect to MyTerminal</button>
 
     <div class="dont-break">
+      <h2>Export</h2>
+      <p>
+        <button id="update-download-link">Update download link</button>
+        <a href="" id="download-link">Download video memory</a>
+      </p>
+    </div>
+
+    <div class="dont-break">
       <h2>Foreground colors</h2>
 
       <ul class="color-list">
@@ -406,6 +414,18 @@
         const myTerminal = new MyTerminal()
         myTerminal.connect().then(() => {
           const editor = new MyTerminalEditor()
+          const downloadLink = document.getElementById("download-link")
+
+          document
+            .getElementById('update-download-link')
+            .addEventListener('click', () => {
+              const rawMemory = editor.export()
+              const bytes = String.fromCharCode.apply(null, rawMemory)
+
+              downloadLink.href = "data:text/plain;charset=ascii,"
+                                + encodeURIComponent(bytes)
+              downloadLink.setAttribute("download", "myterminal.bin")
+            })
 
           editor.connect(myTerminal)
         }).catch((error) => {
