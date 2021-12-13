@@ -423,7 +423,7 @@
               const bytes = String.fromCharCode.apply(null, rawMemory)
 
               downloadLink.href = "data:text/plain;charset=ascii,"
-                                + encodeURIComponent(bytes)
+                                + escape(bytes)
               downloadLink.setAttribute("download", "myterminal.bin")
             })
 

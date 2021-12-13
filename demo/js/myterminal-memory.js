@@ -98,17 +98,17 @@ class MyTerminalMemory {
                         break
                 }
 
-                rawMemory[offset + 0] = cell.background << 4
+                rawMemory[offset + 3] = (cell.background << 4)
                                       | cell.foreground
-                rawMemory[offset + 1] = cell.pattern << 4
-                                      | cell.func << 2
-                                      | (cell.underline ? 1 : 0) << 1
+                rawMemory[offset + 2] = (cell.pattern << 4)
+                                      | (cell.func << 2)
+                                      | ((cell.underline ? 1 : 0) << 1)
                                       | (cell.invert ? 1 : 0)
-                rawMemory[offset + 2] = cell.blink << 6
-                                      | cell.part << 4
-                                      | cell.size << 2
-                                      | (charCode & 0x300) >> 8
-                rawMemory[offset + 3] = charCode & 0xff
+                rawMemory[offset + 1] = (cell.blink << 6)
+                                      | (cell.part << 4)
+                                      | (cell.size << 2)
+                                      | ((charCode & 0x300) >> 8)
+                rawMemory[offset + 0] = charCode & 0xff
             }
         }
 

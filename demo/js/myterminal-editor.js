@@ -200,7 +200,7 @@ class MyTerminalEditor {
 
                 default:
                     if (value.char >= " ") {
-                        this.print(value)
+                        this.print(value.char)
                     }
             }
         }
@@ -390,7 +390,7 @@ class MyTerminalEditor {
         cell.underline = this.underline
         cell.invert = this.invert
         cell.blink = this.blink
-        cell.ord = ord
+        cell.ord = Number(ord)
         cell.charPage = this.charPage
         cell.size = this.size
         cell.part = MyTerminalCell.PART_TOP_LEFT
@@ -399,7 +399,8 @@ class MyTerminalEditor {
     }
 
     print(value) {
-        const ord = value.char.charCodeAt(0)
+        const ord = value[0].charCodeAt(0)
+
         switch (this.size) {
             case MyTerminalCell.SIZE_NORMAL:
                 const cell = this.generateCell(ord)
@@ -430,7 +431,7 @@ class MyTerminalEditor {
                 const cell_top_right = this.generateCell(ord)
                 const cell_bottom_left = this.generateCell(ord)
                 const cell_bottom_right = this.generateCell(ord)
-                cell_top_right.part = MyTerminalCell.PART_TOP_RIGTH
+                cell_top_right.part = MyTerminalCell.PART_TOP_RIGHT
                 cell_bottom_left.part = MyTerminalCell.PART_BOTTOM_LEFT
                 cell_bottom_right.part = MyTerminalCell.PART_BOTTOM_RIGHT
                 this.memory.setCell(this.x, this.y, cell_top_left)
